@@ -1,0 +1,104 @@
+# RecallGuard data sources (AGENTS.md §4, §6).
+# Live mode needs the Zetaris stack running first: it creates the network zetaris_default.
+#   docker compose up -d rg-inventory rg-pos rg-regulator     # databases only
+#   docker compose --profile live up -d                       # + supplier API + app
+#   docker compose --profile sample up app-sample             # judges: no Zetaris, no creds
+
+x-postgres: &postgres
+  image: postgres:16-alpine
+  restart: unless-stopped
+  environment: &pg-env
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: ${PG_ADMIN_PASSWORD:?set PG_ADMIN_PASSWORD in .env}
+    PG_READER_USER: ${PG_READER_USER:-zetaris_reader}
+    PG_READER_PASSWORD: ${PG_READER_PASSWORD:?set PG_READER_PASSWORD in .env}
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U postgres -d $${POSTGRES_DB}"]
+    interval: 5s
+    timeout: 3s
+    retries: 10
+  networks: [zetaris]
+
+services:
+  rg-inventory:
+    <<: *postgres
+    container_name: rg-inventory
+    environment:
+      <<: *pg-env
+      POSTGRES_DB: inventory
+    ports: ["5433:5432"]
+    volumes:
+      - rg-inventory-data:/var/lib/postgresql/data
+      - ./docker/postgres-init:/docker-entrypoint-initdb.d:ro
+
+  rg-pos:
+    <<: *postgres
+    container_name: rg-pos
+    environment:
+      <<: *pg-env
+      POSTGRES_DB: pos
+    ports: ["5434:5432"]
+    volumes:
+      - rg-pos-data:/var/lib/postgresql/data
+      - ./docker/postgres-init:/docker-entrypoint-initdb.d:ro
+
+  rg-regulator:
+    <<: *postgres
+    container_name: rg-regulator
+    environment:
+      <<: *pg-env
+      POSTGRES_DB: regulator
+    ports: ["5435:5432"]
+    volumes:
+      - rg-regulator-data:/var/lib/postgresql/data
+      - ./docker/postgres-init:/docker-entrypoint-initdb.d:ro
+
+  rg-supplier-api:
+    profiles: [live]
+    container_name: rg-supplier-api
+    build: ./services/supplier_api
+    restart: unless-stopped
+    ports: ["8001:8000"]
+    volumes:
+      - ./data/sample:/data/sample:ro
+    networks: [zetaris]
+
+  app:
+    profiles: [live]
+    build: .
+    env_file: .env
+    environment:
+      ZETARIS_REST_URL: http://host.docker.internal:8888/api/v1.0
+      METERLESS_BASE_URL: http://host.docker.internal:8088/v1
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    ports: ["${PORT:-8000}:8000"]
+    volumes:
+      - ./logs:/app/logs
+      - ./state:/app/state
+    depends_on:
+      rg-inventory: { condition: service_healthy }
+      rg-pos: { condition: service_healthy }
+      rg-regulator: { condition: service_healthy }
+    networks: [zetaris]
+
+  # Judges' path: no .env, no Zetaris network, no network calls.
+  app-sample:
+    profiles: [sample]
+    build: .
+    environment:
+      SAMPLE_MODE: "true"
+    ports: ["${PORT:-8000}:8000"]
+    volumes:
+      - ./logs:/app/logs
+    networks: [internal]
+
+networks:
+  zetaris:
+    name: zetaris_default
+    external: true
+  internal: {}
+
+volumes:
+  rg-inventory-data:
+  rg-pos-data:
+  rg-regulator-data:
