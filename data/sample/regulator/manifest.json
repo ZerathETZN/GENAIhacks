@@ -1,0 +1,43 @@
+{
+  "licence": "CC BY 4.0 (data.gov.my open data)",
+  "caveat": "data.gov.my: the data should not be used as the basis for legal action.",
+  "seed": 42,
+  "datasets": {
+    "pharmaceutical_products_cancelled": {
+      "source_url": "https://storage.data.gov.my/healthcare/pharmaceutical_products_cancelled.parquet",
+      "fetched_on": "2026-10-22",
+      "rows_upstream": 1615,
+      "rows_in_sample": 1615,
+      "sampled": false,
+      "file": "data/sample/regulator/pharmaceutical_products_cancelled.parquet",
+      "sha256": "6e139097ab03fc636b4dae3d7fbd7d0d21a6741fd059e18cf4900b5a0ecda3cb"
+    },
+    "pharmaceutical_products": {
+      "source_url": "https://storage.data.gov.my/healthcare/pharmaceutical_products.parquet",
+      "fetched_on": "2026-10-22",
+      "rows_upstream": 28327,
+      "rows_in_sample": 2000,
+      "sampled": true,
+      "file": "data/sample/regulator/pharmaceutical_products.parquet",
+      "sha256": "23af8995d0ed4775ecd3fb7862613308da3040c9cd25f834a5d9c0fab8332346"
+    },
+    "pharmaceutical_importers": {
+      "source_url": "https://storage.data.gov.my/healthcare/pharmaceutical_importers.parquet",
+      "fetched_on": "2026-10-22",
+      "rows_upstream": 479,
+      "rows_in_sample": 479,
+      "sampled": false,
+      "file": "data/sample/regulator/pharmaceutical_importers.parquet",
+      "sha256": "48e759535db062c88f3cff5b018b8f92827fd560a138e236672100fb45659800"
+    },
+    "pharmaceutical_wholesalers": {
+      "source_url": "https://storage.data.gov.my/healthcare/pharmaceutical_wholesalers.parquet",
+      "fetched_on": "2026-10-22",
+      "rows_upstream": 1019,
+      "rows_in_sample": 1019,
+      "sampled": false,
+      "file": "data/sample/regulator/pharmaceutical_wholesalers.parquet",
+      "sha256": "26e2acde3a6eb8c5875442fa68d953b02d274ffdf1e404844c804c8be9ec2ac7"
+    }
+  }
+}
