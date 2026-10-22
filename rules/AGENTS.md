@@ -31,7 +31,7 @@ It reconciles **real public regulator data** against the chain's **fragmented in
    - Only `.env.example` (placeholders) is committed. `.env` is gitignored.
    - Mask keys in logs.
 4. **Power rule: Meterless Runtime (Nightshift) must be a working AI provider in the product** (organiser clarification, 22 Oct). It is added *alongside* other providers, and existing providers may stay.
-   - Every model call goes through `app/llm/generator.py`, which selects the provider via `LLM_PROVIDER=meterless|nvidia|heuristic`.
+   - Every model call goes through `app/llm/generator.py`, which selects the provider via `LLM_PROVIDER=meterless|heuristic`.
    - **Default is `meterless`.** The demo video and committed live traces must show real calls served through Meterless, never a mocked call.
    - Use the organisers' integration prompt (HackOS → Power section) as a reference, then check it against §5.2 (headers, timeouts, `served_by` tracing).
 5. **Zetaris and Meterless must be load-bearing and running locally** for the live demo:
@@ -232,18 +232,14 @@ Rules:
 ### 5.3 NVIDIA: Nemotron models
 
 - Served **through Nightshift** in the normal path. This is required for the NVIDIA DGX Spark award: at least one Nemotron model through Nightshift in a working feature.
-- **Fallback client**, used only on transport failure (connection refused or timeout), logged as `provider_fallback`:
-  - `NVIDIA_BASE_URL=https://integrate.api.nvidia.com/v1`, `NVIDIA_API_KEY`
-  - `MODEL_REASONING=nvidia/nemotron-3.5-super-vl-120b-a12b` (tested working)
-  - `MODEL_FAST=nvidia/nemotron-3.5-lightning-30b-a3b`
-- Do **not** use `nvidia/nemotron-3-super-120b-a12b`: it returns 404 on our account.
+- No direct NVIDIA client (team decision, 22 Oct): every model call goes through Nightshift. Nemotron IDs are only the lane model set in Nightshift.
 - Embeddings: only if optional RAG is built (§5.4). Use `nvidia/nemotron-3-embed-1b`; otherwise skip embeddings.
 
 **`app/llm/generator.py` contract:**
 ```
 generate(prompt, system_prompt=None, model=None, json_schema=None) -> GenerationResult(text, provider, served_by, latency_ms)
 ```
-- Provider selection: `LLM_PROVIDER` (default `meterless`). With `meterless` selected, a transport failure falls back to NVIDIA direct, logged as `provider_fallback`. Teammates whose machines can't run Nightshift may develop with `LLM_PROVIDER=nvidia`. With no credentials or `SAMPLE_MODE`, use `heuristic_fallback`.
+- Provider selection: `LLM_PROVIDER` (default `meterless`). Nightshift retries 429/5xx/`empty_response` up to 3 times with backoff. On a transport failure, exhausted retries, no token, `SAMPLE_MODE`, or `LLM_PROVIDER=heuristic`, `generate` returns `provider=heuristic_fallback` with empty text, and the calling agent applies its own deterministic rules.
 - With `json_schema`: request JSON, validate with pydantic, and retry once with the validation error.
 - `heuristic_fallback` is real deterministic logic (score thresholds, templated critic rules), logged as `provider=heuristic_fallback`. It never returns canned prose.
 
