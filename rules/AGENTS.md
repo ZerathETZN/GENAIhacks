@@ -1,8 +1,7 @@
 # AGENTS.md: RecallGuard (Open Agent Hackathon 2026, Track 1)
 
-> **Context for coding agents** (Claude Code, Cursor Agent, Codex). Read this file fully before writing code.
+> **Context for coding agents** (Cursor Agent, Codex). Read this file fully before writing code.
 > - If anything here conflicts with a direct instruction from a teammate, follow the teammate and update this file in the same commit.
-> - Version 2.1, 22 Oct 2026. Cursor is no longer a required sponsor tool (organisers changed the rules; no Cursor tokens issued). Clarified the Nemotron 3 vs 3.5 model IDs. Added credential status to §11.
 > - Version 2, 21 Oct 2026. Supersedes v1: the provider is now Nightshift-first, Zetaris is reached over REST, regulator data comes from data.gov.my open data, and `metadata.json` is added.
 
 ---
@@ -31,13 +30,17 @@ It reconciles **real public regulator data** against the chain's **fragmented in
    - Credentials come only from env vars.
    - Only `.env.example` (placeholders) is committed. `.env` is gitignored.
    - Mask keys in logs.
-4. **Power rule: Meterless Nightshift is the primary model provider.**
-   - Every model call goes through `app/llm/generator.py`, which calls Nightshift first.
-   - NVIDIA direct is a fallback for **transport failures only**.
+4. **Power rule: Meterless Runtime (Nightshift) must be a working AI provider in the product** (organiser clarification, 22 Oct). It is added *alongside* other providers, and existing providers may stay.
+   - Every model call goes through `app/llm/generator.py`, which selects the provider via `LLM_PROVIDER=meterless|nvidia|heuristic`.
+   - **Default is `meterless`.** The demo video and committed live traces must show real calls served through Meterless, never a mocked call.
+   - Use the organisers' Cursor prompt (HackOS → Power section) to add the integration, then check it against §5.2 (headers, timeouts, `served_by` tracing).
 5. **Zetaris and Meterless must be load-bearing and running locally** for the live demo:
    - Every data read in live mode goes through Zetaris.
    - Agent context goes through the Meterless engines.
-6. **Build rule: Meterless engines need proof.** H-MEM must have a reproducible test (warm run escalates fewer items than cold run, §5.2) with committed traces from real runs.
+6. **Build rule: at least ONE Meterless engine integrated into the running application, with proof** (organiser clarification, 22 Oct). The engines are product components; using them as coding aids doesn't count.
+   - **Required:** World Model.
+   - **Should:** H-MEM, cuttable.
+   - **Proof:** a reproducible feature test with committed traces from real runs (§5.2).
 7. **`SAMPLE_MODE=true` runs real agent logic with no credentials and no network.**
    - Uses the DuckDB adapter over `data/sample/` plus the heuristic generator.
    - Must not replay saved outputs.
@@ -210,7 +213,7 @@ Rules:
 - **Always record `response.model` in the trace (`served_by`).** Nightshift may serve a different model than the one requested.
 - Free-tier lanes are rate-limited, so **batch ambiguous matches into one call** and keep deterministic matching first.
 
-**Engines** (reference specs in `docs/meterless/`; implement minimal services in Python, using the IMPLEMENT prompts from meterless.ai in whichever coding agent the teammate uses):
+**Engines** (reference specs in `docs/meterless/`; implement minimal services in Python, using the IMPLEMENT prompts from meterless.ai in Cursor Agent):
 
 | Engine | Our use | Minimum services |
 |---|---|---|
@@ -219,7 +222,11 @@ Rules:
 | Markovian | not planned | n/a |
 
 - Engines never call a model directly. They receive the injected `generate` function.
-- **Proof (Build rule):** `tests/test_hmem_warm_start.py` asserts `warm.needs_review < cold.needs_review` on the same input. Commit both real traces under `output_examples/cold_warm/`.
+- **World Model is REQUIRED** (it satisfies the Build rule on its own; Meterless's guide recommends it for the Fragmented track). Proof tests:
+  - `tests/test_world_model_ingest.py`: re-ingesting the same run creates no duplicates (idempotent), and a run interrupted mid-ingest resumes cleanly.
+  - `tests/test_world_model_provenance.py`: every `evidence[]` item in the result resolves to a World Model record with source system and record ID.
+  - Also run the engine's conformance suite from `docs/meterless/` if provided.
+- **H-MEM is SHOULD** (cuttable after 24 Oct). If built, `tests/test_hmem_warm_start.py` asserts `warm.needs_review < cold.needs_review` on the same input. Commit both real traces under `output_examples/cold_warm/`.
 - Storage: SQLite under `state/` (gitignored). `state/seed_memory.jsonl` is small, committed and documented.
 
 ### 5.3 NVIDIA: Nemotron models
@@ -229,14 +236,14 @@ Rules:
   - `NVIDIA_BASE_URL=https://integrate.api.nvidia.com/v1`, `NVIDIA_API_KEY`
   - `MODEL_REASONING=nvidia/nemotron-3.5-super-vl-120b-a12b` (tested working)
   - `MODEL_FAST=nvidia/nemotron-3.5-lightning-30b-a3b`
-- Do **not** use `nvidia/nemotron-3-super-120b-a12b` (Nemotron **3** Super, the older generation, no `.5`): it returned 404 when tested on 21 Oct. This does **not** apply to `nemotron-3.5-super-vl-120b-a12b` above, which is our reasoning model. Re-test both once our own NVIDIA key arrives and update this line.
+- Do **not** use `nvidia/nemotron-3-super-120b-a12b`: it returns 404 on our account.
 - Embeddings: only if optional RAG is built (§5.4). Use `nvidia/nemotron-3-embed-1b`; otherwise skip embeddings.
 
 **`app/llm/generator.py` contract:**
 ```
 generate(prompt, system_prompt=None, model=None, json_schema=None) -> GenerationResult(text, provider, served_by, latency_ms)
 ```
-- Order: Nightshift → (transport failure) NVIDIA direct → (no credentials / `SAMPLE_MODE`) `heuristic_fallback`.
+- Provider selection: `LLM_PROVIDER` (default `meterless`). With `meterless` selected, a transport failure falls back to NVIDIA direct, logged as `provider_fallback`. Teammates whose machines can't run Nightshift may develop with `LLM_PROVIDER=nvidia`. With no credentials or `SAMPLE_MODE`, use `heuristic_fallback`.
 - With `json_schema`: request JSON, validate with pydantic, and retry once with the validation error.
 - `heuristic_fallback` is real deterministic logic (score thresholds, templated critic rules), logged as `provider=heuristic_fallback`. It never returns canned prose.
 
@@ -248,11 +255,13 @@ generate(prompt, system_prompt=None, model=None, json_schema=None) -> Generation
 - **Customer-contact line:** e.g. "Outlet 7 sold 12 units of batch X to 9 distinct (synthetic) loyalty customers in the last 30 days."
 - **Optional RAG** over the guideline PDF is the first thing to cut if behind.
 
-### 5.5 Development environment (Cursor optional since 22 Oct)
+### 5.5 Cursor
 
-- Cursor is **no longer required** (organisers changed the rules; no Cursor tokens were issued). Any editor or coding agent is fine.
-- This file is the single source of agent context. Tool-specific rule files (`.cursor/rules/`, `CLAUDE.md`) may point to it but must not duplicate it.
-- Do not claim Cursor in `metadata.json`, the README or the sponsor explanation unless we actually used it.
+- Cursor is the required development environment.
+- Project rules in `.cursor/rules/` point to this file.
+- Meterless IMPLEMENT prompts run in Cursor Agent.
+- Zetaris's own Cursor connection (getting-started repo, `.env.local`) is used for exploring sources.
+- Keep 2–3 screenshots of real Cursor usage for the sponsor explanation.
 
 ### 5.6 `metadata.json` (required by all four sponsor overviews)
 
@@ -264,7 +273,8 @@ Root file stating where each sponsor sits:
   "sponsors": {
     "zetaris":   { "role": "federated SQL over inventory/POS/supplier/regulator sources; unified view product_exposure_v; Critic verification queries", "files": ["app/adapters/zetaris_adapter.py", "scripts/zetaris_register.py"] },
     "meterless": { "role": "Nightshift primary model provider; World Model + H-MEM engines", "files": ["app/llm/generator.py", "app/meterless/"] },
-    "nvidia":    { "role": "Nemotron models served via Nightshift for planner/critic/reporter", "models": ["nemotron-3.5-lightning"] }
+    "nvidia":    { "role": "Nemotron models served via Nightshift for planner/critic/reporter", "models": ["nemotron-3.5-lightning"] },
+    "cursor":    { "role": "development environment; Meterless IMPLEMENT prompts run in Cursor Agent", "files": [".cursor/rules/"] }
   }
 }
 ```
@@ -277,7 +287,7 @@ Keep it accurate: update `models` to what traces actually show in `served_by`.
 ```
 /
 ├── AGENTS.md  README.md  metadata.json  run.py  Dockerfile  docker-compose.yml  requirements.txt  .env.example
-├── .cursor/rules/              # optional, only if a teammate uses Cursor
+├── .cursor/rules/
 ├── app/
 │   ├── main.py                 # FastAPI: POST /run, GET /health (bind 0.0.0.0, $PORT)
 │   ├── orchestrator.py         # agents, caps, timeouts, result assembly
@@ -400,11 +410,6 @@ SAMPLE_MODE=true python run.py --input input_examples/example_1.json    # must p
 - Working Nemotron IDs are in §5.3.
 - Judges run `SAMPLE_MODE`; the live Zetaris + Nightshift run is shown in the demo video.
 
-**Credentials (22 Oct):**
-- NVIDIA API key: **not yet received**. Until it arrives, the NVIDIA-direct fallback cannot be tested; Nightshift's OpenRouter `:free` lane is the only live model path.
-- Zetaris hackathon token: **not yet received**. The local Zetaris install and REST smoke test work with a locally generated API key.
-- Cursor: not required any more (§5.5).
-
 **Open:**
 - How to put NVIDIA-key models in a Nightshift lane. Ask at the Build workshop.
 - Whether Nightshift on Windows requires an NVIDIA GPU for cloud-only lanes. This decides which teammate's machine runs live demos.
@@ -425,11 +430,12 @@ SAMPLE_MODE=true python run.py --input input_examples/example_1.json    # must p
 2. `daily_scan` mode.
 3. Live NPRA scraping (keep the committed snapshot).
 4. USL (keep the schemastore view).
+5. H-MEM and the cold/warm demo.
 
 **Never cut:**
-- Nightshift-first provider
+- Meterless provider with real traced calls
+- World Model and its tests
 - Critic verification query
-- cold/warm proof
 - sample mode
 - traces
 - `metadata.json`
