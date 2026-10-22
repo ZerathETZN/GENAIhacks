@@ -1,0 +1,30 @@
+{
+  "project": "RecallGuard",
+  "track": "Solving Fragmented Intelligence",
+  "team": "Team Invictus",
+  "entry_points": {
+    "cli": "python run.py --input input_examples/example_1.json",
+    "api": "python run.py --serve  (POST /run, GET /health, GET /runs/{run_id}/trace)",
+    "ui": "streamlit run ui/app.py",
+    "sample_mode": "docker compose --profile sample up --build"
+  },
+  "sponsors": {
+    "zetaris": {
+      "role": "federated SQL over inventory/POS/supplier/regulator sources; catalogue discovery; unified view product_exposure_v; Critic verification queries",
+      "files": ["app/adapters/zetaris_adapter.py", "scripts/zetaris_register.py"]
+    },
+    "meterless": {
+      "role": "Nightshift is the default model provider (LLM_PROVIDER=meterless); World Model (required) and H-MEM engines",
+      "files": ["app/llm/generator.py", "app/meterless/"]
+    },
+    "nvidia": {
+      "role": "Nemotron models served via Meterless Nightshift lanes for planner/critic/reporter (no direct NVIDIA client)",
+      "models": ["nvidia/nemotron-3.5-super-vl-120b-a12b", "nvidia/nemotron-3.5-lightning-30b-a3b"]
+    }
+  },
+  "unified_view": "TODO(A): record USL or schemastore view once chosen (AGENTS.md §5.1)",
+  "data": {
+    "real": "data.gov.my pharmaceutical registers (CC BY 4.0) + NPRA recall notice snapshot",
+    "synthetic": "inventory, POS, supplier deliveries (scripts/generate_synthetic.py --seed 42)"
+  }
+}

@@ -1,17 +1,18 @@
 # RecallGuard data sources (AGENTS.md §4, §6).
 # Live mode needs the Zetaris stack running first: it creates the network zetaris_default.
-#   docker compose up -d rg-inventory rg-pos rg-regulator     # databases only
+# Passwords are not interpolated with :? so the sample profile works with no .env (judges' path).
+#   docker compose --profile db up -d                         # databases only
 #   docker compose --profile live up -d                       # + supplier API + app
-#   docker compose --profile sample up app-sample             # judges: no Zetaris, no creds
+#   docker compose --profile sample up --build                # judges: API :8000 + UI :8501, no Zetaris, no creds
 
 x-postgres: &postgres
   image: postgres:16-alpine
   restart: unless-stopped
   environment: &pg-env
     POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: ${PG_ADMIN_PASSWORD:?set PG_ADMIN_PASSWORD in .env}
+    POSTGRES_PASSWORD: ${PG_ADMIN_PASSWORD:-}  # required for live mode; postgres refuses to start without it
     PG_READER_USER: ${PG_READER_USER:-zetaris_reader}
-    PG_READER_PASSWORD: ${PG_READER_PASSWORD:?set PG_READER_PASSWORD in .env}
+    PG_READER_PASSWORD: ${PG_READER_PASSWORD:-}  # checked in docker/postgres-init/01-reader.sh
   healthcheck:
     test: ["CMD-SHELL", "pg_isready -U postgres -d $${POSTGRES_DB}"]
     interval: 5s
@@ -22,6 +23,7 @@ x-postgres: &postgres
 services:
   rg-inventory:
     <<: *postgres
+    profiles: [live, db]   # never started by the sample profile; naming the service still starts it
     container_name: rg-inventory
     environment:
       <<: *pg-env
@@ -33,6 +35,7 @@ services:
 
   rg-pos:
     <<: *postgres
+    profiles: [live, db]   # never started by the sample profile; naming the service still starts it
     container_name: rg-pos
     environment:
       <<: *pg-env
@@ -44,6 +47,7 @@ services:
 
   rg-regulator:
     <<: *postgres
+    profiles: [live, db]   # never started by the sample profile; naming the service still starts it
     container_name: rg-regulator
     environment:
       <<: *pg-env
@@ -66,7 +70,9 @@ services:
   app:
     profiles: [live]
     build: .
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
     environment:
       ZETARIS_REST_URL: http://host.docker.internal:8888/api/v1.0
       METERLESS_BASE_URL: http://host.docker.internal:8088/v1
@@ -90,6 +96,29 @@ services:
     ports: ["${PORT:-8000}:8000"]
     volumes:
       - ./logs:/app/logs
+    networks: [internal]
+
+  # Streamlit UI (Part C). Talks only to the API above.
+  ui:
+    profiles: [live]
+    build: .
+    command: ["streamlit", "run", "ui/app.py", "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true"]
+    environment:
+      API_URL: http://app:8000
+    ports: ["8501:8501"]
+    healthcheck: { disable: true }
+    depends_on: [app]
+    networks: [zetaris]
+
+  ui-sample:
+    profiles: [sample]
+    build: .
+    command: ["streamlit", "run", "ui/app.py", "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true"]
+    environment:
+      API_URL: http://app-sample:8000
+    ports: ["8501:8501"]
+    healthcheck: { disable: true }
+    depends_on: [app-sample]
     networks: [internal]
 
 networks:

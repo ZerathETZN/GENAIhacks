@@ -1,0 +1,5 @@
+{
+  "run_id": "example-3",
+  "input": { "mode": "daily_scan" },
+  "options": { "sample_mode": true, "max_critic_rounds": 2 }
+}

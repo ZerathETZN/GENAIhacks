@@ -1,0 +1,16 @@
+.git
+.env
+.env.*
+!.env.example
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+logs/*
+!logs/.gitkeep
+state/*
+!state/seed_memory.jsonl
+*.duckdb
+.DS_Store
