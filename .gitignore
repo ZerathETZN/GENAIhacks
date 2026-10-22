@@ -1,0 +1,30 @@
+# secrets
+.env
+.env.*
+!.env.example
+
+# runtime state
+state/*
+!state/seed_memory.jsonl
+logs/*
+!logs/.gitkeep
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# local data dumps (keep data/sample/ committed)
+*.parquet
+!data/sample/**/*.parquet
+*.duckdb
+*.duckdb.wal
+
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
