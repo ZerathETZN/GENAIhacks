@@ -34,3 +34,15 @@ def test_unassigned_delivery_is_kept_and_has_evidence():
     d = build_drafts(RECALL, [cand("D1", "delivery", 50, outlet=None)])[0]
     assert (d.outlet_id, d.on_hand_qty) == (UNASSIGNED, 0) and d.evidence == []
     assert d.status == "needs_review" and "no outlet" in d.reasons[0]  # A: never ranked as an outlet
+
+
+def test_delivery_without_stock_record_needs_review():
+    d = build_drafts(RECALL, [cand("D1", "delivery", 30), cand("P1", "sale", 1, date="2026-10-03", customer="c1", reg_no=None)])[0]
+    assert d.status == "needs_review" and "no stock record" in d.reasons[-1]
+
+
+def test_typo_batch_sales_are_counted_under_the_recalled_batch_and_flagged():
+    typo = cand("P2", "sale", 2, batch="NSC-24O67", date="2026-10-04", customer="c2", reg_no=None, status="needs_review", conf=0.4)
+    typo.reasons.append("batch near-miss")
+    drafts = build_drafts(RECALL, [cand("S1", "stock", 5), typo])
+    assert len(drafts) == 1 and (drafts[0].batch, drafts[0].sold_after_date_qty, drafts[0].status) == ("NSC24067", 2, "needs_review")
