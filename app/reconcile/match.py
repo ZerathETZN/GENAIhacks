@@ -21,6 +21,7 @@ from app.schemas import Evidence, Recall
 
 ID_STRONG = 0.9  # identity >= this is a match
 ID_WEAK = 0.6  # identity below this is not the same product
+ID_NEAR = 0.75  # a near-miss batch is kept for review at this identity (name abbreviations like 'tab' vs 'tablets')
 BATCH_NEAR = 85  # fuzz.ratio at or above this (but not equal) is a near-miss
 
 
@@ -63,7 +64,7 @@ def classify(recall: Recall, rec: dict[str, Any], hmem: MemoryRetrievalService) 
     if batch == "none" or identity < ID_WEAK:
         return m
     if batch == "near":
-        m.label = "near_miss" if identity >= ID_STRONG else "no_match"
+        m.label = "near_miss" if identity >= ID_NEAR else "no_match"
     else:
         m.label = "match" if identity >= ID_STRONG else "ambiguous"
     if m.label != "no_match":

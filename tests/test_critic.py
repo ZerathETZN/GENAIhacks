@@ -61,3 +61,10 @@ def test_transfer_with_a_missing_leg_needs_review():
 def test_unassigned_draft_is_passed_through_untouched():
     d = draft(outlet_id="UNASSIGNED", status="needs_review")
     assert ConflictCriticAgent(RawAdapter(), MemoryStoreService(), "r1").review(RECALL, [d])[0].critic_check is None
+
+
+def test_batch_with_slash_matches_raw_rows_after_norm():
+    a = RawAdapter()
+    a.db.execute("INSERT INTO inventory_pg.stock VALUES ('s9','OUT-09','Paracetamol 500mg Tablet','MAL12345678A','BN2404/23','5','2026-09-30')")
+    d = draft(outlet_id="OUT-09", batch="BN2404-23", on_hand_qty=5, sold_after_date_qty=0, distinct_customers=0)
+    assert ConflictCriticAgent(a, MemoryStoreService(), "r1").review(RECALL, [d])[0].critic_check.passed

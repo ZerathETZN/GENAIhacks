@@ -15,31 +15,21 @@ import time
 from typing import Callable
 
 from app.adapters import DataAdapter
-from app.agents.retriever import name_token
+from app.agents.retriever import name_tokens
 from app.meterless.hmem import MemoryStoreService
 from app.meterless.world_model import norm
 from app.reconcile.aggregate import UNASSIGNED, ExposureDraft
 from app.schemas import CriticCheck, Recall, TraceEvent
 
 NAME = "ConflictCriticAgent"
-_BATCH = "UPPER(REPLACE(REPLACE(batch, '-', ''), ' ', ''))"
 _REG = "UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', ''))"
-
-_STOCK = (
-    f"SELECT COALESCE(SUM(CAST(qty_on_hand AS INTEGER)), 0) AS n FROM inventory_pg.stock "
-    f"WHERE outlet_id = ? AND {_BATCH} = ? AND ({_REG} = ? OR LOWER(product_name) LIKE ?)"
-)
+# Batches are normalised in Python with norm() (all non-alphanumerics), not in SQL: a SQL REPLACE chain
+# missed characters like '/' ("BN2404/23"). Cost: rows come back per outlet+product, then are filtered.
+_PRODUCT = f"({_REG} = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)"
+_STOCK = f"SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND {_PRODUCT}"
 # POS has no reg_no, so product is matched by name token only. Dates compare as ISO strings.
-_SALES = (
-    "SELECT COALESCE(SUM(CAST(qty AS INTEGER)), 0) AS n, COUNT(DISTINCT loyalty_id) AS c FROM pos_pg.sales "
-    f"WHERE outlet_id = ? AND {_BATCH} = ? AND LOWER(product_name) LIKE ? AND CAST(sold_at AS VARCHAR) >= ?"
-)
-# A transfer with a missing leg is a conflict (A: needs_review, never a quantity adjustment).
-_ONE_LEG = (
-    "SELECT transfer_id FROM inventory_pg.transfers "
-    f"WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND {_BATCH} = ? AND ({_REG} = ? OR LOWER(product_name) LIKE ?) "
-    "GROUP BY transfer_id HAVING COUNT(DISTINCT leg) < 2"
-)
+_SALES = "SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS VARCHAR) >= ?"
+_TRANSFERS = f"SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND {_PRODUCT}"
 
 
 class ConflictCriticAgent:
@@ -59,15 +49,23 @@ class ConflictCriticAgent:
         if d.outlet_id == UNASSIGNED:  # no outlet to query; the Reporter lists it as unresolved
             return d
         t0 = time.monotonic()
-        batch, reg, like = norm(d.batch), norm(d.reg_no or recall.reg_no), f"%{name_token(recall.product_name)}%"
-        stock = self.adapter.query(_STOCK, [d.outlet_id, batch, reg, like])[0]
-        sales = self.adapter.query(_SALES, [d.outlet_id, batch, like, recall.date])[0]
-        one_leg = self.adapter.query(_ONE_LEG, [d.outlet_id, d.outlet_id, batch, reg, like])
+        batches, reg, likes = set(d.batch_norms) | {norm(d.batch)}, norm(d.reg_no or recall.reg_no), name_tokens(recall.product_name)
+        stock = [r for r in self.adapter.query(_STOCK, [d.outlet_id, reg, *likes]) if norm(r["batch"] or "") in batches]
+        sales = [r for r in self.adapter.query(_SALES, [d.outlet_id, *likes, recall.date]) if norm(r["batch"] or "") in batches]
+        legs: dict[str, set[str]] = {}
+        for r in self.adapter.query(_TRANSFERS, [d.outlet_id, d.outlet_id, reg, *likes]):
+            if norm(r["batch"] or "") in batches:
+                legs.setdefault(r["transfer_id"], set()).add(r["leg"])
+        one_leg = sorted(t for t, ls in legs.items() if len(ls) < 2)
 
-        observed = {"on_hand_qty": int(stock["n"]), "sold_after_date_qty": int(sales["n"]), "distinct_customers": int(sales["c"])}
+        observed = {
+            "on_hand_qty": sum(int(r["qty_on_hand"]) for r in stock),
+            "sold_after_date_qty": sum(int(r["qty"]) for r in sales),
+            "distinct_customers": len({r["loyalty_id"] for r in sales if r["loyalty_id"]}),
+        }
         expected = {k: getattr(d, k) for k in observed}
         passed = observed == expected
-        d.critic_check = CriticCheck(query=f"{_STOCK} | {_SALES}", expected=expected, observed=observed, passed=passed)
+        d.critic_check = CriticCheck(query=f"{_STOCK} | {_SALES} | {_TRANSFERS}", expected=expected, observed=observed, passed=passed)
 
         # shortcut: the raw tables are the source of truth, so on a mismatch we adopt them once
         # and send the group to a human; a second round would run the same query. Upgrade if a check ever becomes non-deterministic.
@@ -76,7 +74,7 @@ class ConflictCriticAgent:
                 setattr(d, k, v)
             d.status, d.reasons = "needs_review", d.reasons + [f"critic: raw tables disagree ({expected} vs {observed})"]
         if one_leg:
-            d.status, d.reasons = "needs_review", d.reasons + [f"transfer with a missing leg: {sorted(r['transfer_id'] for r in one_leg)}"]
+            d.status, d.reasons = "needs_review", d.reasons + [f"transfer with a missing leg: {one_leg}"]
         if passed and not one_leg and d.status == "confirmed":
             for name in d.names:  # verified by an independent query, so the spelling is safe to remember
                 self.hmem.remember_alias("product_name", name, recall.product_name, "critic_check", self.run_id, NAME, d.confidence)

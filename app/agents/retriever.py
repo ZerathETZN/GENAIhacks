@@ -27,13 +27,15 @@ _ENTITY = {"stock": "StockRecord", "transfer": "StockRecord", "sale": "SaleRecor
 # to flag them. Plain ANSI (UPPER/REPLACE/LIKE) so the same text runs on Zetaris and DuckDB.
 _SQL = (
     f"SELECT {', '.join(COLUMNS)} FROM {VIEW} "
-    "WHERE UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ?"
+    "WHERE UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?"
 )
 
 
-def name_token(product_name: str) -> str:
-    words = re.findall(r"[A-Za-z]{4,}", product_name)
-    return max(words, key=len).lower() if words else product_name.lower()
+def name_tokens(product_name: str) -> tuple[str, str]:
+    """(first word, longest word) as LIKE patterns. The first word is usually the brand ("TSART 40 (Telmisartan...)"),
+    the longest the generic; POS spells products short, so either one alone misses rows."""
+    words = re.findall(r"[A-Za-z]{3,}", product_name) or [product_name]
+    return f"%{words[0].lower()}%", f"%{max(words, key=len).lower()}%"
 
 
 class RetrieverAgent:
@@ -49,7 +51,7 @@ class RetrieverAgent:
     def retrieve(self, recall: Recall) -> list[dict[str, Any]]:
         """Return neutral records for the recalled product and ingest them."""
         t0 = time.monotonic()
-        params = [re.sub(r"[^A-Z0-9]", "", recall.reg_no.upper()), f"%{name_token(recall.product_name)}%"]
+        params = [re.sub(r"[^A-Z0-9]", "", recall.reg_no.upper()), *name_tokens(recall.product_name)]
         rows = self.adapter.query(_SQL, params, limit=LIMIT)
         self._trace("query_view", f"{VIEW} reg_no={recall.reg_no}", f"{len(rows)} rows", "zetaris" if self.adapter.name == "zetaris" else None, t0)
 
