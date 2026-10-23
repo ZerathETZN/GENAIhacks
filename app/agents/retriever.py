@@ -31,7 +31,7 @@ _SQL = (
 )
 
 
-def _name_token(product_name: str) -> str:
+def name_token(product_name: str) -> str:
     words = re.findall(r"[A-Za-z]{4,}", product_name)
     return max(words, key=len).lower() if words else product_name.lower()
 
@@ -49,7 +49,7 @@ class RetrieverAgent:
     def retrieve(self, recall: Recall) -> list[dict[str, Any]]:
         """Return neutral records for the recalled product and ingest them."""
         t0 = time.monotonic()
-        params = [re.sub(r"[^A-Z0-9]", "", recall.reg_no.upper()), f"%{_name_token(recall.product_name)}%"]
+        params = [re.sub(r"[^A-Z0-9]", "", recall.reg_no.upper()), f"%{name_token(recall.product_name)}%"]
         rows = self.adapter.query(_SQL, params, limit=LIMIT)
         self._trace("query_view", f"{VIEW} reg_no={recall.reg_no}", f"{len(rows)} rows", "zetaris" if self.adapter.name == "zetaris" else None, t0)
 
