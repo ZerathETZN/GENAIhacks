@@ -38,6 +38,16 @@
       "sampled": false,
       "file": "data/sample/regulator/pharmaceutical_wholesalers.parquet",
       "sha256": "26e2acde3a6eb8c5875442fa68d953b02d274ffdf1e404844c804c8be9ec2ac7"
+    },
+    "npra_recalls": {
+      "source_url": "https://www.npra.gov.my/index.php/en/consumers/safety-information/product-recall.html",
+      "fetched_on": "2026-10-23",
+      "licence": "NPRA public website content; cited, not redistributed beyond this snapshot. TODO(verify) reuse terms.",
+      "rows_in_sample": 173,
+      "rows_without_date": 0,
+      "rows_all_batches": 21,
+      "file": "data/sample/regulator/npra_recalls.csv",
+      "sha256": "15334f02b1d7b2b7d469047cff8cdf354468e6478648e82e56892943c2071470"
     }
   }
 }
