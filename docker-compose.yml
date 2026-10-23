@@ -1,7 +1,7 @@
 # RecallGuard data sources (AGENTS.md §4, §6).
 # Live mode needs the Zetaris stack running first: it creates the network zetaris_default.
-#   docker compose up -d rg-inventory rg-pos rg-regulator     # databases only
-#   docker compose --profile live up -d                       # + supplier API + app
+#   docker compose up -d                                      # 3 databases + supplier API
+#   docker compose --profile live up -d                       # + app
 #   docker compose --profile sample up app-sample             # judges: no Zetaris, no creds
 
 x-postgres: &postgres
@@ -54,7 +54,6 @@ services:
       - ./docker/postgres-init:/docker-entrypoint-initdb.d:ro
 
   rg-supplier-api:
-    profiles: [live]
     container_name: rg-supplier-api
     build: ./services/supplier_api
     restart: unless-stopped

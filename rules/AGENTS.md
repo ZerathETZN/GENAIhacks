@@ -67,8 +67,8 @@ It reconciles **real public regulator data** against the chain's **fragmented in
 trigger (recall_alert | daily_scan)
    │
    ▼
-PlannerAgent ────────── DISCOVERS sources via Zetaris catalogue (SHOW DATASOURCES / SHOW LIGHTNING DATABASES /
-   │                    DESCRIBE DATASOURCE TABLE) → picks tables with batch-, MAL- or reg_no-like columns → query plan
+PlannerAgent ────────── DISCOVERS sources via adapter.catalogue() (Zetaris: SHOW DATASOURCES / SHOW LIGHTNING DATABASES /
+   │                    SHOW TABLES / DESCRIBE; DuckDB: information_schema) → picks tables with batch-, MAL- or reg_no-like columns → query plan
    ▼
 RetrieverAgent ──────── parameterised queries via DataAdapter (Zetaris REST live / DuckDB sample)
    │                    prefers the Zetaris unified view `recallguard.product_exposure_v`
@@ -173,7 +173,7 @@ The script then:
 | Headers | `Authorization: Bearer ${ZETARIS_API_KEY}`, `X-Org-ID: ${ZETARIS_ORG_ID}` (numeric, from Management → Organisation), `X-Request-ID: <uuid4 per request>` |
 | Body | `{"queryId": "<uuid4>", "sql": "...", "source": "SqlEditor", "limit": N}` |
 | Response (verified 21 Oct) | `{"headers": ["one"], "data": [["1"]], "total": 1, "timeUsed": 382}`. Rows are **lists, not dicts**: zip each row with `headers`. All values are **strings**: cast them. |
-| Errors | `401` → new API key (Management → API Tokens). `400 Not Allowed` → wrong org ID. `400` on a valid request → non-UUID `X-Request-ID` or `queryId`. |
+| Errors | `401` → new API key (Management → API Tokens). `400 Not Allowed` → wrong org ID **or** an invalid/expired API key (`docker logs zetaris-api-1` says `Org id mismatch` or `Api token is not allowed`). A `ZETARIS_*` variable left in the shell overrides `.env`. `400` on a valid request → non-UUID `X-Request-ID` or `queryId`. |
 
 **Lightning SQL rules:**
 - One statement per call.
@@ -181,6 +181,11 @@ The script then:
 - It's the Spark SQL dialect.
 - **REST returns values as strings** (decimals may use exponent format). Cast in the adapter before comparing.
 - After any schema change in a source DB, run `REFRESH DATASOURCE TABLES FROM <datasource>`. Zetaris caches column metadata.
+- **Verified on our instance (23 Oct), write agent SQL accordingly:**
+  - Use `CAST(x AS STRING)`, never `CAST(x AS VARCHAR)`: Zetaris rejects `VARCHAR` with a parse error (`expecting 'METADATA'`). DuckDB accepts `STRING` too. To compare dates, prefer `CAST(col AS DATE) >= CAST(? AS DATE)`.
+  - **Bug: `GROUP BY` + a `WHERE` that combines an `OR` group with a function such as `UPPER(REPLACE(...))` silently drops the whole filter** and aggregates every row. Each part alone is fine, and plain `SUM`/`COUNT` without `GROUP BY` is fine. Workaround: select the filtered rows and group in Python.
+  - Registered names match §7.4 exactly (`inventory_pg.stock`, `pos_pg.sales`, `supplier_rest.deliveries`, `regulator_pg.*`). The REST table returns `qty` as `bigint` and dates as `string`; the view casts them.
+  - Schemastore view: `CREATE SCHEMASTORE VIEW <name> WITH CONTAINER recallguard AS SELECT ...`, queried as `recallguard.<name>`, dropped with `DROP SCHEMASTORE VIEW <name> FROM recallguard`. Re-creating an existing view fails, so `zetaris_register.py` drops first.
 
 **Registration** (`scripts/zetaris_register.py`, idempotent, reads credentials from env, never hardcodes them):
 - `CREATE DATASOURCE inventory_pg|pos_pg|regulator_pg ... OPTIONS (jdbcdriver "org.postgresql.Driver", jdbcurl "jdbc:postgresql://rg-<name>:5432/<db>", username, password, fetchsize "1000")`
@@ -194,7 +199,7 @@ The script then:
 - Agents query this view first. Its columns are fixed in §7.4.
 - **The Critic does not verify against this view.** It runs its own targeted query on the raw source tables (§7.4), so its check is independent of what the Reconciler read.
 - **Preferred:** Unified Semantic Layer (`COMPILE USL` → `ACTIVATE USL TABLE`). USL constraints: scalar column types only, the namespace must exist under `lightning.metastore`, and multi-table `COMPILE USL` is sent intact.
-- **Fallback, if USL blocks us for more than 2 hours:** `CREATE SCHEMASTORE VIEW`. It is still Zetaris-side and still load-bearing. Record which one we used in `metadata.json`.
+- **Fallback, if USL blocks us for more than 2 hours:** `CREATE SCHEMASTORE VIEW`. It is still Zetaris-side and still load-bearing. Record which one we used in `metadata.json`. **Status 23 Oct: the schemastore view is live** (`zetaris_register.py`); USL not tried yet.
 
 **Adapters:**
 - `app/adapters/data_adapter.py`: `DataAdapter.query(sql, params=None, limit=1000) -> list[dict]`, plus `name`.
@@ -202,6 +207,7 @@ The script then:
 - `app/adapters/duckdb_adapter.py`: the sample-mode twin over `data/sample/`, exposing the **same logical table and view names**.
   - Keep agent SQL plain ANSI.
   - Put dialect differences (e.g. string functions) in small helpers, not scattered through agents.
+- **Catalogue discovery:** `adapter.catalogue()` returns the same structure from both adapters: `{adapter, statements, tables: [{source, kind: datasource|lightning_db|view, table, columns: [{name, type}]}], skipped}`. Zetaris runs `SHOW DATASOURCES`, `SHOW LIGHTNING DATABASES`, `SHOW TABLES IN <source>` and `DESCRIBE <table>` (built-in sample DBs `NY_TAXI`/`TPCDS_DB` are listed under `skipped`); DuckDB reads `information_schema`. The Planner calls this, never raw `SHOW` SQL, and logs `statements` in its trace event.
 - **Parameters:** agents write positional `?` placeholders and pass values in `params`.
   - DuckDB binds them natively.
   - Zetaris REST has no parameter support, so `zetaris_adapter.py` substitutes them in **one tested function**: strings are single-quoted with `'` and `\` escaped (Spark SQL treats backslash as an escape); `int`/`float`/`Decimal` are validated and inlined; `date`/`datetime` become `DATE '...'`/`TIMESTAMP '...'`; `None` becomes `NULL`; any other type raises. The number of `?` must equal `len(params)`. `?` inside string literals in the SQL text is not a placeholder.

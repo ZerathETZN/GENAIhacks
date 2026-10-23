@@ -1,2 +1,6 @@
 # Shell scripts run inside Linux containers: CRLF line endings break them.
 *.sh text eol=lf
+# Data snapshots: keep LF so regenerating them never shows as a change on Windows.
+*.csv text eol=lf
+*.json text eol=lf
+*.jsonl text eol=lf

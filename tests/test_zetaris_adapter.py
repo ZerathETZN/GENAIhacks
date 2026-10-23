@@ -107,3 +107,33 @@ def test_runtime_failure_switches_to_duckdb():
     rows = a.query("SELECT count(*) AS n FROM pos_pg.sales")
     assert rows[0]["n"] > 0
     assert (a.name, a.result_name) == ("duckdb", "duckdb_fallback") and "502" in a.fallback_reason
+
+
+def test_catalogue_from_show_and_describe_skips_sample_dbs():
+    answers = {
+        "SHOW DATASOURCES": (["name", "description", "id"], [["inventory_pg", "", "1"]]),
+        "SHOW LIGHTNING DATABASES": (["name", "description", "id"], [["TPCDS_DB", "", "2"], ["supplier_rest", "", "3"]]),
+        "SHOW TABLES IN inventory_pg": (["table_identifier", "catalog_name", "catalog_type"], [["INVENTORY_PG.stock", "INVENTORY_PG", "Data Source"]]),
+        "SHOW TABLES IN supplier_rest": (["table_identifier", "catalog_name", "catalog_type"], [["supplier_rest.deliveries", "supplier_rest", "Lightning Database"]]),
+        "SHOW TABLES IN recallguard": (["table_identifier", "catalog_name", "catalog_type"], [["PRODUCT_EXPOSURE_V", "recallguard", "Schema Store View"]]),
+        "DESCRIBE inventory_pg.stock": (["col_name", "data_type", "comment"], [["batch", "string", None], ["qty_on_hand", "int", None]]),
+        "DESCRIBE supplier_rest.deliveries": (["col_name", "data_type", "comment"], [["qty", "bigint", None]]),
+        "DESCRIBE recallguard.product_exposure_v": (["col_name", "data_type", "comment"], [["batch_norm", "string", None]]),
+    }
+
+    def handler(req):
+        h, d = answers[json.loads(req.content)["sql"]]
+        return httpx.Response(200, json={"headers": h, "data": d})
+
+    cat = _adapter(handler).catalogue()
+    assert [t["table"] for t in cat["tables"]] == ["inventory_pg.stock", "supplier_rest.deliveries", "recallguard.product_exposure_v"]
+    assert [t["kind"] for t in cat["tables"]] == ["datasource", "lightning_db", "view"]
+    assert cat["tables"][0]["columns"] == [{"name": "batch", "type": "string"}, {"name": "qty_on_hand", "type": "int"}]
+    assert cat["skipped"] == [{"source": "TPCDS_DB", "reason": "Zetaris built-in sample dataset"}]
+    assert "SHOW DATASOURCES" in cat["statements"]
+
+
+def test_catalogue_falls_back_to_duckdb():
+    a = FallbackAdapter(_adapter(lambda r: httpx.Response(503)))
+    cat = a.catalogue()
+    assert cat["adapter"] == "duckdb" and a.result_name == "duckdb_fallback"

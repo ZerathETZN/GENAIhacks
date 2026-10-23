@@ -17,7 +17,7 @@ from typing import Any
 
 import httpx
 
-from app.adapters.data_adapter import AdapterError, DataAdapter, Params, Row
+from app.adapters.data_adapter import AdapterError, Catalogue, CatalogueTable, DataAdapter, Params, Row, normalise_type
 
 TIMEOUT = httpx.Timeout(30.0, connect=10.0)
 
@@ -131,3 +131,37 @@ class ZetarisAdapter(DataAdapter):
 
     def __repr__(self) -> str:  # never print the key
         return f"ZetarisAdapter(base_url={self.base_url!r}, org_id={self.org_id!r}, api_key=***)"
+
+    # Zetaris ships these sample databases; listing them is real discovery, describing
+    # their ~30 tables on every run is not worth the time.
+    SAMPLE_DATABASES = {"ny_taxi", "tpcds_db"}
+    CONTAINERS = ("recallguard",)
+    MAX_TABLES = 40  # bounded run (Rule 8)
+
+    def catalogue(self) -> Catalogue:
+        statements: list[str] = []
+
+        def run(sql: str) -> list[Row]:
+            statements.append(sql)
+            return self.query(sql, limit=500)
+
+        sources: list[tuple[str, str]] = [(r["name"], "datasource") for r in run("SHOW DATASOURCES")]
+        sources += [(r["name"], "lightning_db") for r in run("SHOW LIGHTNING DATABASES")]
+        sources += [(c, "view") for c in self.CONTAINERS]
+        skipped = [{"source": s, "reason": "Zetaris built-in sample dataset"} for s, _ in sources
+                   if s.lower() in self.SAMPLE_DATABASES]
+        tables: list[CatalogueTable] = []
+        for source, kind in sources:
+            if source.lower() in self.SAMPLE_DATABASES:
+                continue
+            for r in run(f"SHOW TABLES IN {source}"):
+                if len(tables) >= self.MAX_TABLES:
+                    skipped.append({"source": source, "reason": f"table cap {self.MAX_TABLES} reached"})
+                    break
+                # SHOW TABLES returns e.g. "INVENTORY_PG.stock" or "PRODUCT_EXPOSURE_V"
+                name = r["table_identifier"].rsplit(".", 1)[-1].lower()
+                qualified = f"{source.lower()}.{name}"
+                cols = [{"name": c["col_name"], "type": normalise_type(c["data_type"])}
+                        for c in run(f"DESCRIBE {qualified}") if c.get("col_name") and not c["col_name"].startswith("#")]
+                tables.append({"source": source.lower(), "kind": kind, "table": qualified, "columns": cols})
+        return {"adapter": self.name, "statements": statements, "tables": tables, "skipped": skipped}

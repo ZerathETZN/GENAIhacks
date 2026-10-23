@@ -75,3 +75,15 @@ def test_answer_key_matches_raw_tables(adapter, generated):
 def test_ground_truth_dir_is_refused():
     with pytest.raises(AdapterError):
         DuckDBAdapter(ROOT / "data" / "ground_truth")
+
+
+def test_catalogue_lists_every_logical_table_with_columns(adapter):
+    cat = adapter.catalogue()
+    tables = {t["table"]: t for t in cat["tables"]}
+    assert {"inventory_pg.stock", "inventory_pg.transfers", "pos_pg.sales", "supplier_rest.deliveries",
+            "regulator_pg.npra_recalls", "recallguard.product_exposure_v"} <= set(tables)
+    assert tables["supplier_rest.deliveries"]["kind"] == "lightning_db"
+    assert tables["recallguard.product_exposure_v"]["kind"] == "view"
+    cols = {c["name"]: c["type"] for c in tables["inventory_pg.stock"]["columns"]}
+    assert cols["batch"] == "string" and cols["qty_on_hand"] == "int"
+    assert cat["adapter"] == "duckdb" and cat["statements"]
