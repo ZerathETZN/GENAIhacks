@@ -16,7 +16,7 @@ import logging
 import os
 from pathlib import Path
 
-from app.adapters.data_adapter import AdapterError, DataAdapter, Params, Row
+from app.adapters.data_adapter import AdapterError, Catalogue, DataAdapter, Params, Row
 from app.adapters.duckdb_adapter import DuckDBAdapter
 
 logger = logging.getLogger(__name__)
@@ -46,6 +46,16 @@ class FallbackAdapter(DataAdapter):
         self.fallback_reason = reason
         self.secondary = DuckDBAdapter(self.data_dir)
         return self.secondary
+
+    def catalogue(self) -> Catalogue:
+        if self.secondary:
+            return self.secondary.catalogue()
+        try:
+            return self.primary.catalogue()
+        except AdapterError as e:
+            if not e.recoverable:
+                raise
+            return self._fall_back(str(e)).catalogue()
 
     def query(self, sql: str, params: Params = None, limit: int = 1000) -> list[Row]:
         if self.secondary:

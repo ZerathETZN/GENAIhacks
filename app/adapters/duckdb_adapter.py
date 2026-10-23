@@ -16,7 +16,8 @@ from typing import Any
 
 import duckdb
 
-from app.adapters.data_adapter import AdapterError, DataAdapter, Params, Row
+from app.adapters.data_adapter import AdapterError, Catalogue, CatalogueTable, DataAdapter, Params, Row, normalise_type
+from app.adapters.views import VIEW_NAME, product_exposure_select
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_DATA_DIR = ROOT / "data" / "sample"
@@ -40,31 +41,8 @@ _RECALLS = {"recall_id": "VARCHAR", "recall_date": "DATE", "product_name": "VARC
 _REGULATOR_PARQUET = ["pharmaceutical_products_cancelled", "pharmaceutical_products",
                       "pharmaceutical_importers", "pharmaceutical_wholesalers"]
 
-_NORM = "regexp_replace(upper({c}), '[^A-Z0-9]', '', 'g')"
-
-# §7.4 view. Same columns, order and meaning as the Zetaris view.
-PRODUCT_EXPOSURE_V = f"""
-CREATE VIEW recallguard.product_exposure_v AS
-SELECT 'inventory' AS source, stock_id AS record_id, outlet_id, product_name, reg_no, batch,
-       {_NORM.format(c='reg_no')} AS reg_no_norm, {_NORM.format(c='batch')} AS batch_norm,
-       qty_on_hand AS qty, 'stock' AS event_type, snapshot_date AS event_date, CAST(NULL AS VARCHAR) AS customer_id
-FROM inventory_pg.stock
-UNION ALL
-SELECT 'inventory', transfer_id || ':' || leg, outlet_id, product_name, reg_no, batch,
-       {_NORM.format(c='reg_no')}, {_NORM.format(c='batch')},
-       CASE WHEN leg = 'out' THEN -qty ELSE qty END, 'transfer', transfer_date, NULL
-FROM inventory_pg.transfers
-UNION ALL
-SELECT 'pos', sale_id, outlet_id, product_name, NULL, batch,
-       NULL, {_NORM.format(c='batch')},
-       qty, 'sale', CAST(sold_at AS DATE), loyalty_id
-FROM pos_pg.sales
-UNION ALL
-SELECT 'supplier', delivery_id, outlet_id, supplier_product_name, reg_no, batch,
-       {_NORM.format(c='reg_no')}, {_NORM.format(c='batch')},
-       qty, 'delivery', delivered_on, NULL
-FROM supplier_rest.deliveries
-"""
+# §7.4 view, shared with the Zetaris registration so both define it identically.
+PRODUCT_EXPOSURE_V = f"CREATE VIEW {VIEW_NAME} AS {product_exposure_select('duckdb')}"
 
 
 def _csv(path: Path, cols: dict[str, str]) -> str:
@@ -125,3 +103,18 @@ class DuckDBAdapter(DataAdapter):
             return [{k: _plain(v) for k, v in zip(cols, row)} for row in cur.fetchmany(limit)]
         except duckdb.Error as e:
             raise AdapterError(f"duckdb: {e}", recoverable=False) from e
+
+    # Which DuckDB schema stands in for which kind of Zetaris source.
+    _KINDS = {"inventory_pg": "datasource", "pos_pg": "datasource", "regulator_pg": "datasource",
+              "supplier_rest": "lightning_db", "recallguard": "view"}
+
+    def catalogue(self) -> Catalogue:
+        sql = ("SELECT table_schema, table_name, column_name, data_type FROM information_schema.columns "
+               "WHERE table_schema IN ({}) ORDER BY table_schema, table_name, ordinal_position").format(
+            ", ".join(f"'{s}'" for s in self._KINDS))
+        tables: dict[str, CatalogueTable] = {}
+        for schema, table, col, typ in self.con.execute(sql).fetchall():
+            key = f"{schema}.{table}".lower()
+            t = tables.setdefault(key, {"source": schema, "kind": self._KINDS[schema], "table": key, "columns": []})
+            t["columns"].append({"name": col, "type": normalise_type(typ)})
+        return {"adapter": self.name, "statements": [sql], "tables": list(tables.values()), "skipped": []}

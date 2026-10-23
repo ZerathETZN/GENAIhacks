@@ -9,7 +9,7 @@ logical table and view names:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Mapping, Sequence
+from typing import Any, Mapping, Sequence, TypedDict
 
 Row = dict[str, Any]
 Params = Mapping[str, Any] | Sequence[Any] | None
@@ -43,3 +43,40 @@ class DataAdapter(ABC):
           - bounded by a timeout; failures raise AdapterError
         """
         raise NotImplementedError
+
+    def catalogue(self) -> "Catalogue":
+        """Discover every source, table and column, in the same shape for every
+        implementation. The Planner uses this instead of engine-specific SHOW/DESCRIBE SQL,
+        so catalogue discovery works in SAMPLE_MODE too (AGENTS.md §3)."""
+        raise NotImplementedError(f"{type(self).__name__} has no catalogue()")
+
+
+SourceKind = str  # "datasource" | "lightning_db" | "view"
+
+
+class CatalogueTable(TypedDict):
+    source: str  # e.g. "inventory_pg", "supplier_rest", "recallguard"
+    kind: SourceKind
+    table: str  # qualified, lower case: "inventory_pg.stock"
+    columns: list[dict[str, str]]  # [{"name": "batch", "type": "string"}], types normalised
+
+
+class Catalogue(TypedDict):
+    adapter: str  # "zetaris" | "duckdb"
+    statements: list[str]  # the discovery statements actually run, for the trace
+    tables: list[CatalogueTable]
+    skipped: list[dict[str, str]]  # [{"source": ..., "reason": ...}]
+
+
+_TYPE_ALIASES = {
+    "varchar": "string", "text": "string", "string": "string",
+    "integer": "int", "int": "int", "int32": "int", "bigint": "bigint", "int64": "bigint", "long": "bigint",
+    "double": "double", "float": "double", "decimal": "double", "real": "double",
+    "date": "date", "timestamp": "timestamp", "datetime": "timestamp", "boolean": "boolean", "bool": "boolean",
+}
+
+
+def normalise_type(t: str) -> str:
+    """'VARCHAR' / 'string' -> 'string', 'INTEGER' / 'int' -> 'int', 'DECIMAL(10,2)' -> 'double'."""
+    base = t.strip().lower().split("(", 1)[0]
+    return _TYPE_ALIASES.get(base, base)
