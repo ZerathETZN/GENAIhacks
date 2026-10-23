@@ -1,0 +1,1073 @@
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 1 of 17 
+ 
+ 
+ 
+APPENDIX 34 
+GUIDELINE FOR PRODUCT QUALITY REPORTING AND RECALL 
+PROCEDURES 
+ 
+TABLE OF CONTENTS  
+ 
+1. INTRODUCTION  
+ 1.1 Purpose and scope  
+ 1.2 Definitions   
+   
+2. RESPONSIBILITIES OF COMPANY  
+   
+3. PROCESS AND REQUIREMENTS OF PRODUCT DEFECT REPORTING  
+ 3.1 What types of defect needs to be reported to NPRA  
+ 3.2  How to report a product defect to NPRA  
+ 3.3  What initial information needs to be submitted to NPRA  
+ 3.4  Investigation and risk assessment  
+ 3.5  Timelines for reporting product defects to NPRA  
+ 3.6  Timelines for submission of investigation report  
+ 3.7  Duty to maintain records of product defects  
+ 3.8  What regulatory actions can NPRA take arising from a product defect  
+ 3.9  Reporting of product defect by prescribers, pharmacists and other  
+       healthcare professionals 
+ 
+ 3.10  Reporting of local serious adverse reaction related to a product defect  
+   
+4.  PRODUCT RECALL  
+ 4.1  Duty to notify product recalls  
+ 4.2  Degree of recall and recall timelines  
+ 4.3  Level of recall  
+ 4.4  Progress of recall  
+ 4.5  Completion of recall  
+ 4.6  Public notification  
+   
+   
+ Annex I: Flowchart on assessment of product defects   
+ Annex II: Flowchart on assessment of product recalls  
+ 
+ 
+ 
+ 
+ 
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 2 of 17 
+ 
+ 
+ 
+1. INTRODUCTION 
+ 
+1.1 Purpose and scope 
+This document consists of general requirements and guideline for product quality 
+reporting and recall procedures in accordance to: 
+ 
+▪ Sales of Drugs Act 1952 (Revised 1989); 
+▪ Control of Drugs and Cosmetics Regulations 1984. 
+ 
+This Guideline applies to product registration holders, licensed manufacturers, licensed 
+importers, licensed wholesalers, prescribers, pharmacists, as well as all other healthcare 
+professionals in Malaysia (where applicable).  
+  
+The requirements and procedures outlined in this guide apply to medicinal products as 
+defined in the DRGD and the term ‘product’ as stipulated in Regulation 2, CDCR 1984. 
+ 
+Separate guidelines are available for Cosmetics at the National Pharmaceutical 
+Regulatory Agency (NPRA) website. Please refer to Guidelines for Control of Cosmetic 
+Products in Malaysia. 
+ 
+NPRA maintains oversight of inv estigations into product quality defects in the Malaysia 
+market to assess the level of risk, appropriate market actions and appropriate corrective 
+and preventive actions (CAPA), if any, to mitigate risk. 
+ 
+1.2 Definition 
+Company: Refers to the PRH, licensed man ufacturer, licensed importer, licensed 
+wholesaler under the scope of this guideline. 
+ 
+Critical defect: Deemed as one that can pose a serious threat to the intended users or 
+public health in Malaysia. A serious threat means a hazard that occurs in association 
+with the use or administration of a product and that may lead to the death of, or a 
+serious injury to, any person. 
+ 
+Directive recall : The decision for recall of a product as directed by the Director of 
+Pharmaceutical Services, Ministry of Health Malaysia. 
+ 
+Licensed Importer:  A person to whom an import license has been issued under 
+Regulation 12, CDCR 1984 (as defined in Regulation 2, CDCR 1984). 
+ 
+Licensed Manufacturer: A person to whom a manufacturer’s licence has been issued 
+under these Regulations, and includes a contract manufacturer (as defined in Regulation 
+2, CDCR 1984). 
+ 
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 3 of 17 
+ 
+ 
+ 
+Licensed Wholesaler: A person to whom a wholesaler's license has been issued under 
+Regulation 12, CDCR 1984 (as defined in Regulation 2, CDCR 1984). 
+ 
+Manufacturer: A person carrying out one or more of the steps specified in the definition 
+of manufacture. 
+ 
+Manufacture, in relation to any product includes – 
+a) The making or assembling of the product; 
+b) The enclosing or packing of the product in any container in a form suitable for 
+administration or application, and the labelling of the container and; 
+c) The carrying out of any process in the course of any of the foregoing activities. 
+(as defined in Regulation 2, CDCR 1984). 
+ 
+Non-critical defect: Defects that do not meet the criteria of “critical defect” but may 
+cause illness or affect the outcome of a person’s medical treatment and/or affect the 
+quality of a product. 
+ 
+Product: The term refers to ‘product’ as stated in Regulation 2, CDCR 1984, which is 
+applicable to medicinal products as defined in the DRGD. 
+ 
+Product defect: Also known as Quality Defect, may be defined as attributes of a 
+medicinal product or component which may affect the quality, safety and/or efficacy of 
+the product, and/or which deviates from the pharmaceutical properties as per 
+registered. 
+ 
+Product recall: Any action taken by its PRH, licensed manufacturer, licensed importer, 
+licensed wholesaler to remove or withdraw a particula r product from the market or to 
+retrieve the product from any person to whom it has been supplied.  
+ 
+Product Registration Holder (PRH):  The company or corporate or legal entity in the 
+field of pharmaceuticals who has been granted the marketing authorizatio n. This party 
+is responsible for all aspects of the product, including quality and compliance with the 
+conditions of marketing authorization. The authorized holder must be subjected to 
+legislation in the country that issued the marketing authorization, whi ch normally 
+means being physically located in that country (glossary used in ACTD and ACTR). 
+ 
+Recalling company: Company who is responsible for co -ordinating the recall and for 
+issuing the recall notification(s), in this case, should be the PRH. However, responsibility 
+for these tasks may be delegated by the PRH to the licensed manufacturer/ licensed 
+importer/ licensed wholesaler, and the recall should be closely monitored by a 
+designated person at the PRH company. Where the PRH carries out the recall, this  
+designated person will be responsible for the overall organisation, supervision and 
+execution of the recall. 
+ 
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 4 of 17 
+ 
+ 
+The Authority: Refers to Drug Control Authority (DCA). 
+ 
+Voluntary recall : The decision for recall of a product is initiated and voluntarily 
+undertaken by the company after consulting/informing NPRA. 
+ 
+ 
+2. RESPONSIBILITIES OF COMPANY 
+ 
+Companies are responsible for the safety, quality and efficacy of their products and 
+should have adequate systems and appropriate procedures in place to investigate, 
+review and report the product defects to NPRA, and if necessary, to promptly recall the 
+product from the distribution network.  
+ 
+Appropriately trained and experienced personnel should be responsible for managing  
+complaint and quality defect investigations and for deciding the measures to be taken  
+to mitigate any potential risk(s) including recalls. Sufficient personnel and resources 
+should be made available for the handling, reviewing and investigation of complaints  
+and quality defects and for implementing any risk mitigation measures, as well as for  
+the management of interactions with NPRA. 
+ 
+If there is a business arrangement between the product registration holders, licensed 
+manufacturers, licensed importers and/or licensed wholesalers of the registere d 
+product, it needs to be ensured that at least one party is responsible for reporting the 
+product defect to NPRA. It is acceptable that not all parties report the same defect to 
+NPRA. The party reporting the defect should keep the other parties informed, and the 
+appropriate records should be kept. If unsure whether the defect has been reported by 
+the other party(ies), the product registration holders should report the defect to NPRA.  
+ 
+3. PROCESS AND REQUIREMENTS OF PRODUCT DEFECT REPORTING 
+ 
+Product defect, also known as Quality Defect, may be defined as attributes of a medicinal 
+product or component which may affect the quality, safety and/or efficacy of the 
+product, and/or which deviates from the pharmaceutical properties as per registered. 
+ 
+Product defect is classified into either “critical defect” or “non -critical defect” according 
+to the potential impact to public health and the risks posed to the intended user of the 
+product. 
+ 
+• A critical defect is deemed as one that can pose a serious threat to the intended 
+users or public health in Malaysia. A serious threat means a hazard that occurs in 
+association with the use or administration of a product and that may lead to the 
+death of, or a serious injury to, any person. 
+• A non-critical defect is deemed as defect that do not meet the criteria of “critical 
+defect” but may cause illness or affect the outcome of a person’s medical treatment 
+and/or affect the quality of a product. 
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 5 of 17 
+ 
+ 
+3.1 What types of defect needs to be reported to NPRA 
+The company needs to report critical or non-critical defects of: 
+ 
+• Affected batches which have been imported for supply or supplied in Malaysia; 
+and 
+• Affected batches which the company intends to import into Malaysia for supply. 
+ 
+Please note that this includes defects resulting from manufacturing deviations or non -
+compliances to Good Manufacturing Practice (GMP) at a manufacturing plant (which 
+may be located in Malaysia or overseas). 
+ 
+Any out of specification including those that could lead to a product recall needs to be 
+notified. Company would need to report out of trend or out of specification results for 
+the drug substance if there is potential follow-up from GMP non-compliance or further 
+action taken later in the products’ shelf life. 
+ 
+In addition, the company may be required to submit information when requested by 
+NPRA to assist in the investigation of defects which have been brought to NPRA’s 
+awareness through any other means and where NPRA assesses that the defect 
+(regardless of whether it has affected local or overseas batches) has potential impact 
+on the batches already supplied or will be supplied in Malaysia. 
+ 
+3.2 How to report a product defect to NPRA 
+Product defect reporting can be (non-exhaustive): 
+ 
+i) initiated by reports from healthcare facilities/professionals and public 
+ii) due to out -of-specification (OOS) during product life cycle. Once the incident is 
+confirmed, it is recommended that reports are submitted to NPRA within the 
+stipulated timelines as mentioned in para 3.6 of this Appendix. 
+ 
+The PRH shall notify NPRA of any product defect issues of which the PRH is aware of, 
+with a  complete investigation report. This includes root cause analysis and corrective 
+action if necessary. The completed product defect report and any ot her accompanying 
+documents must be submitted by the PRH within stipulated timelines to:  
+ 
+Surveillance and Complaints Section 
+Centre of Compliance and Quality Control 
+National Pharmaceutical Regulatory Agency 
+E-mail: oos_sva@npra.gov.my 
+ 
+ 
+ 
+ 
+ 
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 6 of 17 
+ 
+ 
+All reports on product defect issues received shall be investigated by the PRH/ 
+manufacturer. In the event of confirmed case of quality defect issues or regulatory non -
+compliance, NPRA may take necessary regulatory action towards the product. 
+ 
+It is the responsibility of the PRH to determine the appropriate corrective and 
+preventive action, as well as risk control measures such as (if appropriate/when 
+necessary): 
+ 
+i) Issuance of Dear Healthcare Professional Communication (DHPC) 
+ii) A product recall 
+iii) Issuance of a press release 
+iv) Withdrawal of the product registration. 
+ 
+NPRA will review the information provided in the report submitted by the PRH and may 
+request further information required for assessment. 
+ 
+3.3 What initial information needs to be submitted to NPRA 
+Upon becoming aware of a product defect, the company should gather as much relevant 
+information to assess the extent of the defect and the health risk to the intended users. 
+The minimum information required for the submission of an initial report of product 
+defect is: 
+ 
+i) Product information; 
+ii) Description of defect; 
+iii) Number of product(s) and batch(es) affected; 
+iv) Date of occurrence; 
+v) Expiry date of affected batch(es) supplied to the market; 
+vi) Date of last distribution of the affected batches supplied to the market; and 
+vii) An identifiable reporter. 
+ 
+The initial report of product defect should contain as much detail as available but 
+reporting should not be delayed due to the time needed to gather the full information. 
+ 
+Product complaints by patients/consumers should generally be validated and confirmed 
+by the company to rule out other factors (e. g. improper handling or storage by 
+consumers/patients) before considering it reportable as a product defect. However, if it 
+is evident that the product complaint is related to a serious threat to the intended users 
+or public health in Malaysia, it will be prudent to report this to NPRA  ahead of the 
+company’s assessment. Following the initial report, the company will need to submit the 
+investigation report, health hazard assessment, and CAPA plan to NPRA. 
+ 
+ 
+ 
+ 
+ 
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 7 of 17 
+ 
+ 
+3.4 Investigation and risk assessment 
+Information and actions that would be required in the investigation report after the 
+initial review includes (but not limited to): 
+ 
+i)  Full description of the defect. For example, if it is a foreign object, to describe 
+the size and composition etc. If it is a chemical contaminant, to indicate the 
+level of contaminant. If it is a failure to meet product specifications, to provide 
+the specifications and all test reports; 
+ii)  Explain how the defect occurred and the date of occurrence; 
+iii)  Explain how the defect was discovered and the date it was discovered; 
+iv)  Evaluation of sample(s) of the defective produc t obtained from the 
+complainant (if any). The defective product need not be submitted unless 
+requested by NPRA for examination and/or independent testing. If photos of 
+the defect are available, please submit them when reporting the product 
+defect; 
+v)  Local distribution records of affected batch(es) (i.e. date(s) of distribution, no. 
+of units in batch(es), name(s) of purchaser(s); 
+vi)  Overseas distribution list of affected batch(es) exported from Malaysia; 
+vii)  Indicate whether the product was sold under tender contract  or pending 
+tender consideration; 
+viii)  Review of batch records and any change controls or deviations associated 
+with the batch(es); 
+ix)  Review of previous complaints, quality defect reports and relevant 
+information for any indication of recurring problems (locally or globally); 
+x)  Indicate if the defect affects all batches or only selected batches. Review of 
+whether other batches and, if other products could be affected. Explain why 
+the defect affects only selected batch(es); 
+xi)  List down the regulatory actions taken or t o be taken by other regulatory 
+authority or by the company (e.g. issuance of communication, suspension, 
+recall, withdrawal of GMP certificate, withdrawal of product licence); 
+xii)  Identify possible root cause(s) of the defect; 
+xiii)  Health hazard assessment on the po tential short -term and long -term 
+consequence of the defect to intended users; 
+xiv)  Certificate of Analysis of the affected batch(es); 
+xv)  Examine and test retention samples if needed; 
+xvi)  Assessment of the appropriate market actions necessary for the affected 
+stocks, including whether it is necessary to quarantine or recall any existing 
+stocks. As comprehensive information on the nature and extent of the quality 
+defect may not always be available at the early stages of an investigation, 
+appropriate risk reducing actions  should be considered at appropriate 
+timepoints during the investigations. Please note that quarantined stocks can 
+only be released, with NPRA's concurrence, when it has been determined that 
+there is no risk in the use of the product or after appropriate c orrective 
+actions had been taken to address the risk; 
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 8 of 17 
+ 
+ 
+xvii)  Indicate whether there could be a supply shortage as a result of the defect or 
+market action; and 
+xviii)  Provide description of the CAPA, if any, taken or to be taken to prevent a 
+similar defect from recurring. 
+ 
+In assessing the risks associated with the defect, the following should be considered: 
+ 
+i)  Potential consequences of the defect on the patients; 
+ii)  Type and nature of the product involved (e.g. product indication, route of 
+administration, etc.); 
+iii)  Patient population affected (e.g. children, elderly, immunocompromised, 
+etc.); and 
+iv)  Risk posed to the patient for not taking the product as a result of the defect. 
+ 
+Company should provide regular updates to NPRA on the progress of the investigation 
+into the root ca use. Upon completion of the company’s investigation, a complete 
+investigation report with proposed CAPAs, if any, should be submitted to NPRA. 
+ 
+Company should monitor and assess the effectiveness of the CAPAs and continue to 
+perform trend analyses regularl y for any indication of recurring problems requiring 
+attention. 
+ 
+Any decision not to execute a risk mitigation measure, which would otherwise be 
+required, should be agreed with NPRA in advance. 
+ 
+3.5 Timelines for reporting product defects to NPRA 
+Upon becoming aware of a product defect, the company must report the defect to NPRA 
+in accordance to the following timelines: 
+ 
+• Critical defects to be reported within 48 hours; 
+• Non-critical defects to be reported within 15 working days. 
+ 
+Please note that not-withstanding the reporting timelines, if there is a critical defect 
+which poses a risk to public, the company should still take prompt measures to 
+minimise the risk (including market actions) even if it needs to be done during 
+nonworking hours. 
+ 
+If it is genuinely not possible to obtain the information in a timely manner, NPRA should 
+be consulted, to agree on timelines and required actions, if any. If the information 
+required for reporting is available, unnecessary delays should be avoided. The company 
+should not delay the submission of the defect report while conducting the root cause 
+investigation. 
+ 
+ 
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 9 of 17 
+ 
+ 
+3.6 Timelines for submission of investigation report 
+In general, an investigation report will be required by NPRA for all critical and non -
+critical defects. The following timelines is meant to be a guide to assist in the submission 
+of required documents and it should be used for reference only.  
+ 
+Document Timelines 
+Preliminary investigation & 
+assessment (e.g. affected 
+batches, root cause etc) 
+Within 2 working  days from date of initial 
+awareness of the defect (for critical defects) 
+ 
+Within 15 working days from date of initial 
+awareness of the defect (for non-critical defects) 
+Health hazard assessment * Within 15 working days from date of report to 
+NPRA 
+Investigation report 
+including CAPA (as described 
+in section 3.4) * 
+Within 30 calendar days from date of report to 
+NPRA 
+ 
+An interim report at the 30 th day may be provided 
+if closure is not possible 
+*For critical defect that pose a serious threat to the intended users or public 
+health, to submit the information to NPRA as soon as possible. 
+ 
+A thorough investigation should be completed in a timely manner within 30 days from 
+date of report to NPRA. However, some investigation may be more complicated and 
+could exceed the time frame for submission of information. The length of the extension 
+request should be made to NPRA based on the complexity of the investigation.  
+ 
+3.7 Duty to maintain records of product defects 
+All PRHs, licensed manufacturers, licensed importers and licensed wholesalers must 
+maintain records of every defect for at least 5 years after the expiry date of the product 
+and produce such records for inspection by NPRA when required. The records must 
+contain the following information: 
+ 
+i) The proprietary name of the product; 
+ii) The date on which the manufacturer, importer or PRH first became aw are of 
+the defect; 
+iii) The lot, batch or serial number; 
+iv) The nature of the defect; and 
+v) Any information that NPRA may specify in writing. 
+ 
+ 
+ 
+ 
+ 
+ 
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 10 of 17 
+ 
+ 
+3.8 What regulatory actions can NPRA take arising from a product defect 
+Upon receipt of the product defect report, NPRA will review the information provided in 
+the report and may request for the company to provide any further information 
+required for NPRA’s assessment. Depending on the potential risk to the intended users 
+or to public health, NPRA may require additional ris k control measures such as product 
+recall, issuance of Dear Purchaser Letter, Dear Healthcare Professional Communication 
+and/or press release. The Authority may also suspend or cancel the product registration 
+if there are critical and/or major defects whic h have not been addressed. This will be 
+assessed on a case-by-case basis. 
+ 
+3.9 Reporting of product defect by pre scribers, pharmacists and other 
+healthcare professionals 
+In addition to reporting the defect to NPRA by the PRH, it is also the responsibility of the 
+prescribers, pharmacists, as well as all other healthcare professionals to report any 
+product quality defect or regulatory non -compliance by using the form Quality 
+Reporting of Registered Product (N3 -PK-67) with complaint sample (if any).  The 
+completed product quality reporting form and any other accompanying documents must 
+be submitted within stipulated timelines to: 
+ 
+Surveillance and Complaints Section 
+Centre of Compliance and Quality Control 
+National Pharmaceutical Regulatory Agency 
+E-mail: qpr@npra.gov.my 
+ 
+3.10 Reporting of local serious adverse reaction related to a product defect 
+In addition to reporting the defect to NPRA, if the company is aware of any local serious 
+adverse reaction that is assessed or s uspected to be caused by the defect, a separate 
+report for the serious adverse reaction has to be submitted. This report can be 
+submitted using NPRA’s adverse event reporting form and sent to:  
+ 
+Pharmacovigilance Section  
+Centre of Compliance and Quality Control 
+National Pharmaceutical Regulatory Agency 
+E-mail: fv@npra.gov.my  
+ 
+For more details on the channels of reporting and timelines for reporting, please refer to 
+the “ Malaysian Guidelines on Good Pharmacovigilance Practices (GVP) for Product 
+Registration Holders”. 
+ 
+ 
+ 
+ 
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 11 of 17 
+ 
+ 
+4. PRODUCT RECALL 
+ 
+Product Recall means any action taken by its PRH, licensed manufacturer, licensed 
+importer, licensed wholesaler to remove or withdraw a particular product from the 
+market or to retrieve the product fr om any person to whom it has been supplied. The 
+removal or withdrawal may be due to critical quality defects discovered which might 
+cause health risks to users of the product. 
+ 
+4.1 Decision for recall 
+The decision for recall of a product shall be made when the re is actual or potential risk 
+to the product users. Recalls may be done voluntarily by the PRH or as directed by the 
+Director of Pharmaceutical Services, Ministry of Health Malaysia. The PRH is responsible 
+for conducting recalls of defective or unsafe pro ducts. No recall shall take place without 
+first consulting/informing NPRA. There are two types of product recalls: 
+ 
+• Voluntary recall : The decision for recall of a product is initiated and 
+voluntarily undertaken by the company after consulting/informing NPRA. 
+• Directive recall : The decision for recall of a product as directed by the 
+Director of Pharmaceutical Services, Ministry of Health Malaysia. 
+ 
+Unless the Director of Pharmaceutical Services, Ministry of Health Malaysia has already 
+specified the degree and level of a particular product recall, the degree and level will be 
+decided by the company’s Product Recall Committee based on risks involved. The 
+Product Recall Committee shall comprise of personnel who are responsible for the 
+execution and coordination of recall. The persons responsible shall handle all aspects of 
+the recalls with the appropriate degree of urgency. 
+ 
+Recalls that pertain to a specific batch will not affect any other batches or batches that 
+are currently available in the market.  
+ 
+Not all recalls are instigated due to a product being classified as unsafe or ineffective. A 
+recall may also be executed to withdraw products from the Malaysian market that 
+possess quality faults not impacting their safety and efficacy. 
+ 
+4.2 Duty to notify product recall 
+Every company who intends to conduct a voluntary recall of a product, must notify 
+NPRA of, and the reasons for, the intended recall no later than 24 hours* before the 
+start of the intended recall (i.e. issuance of a notice to the customers or public). After the 
+decision to recall is made, it is recommended that the company establishes 
+communication with NPRA. This allows NPRA to review and comment on the company’s 
+recall strategy and offer guidance in the recall process. 
+ 
+ 
+ 
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 12 of 17 
+ 
+ 
+NPRA may require the company to: 
+a) Investigate the matter leading to the recall of the product and provide a 
+report of the findings of the investigation; and / or 
+b) Take other measures as NPRA deems necessary. This includes, but not 
+limited to, an escalation of the degree and/or level of product recall so as to 
+safeguard public health and safety. 
+ 
+A flowchart for guiding the company in making assessment of the quality defects and 
+reporting requirements can be found in Annex I. 
+ 
+4.3 Degree of recall and recall timelines 
+The degree of recall is classified according to the severity of quality defects of the 
+product. 
+ Degree I  
+ 
+Degree II  Degree III  
+Description Products with major 
+health risks that might 
+cause serious injuries 
+or death.  
+ 
+Should be under an 
+embargo within 24 
+hours. 
+ 
+Products with minor 
+health risks or are 
+substandard. 
+ 
+Should be under an 
+embargo within 72 
+hours. 
+Products with other 
+reasons for recall that 
+can cause health risks 
+to users. 
+ 
+Should be under an 
+embargo within 30 
+days or as specified. 
+ 
+Issuance of 
+Recall 
+Notice by 
+PRH/ 
+recalling 
+company 
+PRH/recalling 
+company is required 
+to issue a 
+Communication/ 
+notification to 
+purchaser within 24 
+hours of recall 
+commencement, 
+notifying of the recall 
+action and providing 
+the required 
+instructions to 
+purchasers, including 
+immediate cease in 
+sale and supply of the 
+product.  
+ 
+PRH/recalling 
+company is required 
+to issue a 
+Communication/ 
+notification to 
+purchaser within 48 
+hours of recall 
+commencement, 
+notifying of the recall 
+action and providing 
+the required 
+instructions to 
+purchasers, including 
+immediate cease in 
+sale and supply of the 
+product. 
+PRH/recalling 
+company is required 
+to issue a 
+Communication/ 
+notification to 
+purchaser within 72 
+hours of recall 
+commencement, 
+notifying of the recall 
+action and 
+providing the required 
+instructions to 
+purchasers, including 
+immediate cease in 
+sale and supply of the 
+product. 
+ 
+ 
+ 
+ 
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 13 of 17 
+ 
+ 
+The recall notice to purchaser should include:  
+ 
+i) The name of the products, its strength (if necessary) and pack size.  
+ii) The products batch number. 
+iii) The nature of the defect. 
+iv) The action to be taken.  
+v) The urgency of the action (with reasons, indication of health risk, as 
+appropriate).  
+vi) Whether the recall should be carried out at the consumer level (end users), 
+points of sale level or sub-distributors (wholesalers) level.  
+ 
+PRH/recalling company should notify their stakeholders about the recall as soon as 
+possible. To ensure prompt notification, PRH/recalling company may consider 
+disseminating the recall notice to their stakeholders via telephone and/or email first 
+and follow-up with the letter and/or any suitable method of communication to confirm 
+this notification. 
+ 
+4.4 Level of recall 
+The level of recall depends on the nature of problem, extent of the product’s distribution 
+and degree of hazard involved. 
+ 
+Level A: To all consumers (end users) 
+ 
+a) Usually initiated when the risk to consumers is assessed to be unacceptable, and 
+where the product is directly supplied to consumers. 
+b) All wholesale and retail supply of the affected product or batch(es) should be 
+suspended. 
+c) Affected product or batch(es) are to be recalled from all wholesale and retail 
+distributors as well as consumers who had been supplied with the affected batch(es). 
+d) Where necessary, the recall notification to consumers may need to be done via 
+announcement on mass me dia such as press announcement, newspaper notification, 
+television and/or radio. 
+e) The recalled product or batch(es) should be segregated in a secured area before the 
+implementation of follow-up actions (e.g. destruction of the products). 
+ 
+Level B: To all points of sales  
+ 
+a) Usually initiated when the risk to consumers is assessed to be moderate to high but 
+recall at consumer level is not deemed necessary. 
+b) All wholesale and retail supply of the affected product or batch(es) should be 
+suspended. 
+c) Affected product or batch(es) are to be recalled from all wholesale and retail 
+distributors including: government/private hospitals and clinics; retail pharmacies; 
+other healthcare practitioners' establishments; nursing homes and other related 
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 14 of 17 
+ 
+institutions; and other retail outlets, e.g. health food stores, supermarkets, 
+departmental stores. 
+d) The recalled product or batch(es) should be segregated in a secured area before the 
+implementation of follow-up actions (e.g. destruction of the products). 
+ 
+Level C: To all sub-distributors (wholesalers) 
+ 
+a) Usually initiated when the risk to consumers is assessed to be low or where other 
+measures can be taken to mitigate the risk. 
+b) All wholesale supply of the affected product or batch(es) should be suspended. 
+Affected pr oduct or batch(es) are to be recalled from all affected: wholesalers; 
+distributors; third -party logistics providers holding the product for distribution to 
+retailers etc. 
+c) The recalled product or batch(es) should be segregated in a secured area before the 
+implementation of follow-up actions, e.g. destruction of the products. 
+ 
+ 
+Where product recall affects a particular batch, consideration should also be given to 
+determine whether other batches are also affected. 
+ 
+4.5 Progress of recall 
+PRH/recalling company must keep the NPRA informed of the progress of the recall. 
+PRH/recalling company should perform an effectiveness check to verify that the recall 
+communication was received by the customers and that they understood and followed 
+through the recall instructions. If the effectiveness checks indicate that the recall 
+communication was not received and/or its instructions were not followed, the 
+PRH/recalling company should take steps to rectify any issue. These steps may involve 
+using  alternative means of contacting the customers or sending out a follow up 
+communication. 
+ 
+4.6 Completion of recall 
+Upon completion of the product recall, the PRH needs to furnish the recall completion 
+report together with the Product Recall Completion Confirmation Fo rm to the NPRA. 
+These reports may include but not limited to the following: 
+ 
+i)  Details on the investigation into the cause of the defect/event; 
+ii)  The corrective actions proposed/implemented and the dates of implementation 
+to prevent a recurrence of the problem; 
+iii)  The extent of distribution of the relevant batch in Malaysia as well as to the 
+international market; 
+iv)  The success of the recall (reconciliation report) i.e., quantity of stock returned, 
+corrected, outstanding, etc.; and 
+v)  The method of destruction or disposal of the recalled products. 
+ 
+ 
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 15 of 17 
+ 
+ 
+As part of the recall completion report, the PRH should update the NPRA of the follow -
+up actions that will be taken for the recalled products. Such actions include, but are not 
+limited to: 
+ 
+i)  Destruction of the recalled products locally. The PRH should submit the proof of 
+destruction, such as certificate of destruction together with the Product Recall 
+Disposal Confirmation Form to the NPRA within 4 months from the recall 
+commencement, unless ot herwise justified. For this action, the PRH is not 
+required to seek and obtain prior approval from NPRA. However, the PRH 
+should ensure that destruction of products is carried out in accordance with the 
+national legislative and regulatory requirements and with due consideration to 
+protect the environment.  
+ 
+ii)   Reintroduction of the recalled products back into the market after appropriate 
+CAPA has been implemented by the PRH/manufacturer/importer/wholesaler. 
+For this action, the PRH is required to seek and obtain prior approval from NPRA 
+with appropriate justification.  
+ 
+If any other actions are to be taken, they will be subjected to approval 
+ from NPRA.  
+ 
+Disposal records should be maintained by the PRH/recalling company. 
+ 
+A flowchart to facilitate the de cision-making process on product recalls and documents 
+to be submitted can be found in Annex II. 
+ 
+Note: Recall action taken by PRH/recalling company shall also comply with the 
+requirement stipulated under latest PIC/S GMP Guide and Guidelines on Good 
+Distribution Practice. 
+ 
+4.7 Public notification 
+NPRA may require the issuance of a mass media announcement to notify the public on 
+the recall in a timely manner, if deemed necessary. NPRA may also issue a press release 
+for such situations to update the public. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                                                                                                                                    Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+                                                                               Page 16 of 17 
+ 
+ 
+ 
+No 
+ 
+No 
+No 
+ 
+No 
+If recall is required 
+ 
+If recall is required 
+If recall is required 
+ 
+If recall is required 
+Yes 
+ 
+Yes 
+Yes 
+ 
+Yes 
+ 
+Yes 
+ 
+ 
+Yes 
+No 
+ 
+No 
+Investigate the cause of defect and 
+conduct impact assessment on the 
+safety & efficacy of the product 
+ 
+Investigate the cause of defect and 
+conduct impact assessment on the 
+safety & efficacy of the product Were the affected batches imported for supply or supplied in 
+Malaysia? OR 
+Based on the root cause of the defect, will local supplies and/or 
+future importation be potentially affected (even though the 
+affected batch has not been supplied in Malaysia)? 
+ 
+Were the affected batches imported for supply or supplied in 
+Malaysia? OR 
+Based on the root cause of the defect, will local supplies and/or 
+future importation be potentially affected (even though the 
+affected batch has not been supplied in Malaysia)? 
+Does it lead to death or 
+serious injury and/or pose 
+serious threat to public 
+health? 
+ 
+Does it lead to death or 
+serious injury and/or pose 
+serious threat to public 
+health? 
+Could it cause illness or affect the outcome 
+of treatment and/or affect the quality of a 
+product. 
+ 
+Could it cause illness or affect the outcome 
+of treatment and/or affect the quality of a 
+product. 
+Critical defect 
+Notify NPRA within 48 hours 
+ 
+Critical defect 
+Notify NPRA within 48 hours 
+Non-critical defect 
+Notify NPRA within 15 calendar days 
+ 
+Non-critical defect 
+Notify NPRA within 15 calendar days 
+Submit report to NPRA: 
+i. Preliminary investigation & assessment 
+ii. Health hazard assessment 
+iii. Corrective & preventive actions plan 
+iv. Investigation report 
+ 
+Submit report to NPRA: 
+i. Preliminary investigation & assessment 
+ii. Health hazard assessment 
+iii. Corrective & preventive actions plan 
+iv. Investigation report 
+Reporting is not 
+required 
+ 
+Reporting is not 
+required 
+Please refer to 
+Annex II 
+ 
+Please refer to 
+Annex II 
+Please refer to 
+Annex II 
+ 
+Please refer to 
+Annex II 
+Reporting is not 
+required 
+ 
+Reporting is not 
+required 
+Annex I – Flowchart on assessment of product defects 
+This flowchart is meant to be a guide to assist in the 
+determination of product defect classification. It should be 
+used for reference only. 
+ 
+Annex I – Flowchart on assessment of product defects 
+This flowchart is meant to be a guide to assist in the 
+determination of product defect classification. It should be 
+used for reference only. 
+                                                  Drug Registration Guidance Document (DRGD) Third Edition, 12th Revision July 2026 
+ 
+Appendix 34: Guideline for Product Quality Reporting and Recall Procedures                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  
+  Page 17 of 17 
+ 
+Annex II – Flowchart on assessment of product recalls  
+ 
+ 
+ 
+ 
+ 
+ 
+This flowchart is meant to be a guide to facilitate the decision-making process on product recalls and 
+documents to be submitted. It should be used for reference only. 
+ 
+ 
+ 
+This flowchart is meant to be a guide to facilitate the decision-making process on product recalls and 
+documents to be submitted. It should be used for reference only. 
+ 
+ 
+Product recall is required 
+ 
+Product recall is required 
+Voluntary recall 
+ 
+Voluntary recall 
+Directive recall 
+ 
+Directive recall 
+•Notification to NPRA: no later than 
+24 hours prior to the start of the 
+intended recall 
+•Justify the degree and level of recall 
+ 
+ 
+•Notification to NPRA: no later than 
+24 hours prior to the start of the 
+intended recall 
+•Justify the degree and level of recall 
+ 
+Submit to NPRA*:  
+i. Product Recall Notification Form (Form 
+N3-FR-59) together with: 
+a) A copy of recall notice issued to 
+purchasers 
+ 
+ii. Product Recall Completion 
+Confirmation Form (Form N3-FR-60) 
+together with: 
+a) Product distribution/sales record 
+b) Complete investigation report 
+c) Complete CAPA plan/report 
+d) Product recall reconciliation 
+report/Success of the product recall 
+ 
+iii. Product Recall Disposal Confirmation 
+Form (Form N3-FR-61) together with: 
+a) Certificate/proof of disposal of the 
+recalled products  
+*within the specified time in accordance to the 
+degree and level of recall 
+ 
+ 
+Submit to NPRA*:  
+i. Product Recall Notification Form (Form 
+N3-FR-59) together with: 
+a) A copy of recall notice issued to 
+purchasers 
+ 
+ii. Product Recall Completion 
+Confirmation Form (Form N3-FR-60) 
+together with: 
+a) Product distribution/sales record 
+b) Complete investigation report 
+c) Complete CAPA plan/report 
+d) Product recall reconciliation 
+report/Success of the product recall 
+ 
+Consent has been obtained from 
+NPRA to proceed with the suggested 
+recall. 
+ 
+Consent has been obtained from 
+NPRA to proceed with the suggested 
+recall. 
+Submit to NPRA*:  
+i. Product Recall Notification Form (Form 
+N3-FR-59) together with: 
+a) A copy of recall notice issued to 
+purchasers 
+  
+ii. Product Recall Completion 
+Confirmation Form (Form N3-FR-60) 
+together with: 
+a) Product distribution/sales record 
+b) Complete investigation report 
+c) Complete CAPA plan/report 
+d) Product recall reconciliation 
+report/Success of the product recall 
+  
+iii. Product Recall Disposal Confirmation 
+Form (Form N3-FR-61) together with: 
+a) Certificate/proof of disposal of the 
+recalled products  
+*within the specified time in accordance 
+to the degree and level of recall 
+  
+ 
+Submit to NPRA*:  
+i. Product Recall Notification Form (Form 
+N3-FR-59) together with: 
+a) A copy of recall notice issued to 
+purchasers 
+  
+ii. Product Recall Completion 
+Confirmation Form (Form N3-FR-60) 
+together with: 
+a) Product distribution/sales record 
+b) Complete investigation report 
+c) Complete CAPA plan/report 
+d) Product recall reconciliation 
+report/Success of the product recall 
+  
+iii. Product Recall Disposal Confirmation 
+Form (Form N3-FR-61) together with: 
+a) Certificate/proof of disposal of the 
+recalled products  
+*within the specified time in accordance 
+to the degree and level of recall 
+  

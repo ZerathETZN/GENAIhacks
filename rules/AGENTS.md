@@ -379,11 +379,20 @@ One row per internal record from inventory, POS or supplier. Identical names and
 
 - Agents select these columns by name, never `SELECT *`, so adding columns later is not breaking. Renaming or removing one needs both A and B.
 - The view does not include regulator rows. Regulator data is read from `regulator_pg.*` tables directly.
-- **Raw tables for the Critic** (logical names; `TODO(verify)` the exact names Zetaris gives them after `REGISTER DATASOURCE TABLES`, and DuckDB mirrors whatever Zetaris shows):
-  - `inventory_pg.stock`, `inventory_pg.transfers`
-  - `pos_pg.sales`
-  - `supplier_rest.deliveries`
-  - `regulator_pg.npra_recalls`, `regulator_pg.pharmaceutical_products_cancelled`, `regulator_pg.pharmaceutical_products`, `regulator_pg.pharmaceutical_importers`, `regulator_pg.pharmaceutical_wholesalers`
+- **Raw tables for the Critic** (agreed A ↔ B, 23 Oct; `TODO(verify)` the exact names Zetaris gives them after `REGISTER DATASOURCE TABLES`, and DuckDB mirrors whatever Zetaris shows). No shared key across systems by design: link on `outlet_id` + normalised batch; POS has `sku` but no `reg_no`.
+
+| Table | Columns |
+|---|---|
+| `inventory_pg.stock` | `stock_id`, `outlet_id`, `product_name`, `reg_no` (NULL possible), `batch` (UPPERCASE), `qty_on_hand` int, `snapshot_date` date |
+| `inventory_pg.transfers` | `transfer_id` (shared by both legs), `leg` `out`/`in`, `outlet_id`, `counterparty_outlet_id`, `product_name`, `reg_no`, `batch`, `qty` int (positive), `transfer_date` date. A missing leg is a conflict (`needs_review`); transfers never change on-hand qty. |
+| `pos_pg.sales` | `sale_id`, `outlet_id`, `sku`, `product_name`, `batch` (lowercase), `qty` int, `sold_at` timestamp, `loyalty_id` (hashed synthetic, NULL for walk-ins) |
+| `supplier_rest.deliveries` | `delivery_id`, `supplier_name`, `supplier_licence_no` (NULL = not licensed), `outlet_id` (NULL = unassigned), `supplier_product_name`, `reg_no`, `batch` (hyphenated), `qty` int, `delivered_on` date |
+| `regulator_pg.npra_recalls` | see `data/README.md`; `batches` is `\|`-separated |
+| `regulator_pg.pharmaceutical_*` | the four data.gov.my files, columns as published |
+
+- **Adapter selection:** `app.adapters.factory.get_adapter(sample_mode=None, data_dir=None)`. `adapter.result_name` is the `RunResult.adapter` value; `adapter.fallback_reason` feeds the `adapter_fallback` trace event.
+- **Answer key** (`data/ground_truth/exposures.json`, read only by `evaluate.py`): `exposures[]` keyed by `recall_id` + `outlet_id` + `batch_norm`, with `on_hand_qty`, `sold_after_date_qty` (sales on or after the recall date), `distinct_customers`, `expected_status`, `conflicts[]`, `evidence[]` (`source`, `record_id`); `unassigned[]` (deliveries with no outlet, expected `needs_review`); `decoys[]` (records of a recalled product with a non-affected batch: flagging them is a false positive). `expected_status` is `needs_review` when the conflicts include `batch_typo`, `one_sided_transfer` or `delivered_not_in_inventory`.
+- **Tuning data:** `data/tuning/seed7/` has the same layout with its own `ground_truth/`. Point the DuckDB adapter at it with `data_dir` or `RG_DATA_DIR`.
 
 ---
 
