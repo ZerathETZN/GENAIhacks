@@ -32,16 +32,32 @@ class ExposureDraft:
     reasons: list[str] = field(default_factory=list)
     names: list[str] = field(default_factory=list)  # distinct product names seen, for H-MEM learning
     critic_check: CriticCheck | None = None
+    doubts: list[dict] = field(default_factory=list)  # spellings a pharmacist can answer (decisions.jsonl): {field, alias, canonical, record_ref}
     batch_norms: list[str] = field(default_factory=list)  # every spelling folded into this group (typos included)
 
 
 def _home_batch(recall: Recall, c: Candidate) -> str:
-    """Batch a record is counted under. A typo'd batch (near-miss) is counted under the recalled batch it
-    most resembles, and the group is flagged for review, so its sales are not lost."""
+    """Batch a record is counted under. A spelling that is not a recalled batch (a typo flagged as a near-miss,
+    or one a pharmacist verified as the same) is counted under the recalled batch it most resembles, so its
+    sales are not lost. shortcut: resemblance only; two similar recalled batches could be mixed up, upgrade
+    by keeping the matched batch on the Candidate."""
     batch = c.record.get("batch") or ""
-    if c.status == "needs_review" and "batch near-miss" in c.reasons and recall.batches:
+    if recall.batches and norm(batch) not in {norm(b) for b in recall.batches}:
         return max(recall.batches, key=lambda b: fuzz.ratio(norm(batch), norm(b)))
     return batch
+
+
+def _doubts(recall: Recall, cs: list[Candidate]) -> list[dict]:
+    """Spellings the agents could not settle, in the shape of a decisions.jsonl line (AGENTS.md §7.5)."""
+    out: dict[tuple[str, str], dict] = {}
+    for c in cs:
+        rec = c.record
+        ref = f"{rec['source']}:{rec['record_id']}"
+        if c.status == "needs_review" and "batch near-miss" in c.reasons:
+            out.setdefault(("batch", rec["batch"]), {"field": "batch", "alias": rec["batch"], "canonical": _home_batch(recall, c), "record_ref": ref})
+        if c.via == "unresolved" and rec.get("product_name"):
+            out.setdefault(("product_name", rec["product_name"]), {"field": "product_name", "alias": rec["product_name"], "canonical": recall.product_name, "record_ref": ref})
+    return list(out.values())
 
 
 def build_drafts(recall: Recall, candidates: list[Candidate]) -> list[ExposureDraft]:
@@ -73,6 +89,7 @@ def build_drafts(recall: Recall, candidates: list[Candidate]) -> list[ExposureDr
             confidence=min(c.confidence for c in cs),
             evidence=[e for c in cs for e in c.evidence],
             reasons=[x for c in cs for x in c.reasons] + (["delivered, no outlet recorded"] if unassigned else []) + (["delivered but no stock record"] if no_stock else []),
+            doubts=_doubts(recall, cs),
             batch_norms=sorted({norm(r.get("batch") or "") for r in rows}),
             names=sorted({r["product_name"] for r in rows if r.get("product_name")}),
         ))

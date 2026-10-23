@@ -66,9 +66,9 @@ class MemoryStoreService:
         return True
 
     def load_jsonl(self, path: str, source: str, run_id: str, agent_id: str = "MemoryStoreService") -> int:
-        """Load confirmed aliases, one JSON object per line: {field, alias, canonical}.
+        """Load confirmed aliases, one JSON object per line: {field, alias, canonical[, verdict]}; verdict 'different' is skipped.
         Used for state/seed_memory.jsonl (source='seed') and data/feedback/decisions.jsonl
-        (source='human_verdict'). TODO(verify): final decisions.jsonl shape with the team."""
+        (source='human_verdict')."""
         p = Path(path)
         if not p.exists():
             return 0
@@ -76,5 +76,7 @@ class MemoryStoreService:
         for line in p.read_text(encoding="utf-8").splitlines():
             if line.strip():
                 r = json.loads(line)
+                if r.get("verdict", "same") != "same":  # "different" is recorded in the file, never learned
+                    continue
                 n += self.remember_alias(r["field"], r["alias"], r["canonical"], source, run_id, agent_id)
         return n

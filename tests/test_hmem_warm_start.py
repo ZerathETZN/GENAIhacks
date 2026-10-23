@@ -27,3 +27,23 @@ def test_warm_run_has_fewer_needs_review_than_cold(tmp_path, monkeypatch):
     warm = run(req(), WarmAdapter(), state).output
     review = lambda o: [e.outlet_id for e in o.exposures if e.status == "needs_review"]
     assert review(cold) == ["OUT-03"] and review(warm) == []
+
+
+def test_pharmacist_verdict_resolves_a_batch_typo_on_the_next_run(tmp_path, monkeypatch):
+    class TypoAdapter(FullAdapter):
+        def __init__(self):
+            super().__init__()
+            self.db.execute("INSERT INTO pos_pg.sales VALUES ('p7','OUT-01','K1','PARACETAMOL TAB','nsc24o67','2','2026-10-06 09:00:00','c5')")
+            self.db.execute("INSERT INTO recallguard.product_exposure_v VALUES ('pos','p7','OUT-01','PARACETAMOL TAB',NULL,'nsc24o67','2','sale','2026-10-06','c5')")
+
+    decisions = tmp_path / "decisions.jsonl"
+    decisions.write_text('{"field":"batch","alias":"nsc24o67","canonical":"NSC24067","verdict":"different","decided_by":"x","decided_at":"2026-10-24T10:00:00Z","run_id":"t1"}\n')
+    monkeypatch.setenv("LOG_DIR", str(tmp_path / "logs"))
+    monkeypatch.setenv("DECISIONS_FILE", str(decisions))
+    state = str(tmp_path / "state")
+    cold = run(req(), TypoAdapter(), state).output.exposures[0]
+    assert (cold.status, cold.sold_after_date_qty) == ("needs_review", 8)  # typo sale counted, flagged; "different" learned nothing
+
+    decisions.write_text(decisions.read_text().replace('"different"', '"same"'))
+    warm = run(req(), TypoAdapter(), state).output.exposures[0]
+    assert (warm.status, warm.sold_after_date_qty, warm.critic_check.passed) == ("confirmed", 8, True)

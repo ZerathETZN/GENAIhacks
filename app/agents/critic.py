@@ -27,8 +27,8 @@ _REG = "UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', ''))"
 # missed characters like '/' ("BN2404/23"). Cost: rows come back per outlet+product, then are filtered.
 _PRODUCT = f"({_REG} = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)"
 _STOCK = f"SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND {_PRODUCT}"
-# POS has no reg_no, so product is matched by name token only. Dates compare as ISO strings.
-_SALES = "SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS VARCHAR) >= ?"
+# POS has no reg_no, so product is matched by name token only. Zetaris rejects CAST(.. AS VARCHAR), so compare as DATE.
+_SALES = "SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE)"
 _TRANSFERS = f"SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND {_PRODUCT}"
 
 

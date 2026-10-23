@@ -1,0 +1,803 @@
+{
+  "run_id": "demo-warm",
+  "status": "success",
+  "output": {
+    "summary": "Doxycillin Tablet 100mg (MAL19860580AZ) has a voluntary-no-degree rule with medium severity. There are 6 outlets exposed, 131 units on hand, 47 units sold since 2026-02-19, and 2 items need review.",
+    "disclaimer": "For pharmacist review. Not a compliance verdict.",
+    "exposures": [
+      {
+        "outlet_id": "OUT-02",
+        "product_name": "Doxycillin Tablet 100mg",
+        "reg_no": "MAL19860580AZ",
+        "batch": "2403301",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 16,
+        "distinct_customers": 4,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.98,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 16,
+            "distinct_customers": 4
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 16,
+            "distinct_customers": 4
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "TRF-000002:out",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "inventory",
+            "record_id": "TRF-000002:out",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "TRF-000002:out",
+            "field": "product_name",
+            "value": "Doxycillin Tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000027",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000027",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000028",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000028",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000029",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000029",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000030",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000030",
+            "field": "product_name",
+            "value": "doxycillin tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000031",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000031",
+            "field": "product_name",
+            "value": "doxycillin tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000032",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000032",
+            "field": "product_name",
+            "value": "DOXYCILLIN TABLET 100MG"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000010",
+            "field": "batch",
+            "value": "240-3301"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000010",
+            "field": "product_name",
+            "value": "DOXYCILLIN TABLET 100MG (PACK 10X10)"
+          }
+        ]
+      },
+      {
+        "outlet_id": "OUT-08",
+        "product_name": "Doxycillin Tablet 100mg",
+        "reg_no": "MAL19860580AZ",
+        "batch": "2403300",
+        "on_hand_qty": 41,
+        "sold_after_date_qty": 10,
+        "distinct_customers": 3,
+        "severity": "medium",
+        "status": "confirmed",
+        "confidence": 0.98,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 41,
+            "sold_after_date_qty": 10,
+            "distinct_customers": 3
+          },
+          "observed": {
+            "on_hand_qty": 41,
+            "sold_after_date_qty": 10,
+            "distinct_customers": 3
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000013",
+            "field": "batch",
+            "value": "2403300"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000013",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000013",
+            "field": "product_name",
+            "value": "Doxycillin Tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000048",
+            "field": "batch",
+            "value": "2403300"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000048",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000049",
+            "field": "batch",
+            "value": "2403300"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000049",
+            "field": "product_name",
+            "value": "doxycillin tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000050",
+            "field": "batch",
+            "value": "2403300"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000050",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000051",
+            "field": "batch",
+            "value": "2403300"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000051",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000015",
+            "field": "batch",
+            "value": "240-3300"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000015",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000015",
+            "field": "product_name",
+            "value": "DOXYCILLIN TABLET 100MG (BTL)"
+          }
+        ]
+      },
+      {
+        "outlet_id": "OUT-04",
+        "product_name": "Doxycillin Tablet 100mg",
+        "reg_no": "MAL19860580AZ",
+        "batch": "2403301",
+        "on_hand_qty": 51,
+        "sold_after_date_qty": 8,
+        "distinct_customers": 1,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.98,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 51,
+            "sold_after_date_qty": 8,
+            "distinct_customers": 1
+          },
+          "observed": {
+            "on_hand_qty": 51,
+            "sold_after_date_qty": 8,
+            "distinct_customers": 1
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000010",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000010",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000010",
+            "field": "product_name",
+            "value": "Doxycillin Tablet 100mg"
+          },
+          {
+            "source": "inventory",
+            "record_id": "TRF-000003:out",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "inventory",
+            "record_id": "TRF-000003:out",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "TRF-000003:out",
+            "field": "product_name",
+            "value": "Doxycillin Tablet 100mg"
+          },
+          {
+            "source": "inventory",
+            "record_id": "TRF-000006:out",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "inventory",
+            "record_id": "TRF-000006:out",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "TRF-000006:out",
+            "field": "product_name",
+            "value": "Doxycillin Tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000036",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000036",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000037",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000037",
+            "field": "product_name",
+            "value": "doxycillin tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000038",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000038",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000012",
+            "field": "batch",
+            "value": "240-3301"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000012",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000012",
+            "field": "product_name",
+            "value": "DOXYCILLIN TABLET 100MG (BTL)"
+          }
+        ]
+      },
+      {
+        "outlet_id": "OUT-08",
+        "product_name": "Doxycillin Tablet 100mg",
+        "reg_no": "MAL19860580AZ",
+        "batch": "2403301",
+        "on_hand_qty": 14,
+        "sold_after_date_qty": 5,
+        "distinct_customers": 3,
+        "severity": "medium",
+        "status": "confirmed",
+        "confidence": 0.98,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 14,
+            "sold_after_date_qty": 5,
+            "distinct_customers": 3
+          },
+          "observed": {
+            "on_hand_qty": 14,
+            "sold_after_date_qty": 5,
+            "distinct_customers": 3
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000014",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000014",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000014",
+            "field": "product_name",
+            "value": "Doxycillin Tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000052",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000052",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000053",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000053",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000054",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000054",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000055",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000055",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000056",
+            "field": "batch",
+            "value": "2403301"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000056",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000016",
+            "field": "batch",
+            "value": "240-3301"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000016",
+            "field": "product_name",
+            "value": "DOXYCILLIN TABLET 100MG (UNIT)"
+          }
+        ]
+      },
+      {
+        "outlet_id": "OUT-04",
+        "product_name": "Doxycillin Tablet 100mg",
+        "reg_no": "MAL19860580AZ",
+        "batch": "2403300",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 5,
+        "distinct_customers": 2,
+        "severity": "medium",
+        "status": "confirmed",
+        "confidence": 0.98,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 5,
+            "distinct_customers": 2
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 5,
+            "distinct_customers": 2
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000012",
+            "field": "batch",
+            "value": "2403300"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000012",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000012",
+            "field": "product_name",
+            "value": "Doxycillin Tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000044",
+            "field": "batch",
+            "value": "24033o0"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000044",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000045",
+            "field": "batch",
+            "value": "2403300"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000045",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000046",
+            "field": "batch",
+            "value": "2403300"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000046",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000047",
+            "field": "batch",
+            "value": "2403300"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000047",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000014",
+            "field": "batch",
+            "value": "240-3300"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000014",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000014",
+            "field": "product_name",
+            "value": "DOXYCILLIN TABLET 100MG (BOX 30S)"
+          }
+        ]
+      },
+      {
+        "outlet_id": "OUT-02",
+        "product_name": "Doxycillin Tablet 100mg",
+        "reg_no": "MAL19860580AZ",
+        "batch": "2403300",
+        "on_hand_qty": 25,
+        "sold_after_date_qty": 3,
+        "distinct_customers": 2,
+        "severity": "medium",
+        "status": "confirmed",
+        "confidence": 0.98,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 25,
+            "sold_after_date_qty": 3,
+            "distinct_customers": 2
+          },
+          "observed": {
+            "on_hand_qty": 25,
+            "sold_after_date_qty": 3,
+            "distinct_customers": 2
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000009",
+            "field": "batch",
+            "value": "2403300"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000009",
+            "field": "product_name",
+            "value": "Doxycillin Tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000033",
+            "field": "batch",
+            "value": "24o3300"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000033",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000034",
+            "field": "batch",
+            "value": "2403300"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000034",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000035",
+            "field": "batch",
+            "value": "2403300"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000035",
+            "field": "product_name",
+            "value": "doxycillin tablet 100mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000011",
+            "field": "batch",
+            "value": "240-3300"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000011",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000011",
+            "field": "product_name",
+            "value": "DOXYCILLIN TABLET 100MG (BOX 30S)"
+          }
+        ]
+      }
+    ],
+    "unresolved_conflicts": [
+      {
+        "outlet_id": "OUT-02",
+        "batch": "2403301",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "delivered but no stock record",
+          "transfer with a missing leg: ['TRF-000002']"
+        ],
+        "doubts": []
+      },
+      {
+        "outlet_id": "OUT-04",
+        "batch": "2403301",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "transfer with a missing leg: ['TRF-000003']"
+        ],
+        "doubts": []
+      }
+    ]
+  },
+  "error": null,
+  "agents": [
+    {
+      "name": "PlannerAgent",
+      "role": "discovers the data catalogue and checks the pipeline can run on it"
+    },
+    {
+      "name": "RetrieverAgent",
+      "role": "reads the data layer and ingests into the World Model"
+    },
+    {
+      "name": "ReconcilerAgent",
+      "role": "matches records to the recall, consulting H-MEM"
+    },
+    {
+      "name": "ConflictCriticAgent",
+      "role": "re-checks each exposure against the raw tables"
+    },
+    {
+      "name": "ReporterAgent",
+      "role": "applies the rules table and ranks the action list"
+    }
+  ],
+  "adapter": "duckdb",
+  "providers_used": [
+    "meterless"
+  ],
+  "trace_id": "trace-demo-warm",
+  "log_file": "output_examples\\cold_warm\\trace-demo-warm.jsonl",
+  "execution_time_seconds": 3.105
+}

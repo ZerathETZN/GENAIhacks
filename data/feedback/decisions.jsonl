@@ -1,0 +1,2 @@
+{"field":"batch","alias":"24o3300","canonical":"2403300","verdict":"same","decided_by":"ethan","decided_at":"2026-10-24T00:00:00Z","run_id":"demo-cold","note":"POS keyed letter o for zero; same SKU-36995 Doxycillin 100mg at OUT-02, which stocks 2403300; 2403301 ruled out by last digit"}
+{"field":"batch","alias":"24033o0","canonical":"2403300","verdict":"same","decided_by":"ethan","decided_at":"2026-10-24T00:00:00Z","run_id":"demo-cold","note":"POS keyed letter o for zero; same SKU-36995 Doxycillin 100mg at OUT-04, which sells 2403300; 2403301 ruled out by last digit"}

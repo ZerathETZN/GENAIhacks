@@ -59,7 +59,7 @@ class ReporterAgent:
         rank = (lambda d: (d.sold_after_date_qty, d.on_hand_qty)) if rule["rank_by"] == "sold" else (lambda d: (d.on_hand_qty,))
         exposures = [self._exposure(recall, d, key, rule, level) for d in sorted(real, key=rank, reverse=True)]
         conflicts = [
-            {"outlet_id": d.outlet_id, "batch": d.batch, "reasons": d.reasons}
+            {"outlet_id": d.outlet_id, "batch": d.batch, "reasons": d.reasons, "doubts": d.doubts}
             for d in drafts if d.status == "needs_review"
         ]
         return RunOutput(summary=self._summary(recall, key, rule, exposures, conflicts), exposures=exposures, unresolved_conflicts=conflicts)

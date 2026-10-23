@@ -13,6 +13,7 @@ from pathlib import Path
 
 from app.adapters import DataAdapter
 from app.agents.critic import ConflictCriticAgent
+from app.agents.planner import PlannerAgent
 from app.agents.reconciler import ReconcilerAgent
 from app.agents.reporter import ReporterAgent
 from app.agents.retriever import RetrieverAgent
@@ -24,6 +25,7 @@ from app.schemas import AgentInfo, RunRequest, RunResult, TraceEvent
 from app.tracing import Tracer
 
 AGENTS = [
+    AgentInfo(name="PlannerAgent", role="discovers the data catalogue and checks the pipeline can run on it"),
     AgentInfo(name="RetrieverAgent", role="reads the data layer and ingests into the World Model"),
     AgentInfo(name="ReconcilerAgent", role="matches records to the recall, consulting H-MEM"),
     AgentInfo(name="ConflictCriticAgent", role="re-checks each exposure against the raw tables"),
@@ -61,7 +63,10 @@ def run(request: RunRequest, adapter: DataAdapter | None = None, state_dir: str 
     # The World Model is per-run evidence; H-MEM persists across runs (that is the point of the warm start).
     world = IngestPipelineService(WorldStoreService(str(state / f"world-{run_id}.db")))
     hmem = MemoryStoreService(str(state / "hmem.db"))
+    # Pharmacist verdicts from earlier runs (AGENTS.md §7.5) are loaded before matching, so the warm run uses them.
+    hmem.load_jsonl(os.getenv("DECISIONS_FILE", "data/feedback/decisions.jsonl"), "human_verdict", run_id)
 
+    PlannerAgent(adapter, run_id, tracer.emit).plan()
     rows = RetrieverAgent(adapter, world, run_id, tracer.emit).retrieve(recall)
     candidates = ReconcilerAgent(MemoryRetrievalService(hmem), run_id, gen, tracer.emit).reconcile(recall, rows)
     drafts = ConflictCriticAgent(adapter, hmem, run_id, tracer.emit).review(recall, build_drafts(recall, candidates))

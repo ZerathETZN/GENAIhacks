@@ -46,3 +46,4 @@ def test_typo_batch_sales_are_counted_under_the_recalled_batch_and_flagged():
     typo.reasons.append("batch near-miss")
     drafts = build_drafts(RECALL, [cand("S1", "stock", 5), typo])
     assert len(drafts) == 1 and (drafts[0].batch, drafts[0].sold_after_date_qty, drafts[0].status) == ("NSC24067", 2, "needs_review")
+    assert drafts[0].doubts == [{"field": "batch", "alias": "NSC-24O67", "canonical": "NSC24067", "record_ref": "inventory:P2"}]
