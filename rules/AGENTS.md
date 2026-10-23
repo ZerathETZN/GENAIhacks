@@ -396,6 +396,20 @@ One row per internal record from inventory, POS or supplier. Identical names and
 
 ---
 
+### 7.5 Human verdicts: `data/feedback/decisions.jsonl` (agreed 23 Oct)
+
+One JSON object per line, written by a person **between runs**, validated by `app.schemas.HumanVerdict` and `tests/test_decisions_file.py`. How-to: `data/feedback/README.md`.
+
+```json
+{"field": "batch", "alias": "5o34698", "canonical": "5034698", "verdict": "same", "decided_by": "ethan", "decided_at": "2026-10-24T10:00:00Z", "run_id": "demo-001", "note": "POS typo"}
+```
+
+- `field`: `batch` | `product_name` | `reg_no`. `verdict`: `same` | `different`.
+- H-MEM loads it with `source="human_verdict"` and learns **only `verdict == "same"`** lines as aliases.
+- The Critic still handles everything it can verify; this file covers only `needs_review` items from a real run (Rules 2 and 11).
+
+---
+
 ## 8. Environment (`.env.example`, placeholders only)
 ```
 METERLESS_BASE_URL=http://127.0.0.1:8088/v1
