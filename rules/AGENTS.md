@@ -1,6 +1,6 @@
 # AGENTS.md: RecallGuard (Open Agent Hackathon 2026, Track 1)
 
-> **Context for coding agents** (Cursor Agent, Codex). Read this file fully before writing code.
+> **Context for coding agents.** Read this file fully before writing code.
 > - If anything here conflicts with a direct instruction from a teammate, follow the teammate and update this file in the same commit.
 > - Version 2.3, 24 Oct 2026. `Exposure.recall_id` and `unresolved_conflicts[].doubts` added to the result contract (§7.2, from B's `daily_scan`); `scripts/evaluate.py` and the seed-99 hold-out set (§4.2, §9); USL live as the semantic layer under the view (§5.1).
 > - Version 2.2, 23 Oct 2026. Agreed the `product_exposure_v` column contract with B (§7.4), `?` parameter handling (§5.1), Critic reads raw tables, and data findings from the real regulator files (§4.1, §4.2).
@@ -35,7 +35,7 @@ It reconciles **real public regulator data** against the chain's **fragmented in
 4. **Power rule: Meterless Runtime (Nightshift) must be a working AI provider in the product** (organiser clarification, 22 Oct). It is added *alongside* other providers, and existing providers may stay.
    - Every model call goes through `app/llm/generator.py`, which selects the provider via `LLM_PROVIDER=meterless|heuristic`.
    - **Default is `meterless`.** The demo video and committed live traces must show real calls served through Meterless, never a mocked call.
-   - Use the organisers' Cursor prompt (HackOS → Power section) to add the integration, then check it against §5.2 (headers, timeouts, `served_by` tracing).
+   - Use the organisers' integration prompt (HackOS → Power section) as a reference, then check it against §5.2 (headers, timeouts, `served_by` tracing).
 5. **Zetaris and Meterless must be load-bearing and running locally** for the live demo:
    - Every data read in live mode goes through Zetaris.
    - Agent context goes through the Meterless engines.
@@ -229,17 +229,17 @@ The script then:
 | Item | Value |
 |---|---|
 | Base URL | `METERLESS_BASE_URL` (e.g. `http://127.0.0.1:8088/v1`; from our container use `host.docker.internal`) |
-| Auth | `METERLESS_RUNTIME_TOKEN`, the Runtime token from Nightshift → Setup → Providers → Runtime endpoint |
-| Model | `METERLESS_MODEL` (current working value: `openrouter/nvidia/nemotron-3.5-lightning:free`) |
+| Auth | `METERLESS_RUNTIME_TOKEN`, the runtime API key from Nightshift → **Console → API key** (Copy, not Rotate). Updating or reinstalling Nightshift changes it: a 401 means copy it again. |
+| Model | `METERLESS_MODEL=meterless/auto`. Lanes decide which model serves: set the cloud lanes to **NVIDIA Nemotron 3.5 Super VL 120B** and **Nemotron 3.5 Lightning 30B** (NVIDIA key, "key held") and **stop the local WebLLM lane**, otherwise Nightshift answers with local Llama 1B. Tested 22 Oct: served by `nvidia/nemotron-3.5-super-vl-120b-a12b`. |
 | Headers | `meterless-app: recallguard` on every request; `meterless-scope: user` on chat requests |
 
 Rules:
 - `max_tokens >= 800`. Nemotron reasons before answering, and small limits return empty responses (502 `empty_response`).
 - Client timeout 180 s, because a model load can be slow.
 - **Always record `response.model` in the trace (`served_by`).** Nightshift may serve a different model than the one requested.
-- Free-tier lanes are rate-limited, so **batch ambiguous matches into one call** and keep deterministic matching first.
+- Hosted lanes can be rate-limited, so **batch ambiguous matches into one call** and keep deterministic matching first.
 
-**Engines** (reference specs in `docs/meterless/`; implement minimal services in Python, using the IMPLEMENT prompts from meterless.ai in Cursor Agent):
+**Engines** (reference specs in `docs/meterless/`; implement minimal services in Python, using the IMPLEMENT prompts from meterless.ai as a starting point):
 
 | Engine | Our use | Minimum services |
 |---|---|---|
@@ -277,13 +277,9 @@ generate(prompt, system_prompt=None, model=None, json_schema=None) -> Generation
 - **Customer-contact line:** e.g. "Outlet 7 sold 12 units of batch X to 9 distinct (synthetic) loyalty customers in the last 30 days."
 - **Optional RAG** over the guideline PDF is the first thing to cut if behind.
 
-### 5.5 Cursor
+### 5.5 Cursor: not used
 
-- Cursor is the required development environment.
-- Project rules in `.cursor/rules/` point to this file.
-- Meterless IMPLEMENT prompts run in Cursor Agent.
-- Zetaris's own Cursor connection (getting-started repo, `.env.local`) is used for exploring sources.
-- Keep 2–3 screenshots of real Cursor usage for the sponsor explanation.
+- The organisers confirmed Cursor is not required (22 Oct). We do not use it, so the README, `metadata.json` and slides make no Cursor claims.
 
 ### 5.6 `metadata.json` (required by all four sponsor overviews)
 
@@ -295,8 +291,7 @@ Root file stating where each sponsor sits:
   "sponsors": {
     "zetaris":   { "role": "federated SQL over inventory/POS/supplier/regulator sources; unified view product_exposure_v; Critic verification queries", "files": ["app/adapters/zetaris_adapter.py", "scripts/zetaris_register.py"] },
     "meterless": { "role": "Nightshift primary model provider; World Model + H-MEM engines", "files": ["app/llm/generator.py", "app/meterless/"] },
-    "nvidia":    { "role": "Nemotron models served via Nightshift for planner/critic/reporter", "models": ["nemotron-3.5-lightning"] },
-    "cursor":    { "role": "development environment; Meterless IMPLEMENT prompts run in Cursor Agent", "files": [".cursor/rules/"] }
+    "nvidia":    { "role": "Nemotron models served via Nightshift for planner/critic/reporter", "models": ["nemotron-3.5-super-vl-120b-a12b", "nemotron-3.5-lightning-30b-a3b"] }
   }
 }
 ```
@@ -309,7 +304,6 @@ Keep it accurate: update `models` to what traces actually show in `served_by`.
 ```
 /
 ├── AGENTS.md  README.md  metadata.json  run.py  Dockerfile  docker-compose.yml  requirements.txt  .env.example
-├── .cursor/rules/
 ├── app/
 │   ├── main.py                 # FastAPI: POST /run, GET /health (bind 0.0.0.0, $PORT)
 │   ├── orchestrator.py         # agents, caps, timeouts, result assembly
@@ -435,7 +429,8 @@ One JSON object per line, written by a person **between runs**, validated by `ap
 ```
 METERLESS_BASE_URL=http://127.0.0.1:8088/v1
 METERLESS_RUNTIME_TOKEN=your-runtime-token
-METERLESS_MODEL=openrouter/nvidia/nemotron-3.5-lightning:free
+LLM_PROVIDER=meterless
+METERLESS_MODEL=meterless/auto
 NVIDIA_BASE_URL=https://integrate.api.nvidia.com/v1
 NVIDIA_API_KEY=your-nvidia-key
 MODEL_REASONING=nvidia/nemotron-3.5-super-vl-120b-a12b
@@ -489,9 +484,10 @@ SAMPLE_MODE=true python run.py --input input_examples/example_1.json    # must p
 - The Meterless runtime token **is** required.
 - Working Nemotron IDs are in §5.3.
 - Judges run `SAMPLE_MODE`; the live Zetaris + Nightshift run is shown in the demo video.
+- NVIDIA-key models in a Nightshift lane: update Nightshift, add the NVIDIA key in Setup → Providers, then Change model on a cloud lane to an NVIDIA Nemotron model (§5.2). Tested 22 Oct.
+- Cursor is not required (organisers, 22 Oct).
 
 **Open:**
-- How to put NVIDIA-key models in a Nightshift lane. Ask at the Build workshop.
 - Whether Nightshift on Windows requires an NVIDIA GPU for cloud-only lanes. This decides which teammate's machine runs live demos.
 - USL: resolved 24 Oct, live over JDBC and REST sources (§5.1).
 

@@ -1,17 +1,19 @@
 # RecallGuard data sources (AGENTS.md §4, §6).
 # Live mode needs the Zetaris stack running first: it creates the network zetaris_default.
 #   docker compose up -d                                      # 3 databases + supplier API
-#   docker compose --profile live up -d                       # + app
-#   docker compose --profile sample up app-sample             # judges: no Zetaris, no creds
+#   docker compose --profile live up -d --build               # + app (API :8000) + ui (:8501)
+#   docker compose --profile sample up --build app-sample ui-sample   # judges: no Zetaris, no creds, no .env
+# Passwords use :- (not :?) so the judges' sample command works with no .env; postgres and
+# docker/postgres-init/01-reader.sh still refuse to start with empty passwords.
 
 x-postgres: &postgres
   image: postgres:16-alpine
   restart: unless-stopped
   environment: &pg-env
     POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: ${PG_ADMIN_PASSWORD:?set PG_ADMIN_PASSWORD in .env}
+    POSTGRES_PASSWORD: ${PG_ADMIN_PASSWORD:-}
     PG_READER_USER: ${PG_READER_USER:-zetaris_reader}
-    PG_READER_PASSWORD: ${PG_READER_PASSWORD:?set PG_READER_PASSWORD in .env}
+    PG_READER_PASSWORD: ${PG_READER_PASSWORD:-}
   healthcheck:
     test: ["CMD-SHELL", "pg_isready -U postgres -d $${POSTGRES_DB}"]
     interval: 5s
@@ -66,7 +68,9 @@ services:
   app:
     profiles: [live]
     build: .
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
     environment:
       ZETARIS_REST_URL: http://host.docker.internal:8888/api/v1.0
       METERLESS_BASE_URL: http://host.docker.internal:8088/v1
@@ -90,6 +94,29 @@ services:
     ports: ["${PORT:-8000}:8000"]
     volumes:
       - ./logs:/app/logs
+    networks: [internal]
+
+  # Streamlit UI (Part C). Talks only to the API.
+  ui:
+    profiles: [live]
+    build: .
+    command: ["streamlit", "run", "ui/app.py", "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true"]
+    environment:
+      API_URL: http://app:8000
+    ports: ["8501:8501"]
+    healthcheck: { disable: true }
+    depends_on: [app]
+    networks: [zetaris]
+
+  ui-sample:
+    profiles: [sample]
+    build: .
+    command: ["streamlit", "run", "ui/app.py", "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true"]
+    environment:
+      API_URL: http://app-sample:8000
+    ports: ["8501:8501"]
+    healthcheck: { disable: true }
+    depends_on: [app-sample]
     networks: [internal]
 
 networks:

@@ -16,4 +16,3 @@ Repo for nightshift: https://github.com/Meterless/Meterless/tree/main
 - Our app is the client: base URL METERLESS_BASE_URL, token METERLESS_RUNTIME_TOKEN, model METERLESS_MODEL, headers meterless-app: recallguard and meterless-scope: user.
 - generate() order: Nightshift -> (transport failure) NVIDIA direct -> (no credentials / SAMPLE_MODE) heuristic_fallback. Retry 429/5xx/empty_response up to 3 times with backoff. max_tokens >= 800.
 - Always trace provider and served_by (response.model). Never commit or log the token.
-- Claude Code is only our coding tool; it is unrelated to Nightshift.

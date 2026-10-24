@@ -1,0 +1,19 @@
+{
+  "run_id": "example-2",
+  "input": {
+    "mode": "recall_alert",
+    "recall": {
+      "product_name": "Apalin 250mg Injection (2ml Amp)",
+      "reg_no": "MAL19984033AZ",
+      "batches": [
+        "242837T"
+      ],
+      "date": "2026-05-14",
+      "degree_level": "I"
+    }
+  },
+  "options": {
+    "sample_mode": true,
+    "max_critic_rounds": 2
+  }
+}
