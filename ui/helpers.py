@@ -136,3 +136,23 @@ def verdict_line(doubt: dict[str, Any], verdict: str, decided_by: str, decided_a
     """One decisions.jsonl line in the HumanVerdict shape. Written by a person between runs, never by an agent."""
     return {"field": doubt["field"], "alias": doubt["alias"], "canonical": doubt["canonical"], "verdict": verdict,
             "decided_by": decided_by, "decided_at": decided_at, "run_id": run_id, "note": note}
+
+
+def tally(exposures: list[dict[str, Any]]) -> dict[str, int]:
+    """Numbers an operations manager acts on."""
+    return {
+        "outlets": len({e.get("outlet_id") for e in exposures}),
+        "on_hand": sum(int(e.get("on_hand_qty") or 0) for e in exposures),
+        "sold": sum(int(e.get("sold_after_date_qty") or 0) for e in exposures),
+        "customers": sum(int(e.get("distinct_customers") or 0) for e in exposures),
+        "needs_review": sum(1 for e in exposures if e.get("status") == "needs_review"),
+    }
+
+
+def split_action(text: str) -> tuple[str, str | None]:
+    """Reporter actions end with the customer-contact sentence ("Outlet X sold ..."); show it separately."""
+    text = (text or "").strip()
+    i = text.find(" Outlet ")
+    if i > 0 and " sold " in text[i:]:
+        return text[:i].strip(), text[i:].strip()
+    return text, None

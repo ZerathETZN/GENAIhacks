@@ -281,6 +281,7 @@ python scripts/evaluate.py --data-dir data/holdout/seed99   # score against the 
 | RapidFuzz | MIT |
 | PyYAML | MIT |
 | Streamlit | Apache-2.0 |
+| Vega-Altair | BSD-3-Clause |
 | pandas | BSD-3-Clause |
 | pytest | MIT |
 | Ruff | MIT |

@@ -59,3 +59,21 @@ def test_review_items_and_verdict_line_match_contract():
     assert items[0]["outlet_id"] == "OUT-04"
     line = h.verdict_line(items[0], "same", "shermaine", "2026-10-24T10:00:00Z", "demo-cold", "s for 5")
     HumanVerdict.model_validate(line)
+
+
+def test_tally_and_split_action():
+    assert h.tally(EXP) == {"outlets": 3, "on_hand": 0, "sold": 15, "customers": 11, "needs_review": 1}
+    action, contact = h.split_action("Stop selling within 24 h. (DRGD App. 34 s4.3) Outlet OUT-05 sold 7 units of batch X.")
+    assert action.endswith("s4.3)") and contact.startswith("Outlet OUT-05 sold 7")
+    assert h.split_action("Quarantine stock.") == ("Quarantine stock.", None)
+
+
+def test_visuals_use_only_run_evidence():
+    from ui import visuals as v
+    exps = [{"evidence": [{"source": "pos", "record_id": "S1", "field": "batch", "value": "s036723"},
+                          {"source": "supplier", "record_id": "D1", "field": "batch", "value": "503-6723"}]}]
+    sp = v.spellings(exps)
+    assert sp["pos"]["batch"] == ["s036723"] and sp["supplier"]["n"] == 1
+    html = v.spellings_html(sp, ["5036723"])
+    assert 'class="sp-b odd">s036723' in html and 'class="sp-b">503-6723' in html  # 503-6723 normalises to 5036723
+    assert v.as_img(v.pipeline_svg([]), "x").startswith('<img src="data:image/svg+xml;base64,')
