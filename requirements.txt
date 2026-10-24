@@ -1,12 +1,10 @@
-# Installed at Docker build time only (AGENTS.md §9). Pinned versions tested 22 Oct 2026.
+# Installed at Docker build time only (AGENTS.md §9). Pinned versions tested 24 Oct 2026.
 # API + CLI (Part C)
 fastapi==0.159.1
 uvicorn[standard]==0.54.0
 pydantic==2.14.1
 httpx==0.28.1
 python-dotenv==1.2.4
-# Models via Meterless Nightshift / NVIDIA (OpenAI-compatible)
-openai==3.36.1
 # Data: sample-mode DuckDB twin, Postgres loaders, regulator Parquet
 duckdb==2.0.0
 psycopg[binary]==3.3.6

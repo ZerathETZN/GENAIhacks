@@ -1,0 +1,664 @@
+{
+  "run_id": "example-administrative-whatif",
+  "status": "success",
+  "output": {
+    "summary": "Vamlo Tablets 10mg (MAL07010993AZ) is subject to an administrative recall rule with low severity across six outlets, with 190 units on hand and no units sold since 2026-10-24. One item requires review.",
+    "disclaimer": "For pharmacist review. Not a compliance verdict.",
+    "exposures": [
+      {
+        "outlet_id": "OUT-05",
+        "product_name": "Vamlo Tablets 10mg",
+        "reg_no": "MAL07010993AZ",
+        "batch": "24030132",
+        "on_hand_qty": 51,
+        "sold_after_date_qty": 0,
+        "distinct_customers": 0,
+        "severity": "low",
+        "status": "confirmed",
+        "confidence": 0.8,
+        "recommended_action": "Stop reordering, segregate remaining stock and return it to the supplier. (assumption (registration cancelled; not a quality recall))",
+        "rule_ref": "actions.yaml#administrative",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 51,
+            "sold_after_date_qty": 0,
+            "distinct_customers": 0
+          },
+          "observed": {
+            "on_hand_qty": 51,
+            "sold_after_date_qty": 0,
+            "distinct_customers": 0
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000017",
+            "field": "batch",
+            "value": "24030132"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000017",
+            "field": "reg_no",
+            "value": "MAL07010993AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000017",
+            "field": "product_name",
+            "value": "Vamlo Tablets 10mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000021",
+            "field": "batch",
+            "value": "2403-0132"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000021",
+            "field": "reg_no",
+            "value": "MAL07010993AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000021",
+            "field": "product_name",
+            "value": "VAMLO TABLETS 10MG (PACK 10X10)"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000085",
+            "field": "batch",
+            "value": "24030132"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000085",
+            "field": "product_name",
+            "value": "vamlo tab 10mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000086",
+            "field": "batch",
+            "value": "24030132"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000086",
+            "field": "product_name",
+            "value": "VAMLO TAB 10MG"
+          }
+        ]
+      },
+      {
+        "outlet_id": "OUT-05",
+        "product_name": "Vamlo Tablets 10mg",
+        "reg_no": "MAL07010993AZ",
+        "batch": "61849593",
+        "on_hand_qty": 35,
+        "sold_after_date_qty": 0,
+        "distinct_customers": 0,
+        "severity": "low",
+        "status": "confirmed",
+        "confidence": 0.8,
+        "recommended_action": "Stop reordering, segregate remaining stock and return it to the supplier. (assumption (registration cancelled; not a quality recall))",
+        "rule_ref": "actions.yaml#administrative",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 35,
+            "sold_after_date_qty": 0,
+            "distinct_customers": 0
+          },
+          "observed": {
+            "on_hand_qty": 35,
+            "sold_after_date_qty": 0,
+            "distinct_customers": 0
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000016",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000016",
+            "field": "reg_no",
+            "value": "MAL07010993AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000016",
+            "field": "product_name",
+            "value": "Vamlo Tablets 10mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000081",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000081",
+            "field": "product_name",
+            "value": "VAMLO TABLETS 10MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000082",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000082",
+            "field": "product_name",
+            "value": "VAMLO TABLETS 10MG"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000020",
+            "field": "batch",
+            "value": "6184-9593"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000020",
+            "field": "product_name",
+            "value": "VAMLO TABLETS 10MG (BOX 30S)"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000080",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000080",
+            "field": "product_name",
+            "value": "VAMLO TAB 10MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000083",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000083",
+            "field": "product_name",
+            "value": "vamlo tab 10mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000084",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000084",
+            "field": "product_name",
+            "value": "VAMLO TAB 10MG"
+          }
+        ]
+      },
+      {
+        "outlet_id": "OUT-01",
+        "product_name": "Vamlo Tablets 10mg",
+        "reg_no": "MAL07010993AZ",
+        "batch": "24030132",
+        "on_hand_qty": 32,
+        "sold_after_date_qty": 0,
+        "distinct_customers": 0,
+        "severity": "low",
+        "status": "confirmed",
+        "confidence": 1.0,
+        "recommended_action": "Stop reordering, segregate remaining stock and return it to the supplier. (assumption (registration cancelled; not a quality recall))",
+        "rule_ref": "actions.yaml#administrative",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 32,
+            "sold_after_date_qty": 0,
+            "distinct_customers": 0
+          },
+          "observed": {
+            "on_hand_qty": 32,
+            "sold_after_date_qty": 0,
+            "distinct_customers": 0
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000014",
+            "field": "batch",
+            "value": "24030132"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000014",
+            "field": "reg_no",
+            "value": "MAL07010993AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000014",
+            "field": "product_name",
+            "value": "Vamlo Tablets 10mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000075",
+            "field": "batch",
+            "value": "24030132"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000075",
+            "field": "product_name",
+            "value": "vamlo tablets 10mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000018",
+            "field": "batch",
+            "value": "2403-0132"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000018",
+            "field": "reg_no",
+            "value": "MAL07010993AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000018",
+            "field": "product_name",
+            "value": "VAMLO TABLETS 10MG (BOX 30S)"
+          }
+        ]
+      },
+      {
+        "outlet_id": "OUT-02",
+        "product_name": "Vamlo Tablets 10mg",
+        "reg_no": "MAL07010993AZ",
+        "batch": "61849593",
+        "on_hand_qty": 29,
+        "sold_after_date_qty": 0,
+        "distinct_customers": 0,
+        "severity": "low",
+        "status": "confirmed",
+        "confidence": 0.8,
+        "recommended_action": "Stop reordering, segregate remaining stock and return it to the supplier. (assumption (registration cancelled; not a quality recall))",
+        "rule_ref": "actions.yaml#administrative",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 29,
+            "sold_after_date_qty": 0,
+            "distinct_customers": 0
+          },
+          "observed": {
+            "on_hand_qty": 29,
+            "sold_after_date_qty": 0,
+            "distinct_customers": 0
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000015",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000015",
+            "field": "reg_no",
+            "value": "MAL07010993AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000015",
+            "field": "product_name",
+            "value": "Vamlo Tablets 10mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000078",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000078",
+            "field": "product_name",
+            "value": "vamlo tabs 10mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000079",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000079",
+            "field": "product_name",
+            "value": "vamlo tabs 10mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000019",
+            "field": "batch",
+            "value": "6184-9593"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000019",
+            "field": "product_name",
+            "value": "VAMLO TABLETS 10MG (PACK 10X10)"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000076",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000076",
+            "field": "product_name",
+            "value": "vamlo tab 10mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000077",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000077",
+            "field": "product_name",
+            "value": "VAMLO TAB 10MG"
+          }
+        ]
+      },
+      {
+        "outlet_id": "OUT-07",
+        "product_name": "Vamlo Tablets 10mg",
+        "reg_no": "MAL07010993AZ",
+        "batch": "24030132",
+        "on_hand_qty": 28,
+        "sold_after_date_qty": 0,
+        "distinct_customers": 0,
+        "severity": "low",
+        "status": "confirmed",
+        "confidence": 0.8,
+        "recommended_action": "Stop reordering, segregate remaining stock and return it to the supplier. (assumption (registration cancelled; not a quality recall))",
+        "rule_ref": "actions.yaml#administrative",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 28,
+            "sold_after_date_qty": 0,
+            "distinct_customers": 0
+          },
+          "observed": {
+            "on_hand_qty": 28,
+            "sold_after_date_qty": 0,
+            "distinct_customers": 0
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000018",
+            "field": "batch",
+            "value": "24030132"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000018",
+            "field": "reg_no",
+            "value": "MAL07010993AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000018",
+            "field": "product_name",
+            "value": "Vamlo Tablets 10mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000088",
+            "field": "batch",
+            "value": "24030132"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000088",
+            "field": "product_name",
+            "value": "vamlo tabs 10mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000022",
+            "field": "batch",
+            "value": "2403-0132"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000022",
+            "field": "reg_no",
+            "value": "MAL07010993AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000022",
+            "field": "product_name",
+            "value": "VAMLO TABLETS 10MG (BOX 30S)"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000087",
+            "field": "batch",
+            "value": "24030132"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000087",
+            "field": "product_name",
+            "value": "vamlo tab 10mg"
+          }
+        ]
+      },
+      {
+        "outlet_id": "OUT-01",
+        "product_name": "Vamlo Tablets 10mg",
+        "reg_no": "MAL07010993AZ",
+        "batch": "61849593",
+        "on_hand_qty": 15,
+        "sold_after_date_qty": 0,
+        "distinct_customers": 0,
+        "severity": "low",
+        "status": "confirmed",
+        "confidence": 0.8,
+        "recommended_action": "Stop reordering, segregate remaining stock and return it to the supplier. (assumption (registration cancelled; not a quality recall))",
+        "rule_ref": "actions.yaml#administrative",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 15,
+            "sold_after_date_qty": 0,
+            "distinct_customers": 0
+          },
+          "observed": {
+            "on_hand_qty": 15,
+            "sold_after_date_qty": 0,
+            "distinct_customers": 0
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000013",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000013",
+            "field": "reg_no",
+            "value": "MAL07010993AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000013",
+            "field": "product_name",
+            "value": "Vamlo Tablets 10mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000071",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000071",
+            "field": "product_name",
+            "value": "vamlo tabs 10mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000072",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000072",
+            "field": "product_name",
+            "value": "VAMLO TABS 10MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000073",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000073",
+            "field": "product_name",
+            "value": "VAMLO TABS 10MG"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000017",
+            "field": "batch",
+            "value": "6184-9593"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000017",
+            "field": "reg_no",
+            "value": "MAL07010993AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000017",
+            "field": "product_name",
+            "value": "VAMLO TABLETS 10MG (UNIT)"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000069",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000069",
+            "field": "product_name",
+            "value": "vamlo tab 10mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000070",
+            "field": "batch",
+            "value": "61849593"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000070",
+            "field": "product_name",
+            "value": "VAMLO TAB 10MG"
+          }
+        ]
+      }
+    ],
+    "unresolved_conflicts": [
+      {
+        "outlet_id": "OUT-01",
+        "batch": "24o30132",
+        "reasons": [
+          "batch=any",
+          "identity=0.88 via name_fuzzy",
+          "no stock on hand (sales records only)"
+        ],
+        "doubts": []
+      }
+    ]
+  },
+  "error": null,
+  "agents": [
+    {
+      "name": "PlannerAgent",
+      "role": "discovers the data catalogue and checks the pipeline can run on it"
+    },
+    {
+      "name": "RetrieverAgent",
+      "role": "reads the data layer and ingests into the World Model"
+    },
+    {
+      "name": "ReconcilerAgent",
+      "role": "matches records to the recall, consulting H-MEM"
+    },
+    {
+      "name": "ConflictCriticAgent",
+      "role": "re-checks each exposure against the raw tables"
+    },
+    {
+      "name": "ReporterAgent",
+      "role": "applies the rules table and ranks the action list"
+    }
+  ],
+  "adapter": "zetaris",
+  "providers_used": [
+    "meterless"
+  ],
+  "trace_id": "trace-example-administrative-whatif",
+  "log_file": "output_examples\\administrative-whatif\\trace-example-administrative-whatif.jsonl",
+  "execution_time_seconds": 22.15
+}

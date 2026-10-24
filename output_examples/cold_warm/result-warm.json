@@ -1,0 +1,513 @@
+{
+  "run_id": "demo-warm",
+  "status": "success",
+  "output": {
+    "summary": "Glumet XR Tablet 500mg (MAL13015050AZ) is subject to a degree-II rule with medium severity, affecting 4 outlets, with 18 units on hand and 34 units sold since 2026-04-15. Three items need review.",
+    "disclaimer": "For pharmacist review. Not a compliance verdict.",
+    "exposures": [
+      {
+        "outlet_id": "OUT-04",
+        "product_name": "glumet xr tab 500mg",
+        "reg_no": "MAL13015050AZ",
+        "batch": "5036723",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 11,
+        "distinct_customers": 3,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.98,
+        "recommended_action": "Stop selling the batch within 72 h and segregate it in a secured area; purchasers must be notified within 48 h. (DRGD App. 34 s4.3) Outlet OUT-04 sold 11 units of batch 5036723 to 3 distinct loyalty customers since 2026-04-15.",
+        "rule_ref": "actions.yaml#degree-II",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 11,
+            "distinct_customers": 3
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 11,
+            "distinct_customers": 3
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "pos",
+            "record_id": "SAL-000007",
+            "field": "batch",
+            "value": "s036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000007",
+            "field": "product_name",
+            "value": "glumet xr tab 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000008",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000008",
+            "field": "product_name",
+            "value": "glumet xr tablet 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000009",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000009",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000010",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000010",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000011",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000011",
+            "field": "product_name",
+            "value": "glumet xr tab 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000012",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000012",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000002",
+            "field": "batch",
+            "value": "503-6723"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000002",
+            "field": "reg_no",
+            "value": "MAL13015050AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000002",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG (UNIT)"
+          }
+        ]
+      },
+      {
+        "outlet_id": "OUT-06",
+        "product_name": "GLUMET XR TABLET 500MG",
+        "reg_no": "MAL13015050AZ",
+        "batch": "5036723",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 9,
+        "distinct_customers": 1,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.98,
+        "recommended_action": "Stop selling the batch within 72 h and segregate it in a secured area; purchasers must be notified within 48 h. (DRGD App. 34 s4.3) Outlet OUT-06 sold 9 units of batch 5036723 to 1 distinct loyalty customers since 2026-04-15.",
+        "rule_ref": "actions.yaml#degree-II",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 9,
+            "distinct_customers": 1
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 9,
+            "distinct_customers": 1
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "pos",
+            "record_id": "SAL-000019",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000019",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000020",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000020",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000021",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000021",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000022",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000022",
+            "field": "product_name",
+            "value": "glumet xr tab 500mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000004",
+            "field": "batch",
+            "value": "503-6723"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000004",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG (BTL)"
+          }
+        ]
+      },
+      {
+        "outlet_id": "OUT-08",
+        "product_name": "Glumet XR Tablet 500mg",
+        "reg_no": "MAL13015050AZ",
+        "batch": "5036723",
+        "on_hand_qty": 18,
+        "sold_after_date_qty": 7,
+        "distinct_customers": 3,
+        "severity": "medium",
+        "status": "confirmed",
+        "confidence": 0.98,
+        "recommended_action": "Stop selling the batch within 72 h and segregate it in a secured area; purchasers must be notified within 48 h. (DRGD App. 34 s4.3) Outlet OUT-08 sold 7 units of batch 5036723 to 3 distinct loyalty customers since 2026-04-15.",
+        "rule_ref": "actions.yaml#degree-II",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 18,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "observed": {
+            "on_hand_qty": 18,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000006",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000006",
+            "field": "product_name",
+            "value": "Glumet XR Tablet 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000038",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000038",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000039",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000039",
+            "field": "product_name",
+            "value": "glumet xr tablet 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000040",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000040",
+            "field": "product_name",
+            "value": "glumet xr tab 500mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000008",
+            "field": "batch",
+            "value": "503-6723"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000008",
+            "field": "reg_no",
+            "value": "MAL13015050AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000008",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG (BTL)"
+          }
+        ]
+      },
+      {
+        "outlet_id": "OUT-07",
+        "product_name": "Glumet XR Tablet 500mg",
+        "reg_no": "MAL13015050AZ",
+        "batch": "5036723",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 7,
+        "distinct_customers": 3,
+        "severity": "medium",
+        "status": "confirmed",
+        "confidence": 0.98,
+        "recommended_action": "Stop selling the batch within 72 h and segregate it in a secured area; purchasers must be notified within 48 h. (DRGD App. 34 s4.3) Outlet OUT-07 sold 7 units of batch 5036723 to 3 distinct loyalty customers since 2026-04-15.",
+        "rule_ref": "actions.yaml#degree-II",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000003",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000003",
+            "field": "reg_no",
+            "value": "MAL13015050AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000003",
+            "field": "product_name",
+            "value": "Glumet XR Tablet 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000023",
+            "field": "batch",
+            "value": "5o36723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000023",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000024",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000024",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000025",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000025",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000026",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000026",
+            "field": "product_name",
+            "value": "glumet xr tablet 500mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000005",
+            "field": "batch",
+            "value": "503-6723"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000005",
+            "field": "reg_no",
+            "value": "MAL13015050AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000005",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG (UNIT)"
+          }
+        ]
+      }
+    ],
+    "unresolved_conflicts": [
+      {
+        "outlet_id": "OUT-04",
+        "batch": "5036723",
+        "reasons": [
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "delivered but no stock record"
+        ],
+        "doubts": []
+      },
+      {
+        "outlet_id": "OUT-06",
+        "batch": "5036723",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "delivered but no stock record"
+        ],
+        "doubts": []
+      },
+      {
+        "outlet_id": "UNASSIGNED",
+        "batch": "503-6723",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "delivered, no outlet recorded",
+          "delivered but no stock record"
+        ],
+        "doubts": []
+      }
+    ]
+  },
+  "error": null,
+  "agents": [
+    {
+      "name": "PlannerAgent",
+      "role": "discovers the data catalogue and checks the pipeline can run on it"
+    },
+    {
+      "name": "RetrieverAgent",
+      "role": "reads the data layer and ingests into the World Model"
+    },
+    {
+      "name": "ReconcilerAgent",
+      "role": "matches records to the recall, consulting H-MEM"
+    },
+    {
+      "name": "ConflictCriticAgent",
+      "role": "re-checks each exposure against the raw tables"
+    },
+    {
+      "name": "ReporterAgent",
+      "role": "applies the rules table and ranks the action list"
+    }
+  ],
+  "adapter": "zetaris",
+  "providers_used": [
+    "meterless"
+  ],
+  "trace_id": "trace-demo-warm",
+  "log_file": "output_examples\\cold_warm\\trace-demo-warm.jsonl",
+  "execution_time_seconds": 10.373
+}

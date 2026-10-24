@@ -1,18 +1,19 @@
 # RecallGuard data sources (AGENTS.md §4, §6).
 # Live mode needs the Zetaris stack running first: it creates the network zetaris_default.
-# Passwords are not interpolated with :? so the sample profile works with no .env (judges' path).
-#   docker compose --profile db up -d                         # databases only
-#   docker compose --profile live up -d                       # + supplier API + app
-#   docker compose --profile sample up --build                # judges: API :8000 + UI :8501, no Zetaris, no creds
+#   docker compose up -d                                      # 3 databases + supplier API
+#   docker compose --profile live up -d --build               # + app (API :8000) + ui (:8501)
+#   docker compose --profile sample up --build app-sample ui-sample   # judges: no Zetaris, no creds, no .env
+# Passwords use :- (not :?) so the judges' sample command works with no .env; postgres and
+# docker/postgres-init/01-reader.sh still refuse to start with empty passwords.
 
 x-postgres: &postgres
   image: postgres:16-alpine
   restart: unless-stopped
   environment: &pg-env
     POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: ${PG_ADMIN_PASSWORD:-}  # required for live mode; postgres refuses to start without it
+    POSTGRES_PASSWORD: ${PG_ADMIN_PASSWORD:-}
     PG_READER_USER: ${PG_READER_USER:-zetaris_reader}
-    PG_READER_PASSWORD: ${PG_READER_PASSWORD:-}  # checked in docker/postgres-init/01-reader.sh
+    PG_READER_PASSWORD: ${PG_READER_PASSWORD:-}
   healthcheck:
     test: ["CMD-SHELL", "pg_isready -U postgres -d $${POSTGRES_DB}"]
     interval: 5s
@@ -23,7 +24,6 @@ x-postgres: &postgres
 services:
   rg-inventory:
     <<: *postgres
-    profiles: [live, db]   # never started by the sample profile; naming the service still starts it
     container_name: rg-inventory
     environment:
       <<: *pg-env
@@ -35,7 +35,6 @@ services:
 
   rg-pos:
     <<: *postgres
-    profiles: [live, db]   # never started by the sample profile; naming the service still starts it
     container_name: rg-pos
     environment:
       <<: *pg-env
@@ -47,7 +46,6 @@ services:
 
   rg-regulator:
     <<: *postgres
-    profiles: [live, db]   # never started by the sample profile; naming the service still starts it
     container_name: rg-regulator
     environment:
       <<: *pg-env
@@ -58,13 +56,13 @@ services:
       - ./docker/postgres-init:/docker-entrypoint-initdb.d:ro
 
   rg-supplier-api:
-    profiles: [live]
     container_name: rg-supplier-api
     build: ./services/supplier_api
     restart: unless-stopped
     ports: ["8001:8000"]
     volumes:
-      - ./data/sample:/data/sample:ro
+      # Serve the same dataset load_postgres.py loaded: RG_DATA_DIR=data/holdout/seed99 docker compose up -d rg-supplier-api
+      - ./${RG_DATA_DIR:-data/sample}:/data/sample:ro
     networks: [zetaris]
 
   app:
@@ -98,7 +96,7 @@ services:
       - ./logs:/app/logs
     networks: [internal]
 
-  # Streamlit UI (Part C). Talks only to the API above.
+  # Streamlit UI (Part C). Talks only to the API.
   ui:
     profiles: [live]
     build: .

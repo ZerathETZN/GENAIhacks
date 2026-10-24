@@ -4,27 +4,30 @@
   "team": "Team Invictus",
   "entry_points": {
     "cli": "python run.py --input input_examples/example_1.json",
-    "api": "python run.py --serve  (POST /run, GET /health, GET /runs/{run_id}/trace)",
+    "api": "python run.py --serve  (POST /run, GET /health, GET /runs/{run_id}, GET /runs/{run_id}/trace)",
     "ui": "streamlit run ui/app.py",
-    "sample_mode": "docker compose --profile sample up --build"
+    "sample_mode": "docker compose --profile sample up --build app-sample ui-sample"
   },
   "sponsors": {
     "zetaris": {
-      "role": "federated SQL over inventory/POS/supplier/regulator sources; catalogue discovery; unified view product_exposure_v; Critic verification queries",
-      "files": ["app/adapters/zetaris_adapter.py", "scripts/zetaris_register.py"]
+      "role": "federated SQL over four sources (3 JDBC Postgres, 1 REST); USL model recallguard_usl + view recallguard.product_exposure_v as the semantic layer; catalogue discovery; Critic verification queries on the raw tables",
+      "semantic_layer": "USL",
+      "files": ["app/adapters/", "scripts/zetaris_register.py", "scripts/load_postgres.py"]
     },
     "meterless": {
-      "role": "Nightshift is the default model provider (LLM_PROVIDER=meterless); World Model (required) and H-MEM engines",
-      "files": ["app/llm/generator.py", "app/meterless/"]
+      "role": "Nightshift is the model provider (LLM_PROVIDER=meterless, no direct NVIDIA client); World Model engine holds provenance-tracked entities; H-MEM keeps verified aliases and pharmacist verdicts across runs",
+      "engines": ["world_model", "h_mem"],
+      "files": ["app/llm/generator.py", "app/meterless/world_model/", "app/meterless/hmem/", "data/feedback/decisions.jsonl"]
     },
     "nvidia": {
-      "role": "Nemotron models served via Meterless Nightshift lanes for planner/critic/reporter (no direct NVIDIA client)",
-      "models": ["nvidia/nemotron-3.5-super-vl-120b-a12b", "nvidia/nemotron-3.5-lightning-30b-a3b"]
+      "role": "Nemotron served through Meterless Nightshift lanes for the Reconciler's ambiguous-match decisions and the Reporter's summary",
+      "models": ["nvidia/nemotron-3.5-super-vl-120b-a12b", "nvidia/nemotron-3.5-lightning-30b-a3b"],
+      "served_by_in_committed_traces": ["nvidia/nemotron-3.5-super-vl-120b-a12b"]
     }
   },
-  "unified_view": "TODO(A): record USL or schemastore view once chosen (AGENTS.md §5.1)",
   "data": {
-    "real": "data.gov.my pharmaceutical registers (CC BY 4.0) + NPRA recall notice snapshot",
-    "synthetic": "inventory, POS, supplier deliveries (scripts/generate_synthetic.py --seed 42)"
-  }
+    "real": "data.gov.my pharmaceutical registers (CC BY 4.0); NPRA product recall notices snapshot (Jan 2023 - Aug 2026); NPRA DRGD Appendix 34 recall guideline",
+    "synthetic": "inventory, stock transfers, POS sales, supplier deliveries (scripts/generate_synthetic.py; seeds 42 sample, 7 tuning, 99 hold-out)"
+  },
+  "evaluation": "scripts/evaluate.py; hold-out seed 99: 31/31 exposures found, precision 0.91, 0 decoys flagged (24 Oct)"
 }

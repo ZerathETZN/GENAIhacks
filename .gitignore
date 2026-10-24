@@ -28,3 +28,6 @@ venv/
 .idea/
 .DS_Store
 Thumbs.db
+
+# full downloads and scraped pages (snapshots live in data/sample/)
+data/raw/

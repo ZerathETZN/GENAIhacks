@@ -1,0 +1,31 @@
+# Recall degree -> severity and required action. Source: data/docs/README.md (DRGD App. 34, fetched 23 Oct).
+# rank_by: sold = units sold to customers (safety recalls); stock = stock on hand (administrative).
+# Level (App. 34 s4.4) is applied in code: A = customers must be reached (contact line shown),
+# B = points of sale, C = distributors only (shelf stock is not in scope: severity drops one tier).
+degree-I:
+  severity: high
+  rank_by: sold
+  ref: "DRGD App. 34 s4.3"
+  action: "Stop selling the batch within 24 h and segregate it in a secured area; purchasers must be notified within 24 h."
+degree-II:
+  severity: medium
+  rank_by: sold
+  ref: "DRGD App. 34 s4.3"
+  action: "Stop selling the batch within 72 h and segregate it in a secured area; purchasers must be notified within 48 h."
+degree-III:
+  severity: low
+  rank_by: sold
+  ref: "DRGD App. 34 s4.3"
+  action: "Stop selling the batch within 30 days and segregate it in a secured area; purchasers must be notified within 72 h."
+# Most real notices: "voluntary recall", no degree. The guideline has no rule for this: our ASSUMPTION is Degree II urgency.
+voluntary-no-degree:
+  severity: medium
+  rank_by: sold
+  ref: "assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3)"
+  action: "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope."
+# Registration cancelled / no degree, no batch and no level: not a safety recall.
+administrative:
+  severity: low
+  rank_by: stock
+  ref: "assumption (registration cancelled; not a quality recall)"
+  action: "Stop reordering, segregate remaining stock and return it to the supplier."

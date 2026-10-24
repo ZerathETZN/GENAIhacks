@@ -3,12 +3,17 @@
   "input": {
     "mode": "recall_alert",
     "recall": {
-      "product_name": "PLACEHOLDER - regenerate with scripts/make_examples.py",
-      "reg_no": "MAL00000000X",
-      "batches": ["PLACEHOLDER-3"],
-      "date": "2026-10-01",
-      "degree_level": "II"
+      "product_name": "Apalin 250mg Injection (2ml Amp)",
+      "reg_no": "MAL19984033AZ",
+      "batches": [
+        "242837T"
+      ],
+      "date": "2026-05-14",
+      "degree_level": "I"
     }
   },
-  "options": { "sample_mode": true, "max_critic_rounds": 2 }
+  "options": {
+    "sample_mode": true,
+    "max_critic_rounds": 2
+  }
 }

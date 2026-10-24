@@ -1,0 +1,68 @@
+{
+  "recalls": 6,
+  "adapters": [
+    "duckdb"
+  ],
+  "expected": 31,
+  "found": 31,
+  "missed": [],
+  "extra": [
+    [
+      "NPRA-5f0a102b8d",
+      "OUT-02",
+      "5037253"
+    ],
+    [
+      "NPRA-5f0a102b8d",
+      "OUT-03",
+      "5037253"
+    ],
+    [
+      "NPRA-5f0a102b8d",
+      "OUT-06",
+      "5037253"
+    ]
+  ],
+  "precision": 0.912,
+  "recall": 1.0,
+  "quantities_correct": 31,
+  "status_correct": 29,
+  "qty_mismatches": [],
+  "status_mismatches": [
+    [
+      [
+        "NPRA-564fb14f2e",
+        "OUT-03",
+        "5036723"
+      ],
+      "needs_review",
+      "confirmed",
+      [
+        "batch_format",
+        "missing_reg_no",
+        "name_variant",
+        "sale_after_recall",
+        "unlicensed_supplier"
+      ]
+    ],
+    [
+      [
+        "NPRA-97eaee16c3",
+        "OUT-03",
+        "30724003"
+      ],
+      "needs_review",
+      "confirmed",
+      [
+        "batch_format",
+        "name_variant",
+        "sale_after_recall"
+      ]
+    ]
+  ],
+  "decoy_false_positives": [],
+  "unassigned_expected": 1,
+  "unassigned_reported": 1,
+  "errors": [],
+  "unkeyed_recalls": []
+}

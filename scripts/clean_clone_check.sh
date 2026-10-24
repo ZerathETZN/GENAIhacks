@@ -32,7 +32,7 @@ if env -i PATH="$PATH" HOME="$HOME" SAMPLE_MODE=true .venv/bin/python run.py --i
   pass "sample-mode run with empty environment"; else fail "sample-mode run (see out.json)"; fi
 
 if [ "${SKIP_DOCKER:-0}" != "1" ]; then
-  docker compose --profile sample build --quiet && pass "docker build (sample profile)" || fail "docker build"
+  docker compose --profile sample build --quiet app-sample ui-sample && pass "docker build (sample profile)" || fail "docker build"
   docker compose --profile sample up -d app-sample >/dev/null
   ok=0; for _ in $(seq 1 30); do curl -fs localhost:${PORT:-8000}/health >/dev/null && ok=1 && break; sleep 2; done
   [ "$ok" = 1 ] && pass "container /health" || fail "container /health"

@@ -1,0 +1,2 @@
+{"field":"batch","alias":"s036723","canonical":"5036723","verdict":"same","decided_by":"kk","decided_at":"2026-10-24T03:46:00Z","run_id":"demo-cold","note":"POS typo: letter s for digit 5; outlet only received batch 5036723"}
+{"field":"batch","alias":"5o36723","canonical":"5036723","verdict":"same","decided_by":"kk","decided_at":"2026-10-24T03:46:00Z","run_id":"demo-cold","note":"POS typo: letter o for zero; outlet holds batch 5036723"}

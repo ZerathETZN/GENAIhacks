@@ -9,7 +9,7 @@ import json
 import os
 import sys
 import uuid
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 import httpx
@@ -175,7 +175,8 @@ m[5].metric("Run time", f"{result.get('execution_time_seconds', 0):.1f}s")
 st.caption(f"run_id `{result.get('run_id')}` · data via **{result.get('adapter') or '-'}** · "
            f"models via **{', '.join(result.get('providers_used') or []) or '-'}**")
 
-tab_actions, tab_detail, tab_trace, tab_raw = st.tabs(["Action list", "Evidence", "Agent trace", "Raw JSON"])
+tab_actions, tab_detail, tab_review, tab_trace, tab_raw = st.tabs(
+    ["Action list", "Evidence", "Pharmacist review", "Agent trace", "Raw JSON"])
 
 with tab_actions:
     if exposures:
@@ -186,8 +187,11 @@ with tab_actions:
     else:
         st.success("No exposed outlets found for this input.")
     if out.get("unresolved_conflicts"):
-        st.subheader("Unresolved conflicts")
-        st.dataframe(pd.DataFrame(out["unresolved_conflicts"]), hide_index=True, use_container_width=True)
+        st.subheader(f"Needs a pharmacist ({len(out['unresolved_conflicts'])})")
+        rows = [{"Recall": c.get("recall_id") or "", "Outlet": c.get("outlet_id") or "", "Batch": c.get("batch") or "",
+                 "Why": "; ".join(dict.fromkeys(c.get("reasons") or ([c["error"]] if c.get("error") else []))),
+                 "Open questions": len(c.get("doubts") or [])} for c in out["unresolved_conflicts"]]
+        st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
 
 with tab_detail:
     for rank, e in enumerate(h.rank_exposures(exposures), start=1):
@@ -208,6 +212,39 @@ with tab_detail:
                 st.markdown("**Evidence (source system → record)**")
                 st.dataframe(pd.DataFrame(e["evidence"]), hide_index=True, use_container_width=True)
 
+with tab_review:
+    items = h.review_items(out.get("unresolved_conflicts", []))
+    st.markdown("The agents could not settle these spellings on their own. Answer them **between runs**: download the "
+                "lines, append them to `data/feedback/decisions.jsonl`, and run again. H-MEM learns every `same` "
+                "verdict, so the next run escalates fewer items. Nothing here changes the current run.")
+    if not items:
+        st.success("No open questions in this run.")
+    else:
+        who = st.text_input("Your name or handle (decided_by)", key="decided_by")
+        lines = []
+        for i, d in enumerate(items):
+            c1, c2, c3 = st.columns([3, 2, 3])
+            c1.markdown(f"**{d['field']}** `{d['alias']}` vs `{d['canonical']}`  \n{d.get('outlet_id') or ''} · "
+                        f"{d.get('record_ref') or ''}")
+            v = c2.radio("Verdict", ["skip", "same", "different"], key=f"v{i}", horizontal=True, label_visibility="collapsed")
+            note = c3.text_input("Note", key=f"n{i}", label_visibility="collapsed", placeholder="why (optional)")
+            if v != "skip":
+                now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+                lines.append(h.verdict_line(d, v, who.strip(), now, result.get("run_id", ""), note.strip()))
+        if lines and not who.strip():
+            st.warning("Add your name first: every verdict must name the person who made it.")
+        elif lines:
+            try:
+                from app.schemas import HumanVerdict
+                for ln in lines:
+                    HumanVerdict.model_validate(ln)
+                body = "".join(json.dumps(ln, ensure_ascii=False) + "\n" for ln in lines)
+                st.code(body, language="json")
+                st.download_button(f"Download {len(lines)} verdict line(s)", body, file_name="decisions-new.jsonl",
+                                   mime="application/x-ndjson")
+            except (ImportError, ValueError) as exc:
+                st.error(f"Verdict does not match the decisions.jsonl format: {exc}")
+
 with tab_trace:
     try:
         events = api_get(f"/runs/{result['run_id']}/trace")
@@ -217,12 +254,13 @@ with tab_trace:
         st.info("No trace events recorded for this run.")
     else:
         t = h.trace_summary(events)
+        st.markdown("**Pipeline:** " + " → ".join(t["agents"]))
         k = st.columns(5)
         k[0].metric("Trace events", t["events"])
         k[1].metric("Agent handoffs", t["handoffs"])
-        k[2].metric("Critic revisions", t["critic_revisions"])
-        k[3].metric("Escalated to review", t["needs_review"])
-        k[4].metric("Agents", len(t["agents"]))
+        k[2].metric("Critic checks", t["critic_checks"])
+        k[3].metric("Critic rejections", t["critic_revisions"])
+        k[4].metric("Escalated to review", t["needs_review"])
         st.caption("Sponsor calls: " + (", ".join(f"{k_}×{v}" for k_, v in t["sponsor_calls"].items()) or "none")
                    + " · served by: " + (", ".join(t["served_by"]) or "-")
                    + (" · fallbacks: " + ", ".join(t["fallbacks"]) if t["fallbacks"] else ""))

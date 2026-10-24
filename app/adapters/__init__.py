@@ -1,3 +1,3 @@
-from app.adapters.data_adapter import AdapterError, DataAdapter, Row
+from app.adapters.data_adapter import AdapterError, Catalogue, CatalogueTable, DataAdapter, Row
 
-__all__ = ["AdapterError", "DataAdapter", "Row"]
+__all__ = ["AdapterError", "Catalogue", "CatalogueTable", "DataAdapter", "Row"]

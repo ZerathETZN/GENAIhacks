@@ -1,0 +1,66 @@
+[
+  {
+    "recall_id": "NPRA-2bd56eb8cd",
+    "product_name": "Axcel Mometasone 0.05%w/w Nasal Spray",
+    "reg_no": "MAL14025010AZ",
+    "batches": [
+      "B2509050",
+      "B2509050A",
+      "B2509064A"
+    ],
+    "date": "2026-04-10",
+    "degree_level": "consumer"
+  },
+  {
+    "recall_id": "NPRA-e389994424",
+    "product_name": "Doxycillin Tablet 100mg",
+    "reg_no": "MAL19860580AZ",
+    "batches": [
+      "2403300",
+      "2403301",
+      "2405293"
+    ],
+    "date": "2026-02-19",
+    "degree_level": "sales"
+  },
+  {
+    "recall_id": "NPRA-2dd68f59bb",
+    "product_name": "Apalin 250mg Injection (2ml Amp)",
+    "reg_no": "MAL19984033AZ",
+    "batches": [
+      "242837T"
+    ],
+    "date": "2026-05-14",
+    "degree_level": "I"
+  },
+  {
+    "recall_id": "NPRA-97d4216090",
+    "product_name": "Pro-Stisol Waist & Body Tonic Tablet",
+    "reg_no": "MAL16100054T",
+    "batches": [
+      "013/2412 T22-004"
+    ],
+    "date": "2026-03-13",
+    "degree_level": "III"
+  },
+  {
+    "recall_id": "NPRA-2639707558",
+    "product_name": "NutrinLife Man Pro Capsule",
+    "reg_no": "MAL19036043NCR",
+    "batches": [
+      "H09823310"
+    ],
+    "date": "2026-06-19",
+    "degree_level": "sales"
+  },
+  {
+    "recall_id": "NPRA-4a0ffa7a60",
+    "product_name": "TSART 40 (Telmisartan Tablets USP 40mg)",
+    "reg_no": "MAL19056110AZ",
+    "batches": [
+      "25142819"
+    ],
+    "date": "2026-08-04",
+    "degree_level": "sub-distributor (wholesaler)"
+  }
+]

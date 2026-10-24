@@ -2,6 +2,8 @@
 
 > **Context for coding agents.** Read this file fully before writing code.
 > - If anything here conflicts with a direct instruction from a teammate, follow the teammate and update this file in the same commit.
+> - Version 2.3, 24 Oct 2026. `Exposure.recall_id` and `unresolved_conflicts[].doubts` added to the result contract (§7.2, from B's `daily_scan`); `scripts/evaluate.py` and the seed-99 hold-out set (§4.2, §9); USL live as the semantic layer under the view (§5.1).
+> - Version 2.2, 23 Oct 2026. Agreed the `product_exposure_v` column contract with B (§7.4), `?` parameter handling (§5.1), Critic reads raw tables, and data findings from the real regulator files (§4.1, §4.2).
 > - Version 2, 21 Oct 2026. Supersedes v1: the provider is now Nightshift-first, Zetaris is reached over REST, regulator data comes from data.gov.my open data, and `metadata.json` is added.
 
 ---
@@ -66,8 +68,8 @@ It reconciles **real public regulator data** against the chain's **fragmented in
 trigger (recall_alert | daily_scan)
    │
    ▼
-PlannerAgent ────────── DISCOVERS sources via Zetaris catalogue (SHOW DATASOURCES / SHOW LIGHTNING DATABASES /
-   │                    DESCRIBE DATASOURCE TABLE) → picks tables with batch-, MAL- or reg_no-like columns → query plan
+PlannerAgent ────────── DISCOVERS sources via adapter.catalogue() (Zetaris: SHOW DATASOURCES / SHOW LIGHTNING DATABASES /
+   │                    SHOW TABLES / DESCRIBE; DuckDB: information_schema) → picks tables with batch-, MAL- or reg_no-like columns → query plan
    ▼
 RetrieverAgent ──────── parameterised queries via DataAdapter (Zetaris REST live / DuckDB sample)
    │                    prefers the Zetaris unified view `recallguard.product_exposure_v`
@@ -124,9 +126,14 @@ All databases run as **containers on the Zetaris Docker network `zetaris_default
 - plus the approved products, importers and wholesalers datasets.
 
 The script then:
-- writes small dated snapshots to `data/sample/regulator/` (committed, for sample mode)
-- loads them into `rg-regulator`
-- records the source URL, licence and fetch date in `data/README.md`
+- keeps the full downloads in `data/raw/<name>_<date>.parquet` (gitignored)
+- writes snapshots to `data/sample/regulator/<name>.parquet` (committed, for sample mode). `pharmaceutical_products` (28k rows) is cut to a seeded 2,000-row subset; the other three are kept whole.
+- writes `data/sample/regulator/manifest.json` (URL, fetch date, row counts, sha256); licence and caveat are in `data/README.md`
+- does **not** load Postgres; `load_postgres.py` does that.
+
+**What the real files do and don't contain (verified 22 Oct):**
+- `reg_no` is present in all product files. **There are no batch numbers anywhere on data.gov.my.** Real batches come only from the NPRA recall notices, so `scrape_npra.py` is required, not optional.
+- `pharmaceutical_products_cancelled` has **no cancellation date**. Its `date_end` is the registration expiry and can be in the future. Never treat `date_end` as the cancellation date.
 
 **Why not register the Parquet directly in Zetaris?** Zetaris file tables read `s3a://` paths. A browser or download URL is not a valid `PATH`, and Zetaris cannot read files on a laptop. Loading the data into Postgres keeps it federated and reproducible.
 
@@ -145,11 +152,12 @@ The script then:
   - name variants and typos (Malay vs English)
   - missing MAL number
   - delivered but missing from inventory
-  - sale after the recall or cancellation date
+  - sale after the recall or cancellation date (the recall date comes from NPRA; for cancelled products with no NPRA notice, use a synthetic cancellation date and label it synthetic)
   - sale from an outlet showing zero stock
   - one-sided transfers
   - delivery from an unlicensed supplier
 - **Decoys:** same product, non-affected batch. These must NOT be flagged.
+- **Tuning vs scoring:** tune matching thresholds on a seed other than 42. Seed 42 is what `evaluate.py` scores, so tuning on it inflates the results.
 
 ---
 
@@ -166,7 +174,7 @@ The script then:
 | Headers | `Authorization: Bearer ${ZETARIS_API_KEY}`, `X-Org-ID: ${ZETARIS_ORG_ID}` (numeric, from Management → Organisation), `X-Request-ID: <uuid4 per request>` |
 | Body | `{"queryId": "<uuid4>", "sql": "...", "source": "SqlEditor", "limit": N}` |
 | Response (verified 21 Oct) | `{"headers": ["one"], "data": [["1"]], "total": 1, "timeUsed": 382}`. Rows are **lists, not dicts**: zip each row with `headers`. All values are **strings**: cast them. |
-| Errors | `401` → new API key (Management → API Tokens). `400 Not Allowed` → wrong org ID. `400` on a valid request → non-UUID `X-Request-ID` or `queryId`. |
+| Errors | `401` → new API key (Management → API Tokens). `400 Not Allowed` → wrong org ID **or** an invalid/expired API key (`docker logs zetaris-api-1` says `Org id mismatch` or `Api token is not allowed`). A `ZETARIS_*` variable left in the shell overrides `.env`. `400` on a valid request → non-UUID `X-Request-ID` or `queryId`. |
 
 **Lightning SQL rules:**
 - One statement per call.
@@ -174,6 +182,11 @@ The script then:
 - It's the Spark SQL dialect.
 - **REST returns values as strings** (decimals may use exponent format). Cast in the adapter before comparing.
 - After any schema change in a source DB, run `REFRESH DATASOURCE TABLES FROM <datasource>`. Zetaris caches column metadata.
+- **Verified on our instance (23 Oct), write agent SQL accordingly:**
+  - Use `CAST(x AS STRING)`, never `CAST(x AS VARCHAR)`: Zetaris rejects `VARCHAR` with a parse error (`expecting 'METADATA'`). DuckDB accepts `STRING` too. To compare dates, prefer `CAST(col AS DATE) >= CAST(? AS DATE)`.
+  - **Bug: `GROUP BY` + a `WHERE` that combines an `OR` group with a function such as `UPPER(REPLACE(...))` silently drops the whole filter** and aggregates every row. Each part alone is fine, and plain `SUM`/`COUNT` without `GROUP BY` is fine. Workaround: select the filtered rows and group in Python.
+  - Registered names match §7.4 exactly (`inventory_pg.stock`, `pos_pg.sales`, `supplier_rest.deliveries`, `regulator_pg.*`). The REST table returns `qty` as `bigint` and dates as `string`; the view casts them.
+  - Schemastore view: `CREATE SCHEMASTORE VIEW <name> WITH CONTAINER recallguard AS SELECT ...`, queried as `recallguard.<name>`, dropped with `DROP SCHEMASTORE VIEW <name> FROM recallguard`. Re-creating an existing view fails, so `zetaris_register.py` drops first.
 
 **Registration** (`scripts/zetaris_register.py`, idempotent, reads credentials from env, never hardcodes them):
 - `CREATE DATASOURCE inventory_pg|pos_pg|regulator_pg ... OPTIONS (jdbcdriver "org.postgresql.Driver", jdbcurl "jdbc:postgresql://rg-<name>:5432/<db>", username, password, fetchsize "1000")`
@@ -184,9 +197,17 @@ The script then:
 **Unified view (core, not a stretch goal):** `recallguard.product_exposure_v`.
 - It joins inventory + POS + supplier + regulator.
 - It does batch and registration-number normalisation **in Zetaris SQL** (upper-casing, stripping hyphens and spaces).
-- Agents query this view first and drop to raw tables only when the Critic needs a targeted check.
+- Agents query this view first. Its columns are fixed in §7.4.
+- **The Critic does not verify against this view.** It runs its own targeted query on the raw source tables (§7.4), so its check is independent of what the Reconciler read.
 - **Preferred:** Unified Semantic Layer (`COMPILE USL` → `ACTIVATE USL TABLE`). USL constraints: scalar column types only, the namespace must exist under `lightning.metastore`, and multi-table `COMPILE USL` is sent intact.
 - **Fallback, if USL blocks us for more than 2 hours:** `CREATE SCHEMASTORE VIEW`. It is still Zetaris-side and still load-bearing. Record which one we used in `metadata.json`.
+- **Status 24 Oct: USL is live and is the semantic layer.** `zetaris_register.py` builds it following the [Zetaris USL HOWTO](https://zetaris.github.io/getting-started/open_data/usl/HOWTO.html):
+  1. `CREATE NAMESPACE IF NOT EXISTS lightning.metastore` then `... lightning.metastore.recallguard`
+  2. `COMPILE USL IF NOT EXISTS recallguard_usl DEPLOY NAMESPACE lightning.metastore.recallguard DDL CREATE TABLE product_exposure (...)`
+  3. `ACTIVATE USL TABLE lightning.metastore.recallguard.recallguard_usl.product_exposure AS <the four-source union>`
+  4. `recallguard.product_exposure_v` = a schemastore view that renames `source_system` back to `source` over the USL table. **Agents still query only the view: same name, same 12 columns.**
+- USL facts verified on our build: works over JDBC datasource and REST tables; activation is a **live query, not a copy** (a row inserted in Postgres appears at once, also after `load_postgres.py` recreates the tables); `source` is a reserved word in USL DDL (backticks are stored literally, hence `source_system`); columns must be nullable to match a `SELECT`; re-running compile (`IF NOT EXISTS`) and activate is safe; `DROP NAMESPACE ... CASCADE` returns OK but did not remove a USL model (teardown unconfirmed, as the HOWTO says).
+- Results through USL: 595 rows, identical to the direct view; `evaluate.py --data-dir data/sample --live` 22/22. If USL ever fails, the script falls back to the direct schemastore view and says so (`--no-usl` forces that).
 
 **Adapters:**
 - `app/adapters/data_adapter.py`: `DataAdapter.query(sql, params=None, limit=1000) -> list[dict]`, plus `name`.
@@ -194,6 +215,11 @@ The script then:
 - `app/adapters/duckdb_adapter.py`: the sample-mode twin over `data/sample/`, exposing the **same logical table and view names**.
   - Keep agent SQL plain ANSI.
   - Put dialect differences (e.g. string functions) in small helpers, not scattered through agents.
+- **Catalogue discovery:** `adapter.catalogue()` returns the same structure from both adapters: `{adapter, statements, tables: [{source, kind: datasource|lightning_db|view, table, columns: [{name, type}]}], skipped}`. Zetaris runs `SHOW DATASOURCES`, `SHOW LIGHTNING DATABASES`, `SHOW TABLES IN <source>` and `DESCRIBE <table>` (built-in sample DBs `NY_TAXI`/`TPCDS_DB` are listed under `skipped`); DuckDB reads `information_schema`. The Planner calls this, never raw `SHOW` SQL, and logs `statements` in its trace event.
+- **Parameters:** agents write positional `?` placeholders and pass values in `params`.
+  - DuckDB binds them natively.
+  - Zetaris REST has no parameter support, so `zetaris_adapter.py` substitutes them in **one tested function**: strings are single-quoted with `'` and `\` escaped (Spark SQL treats backslash as an escape); `int`/`float`/`Decimal` are validated and inlined; `date`/`datetime` become `DATE '...'`/`TIMESTAMP '...'`; `None` becomes `NULL`; any other type raises. The number of `?` must equal `len(params)`. `?` inside string literals in the SQL text is not a placeholder.
+  - Agents never build SQL by string formatting values themselves.
 - **Selection:** `SAMPLE_MODE=true` or missing Zetaris env → DuckDB. On a Zetaris failure at runtime → DuckDB, logged as `adapter_fallback` with the reason.
 
 ### 5.2 Meterless (required): Nightshift provider + engines
@@ -326,12 +352,18 @@ Keep it accurate: update `models` to what traces actually show in `served_by`.
       "severity": "high|medium|low", "status": "confirmed|needs_review", "confidence": 0.87,
       "recommended_action": "...", "rule_ref": "actions.yaml#degree-II",
       "critic_check": { "query": "...", "expected": 12, "observed": 12, "passed": true },
-      "evidence": [ { "source": "inventory|pos|supplier|regulator", "record_id": "...", "field": "batch", "value": "NSC-24067" } ] } ],
-    "unresolved_conflicts": [] },
+      "evidence": [ { "source": "inventory|pos|supplier|regulator", "record_id": "...", "field": "batch", "value": "NSC-24067" } ],
+      "recall_id": "NPRA-..." } ],
+    "unresolved_conflicts": [ { "outlet_id": "OUT-07", "batch": "...", "reasons": ["..."],
+                                "doubts": [ { "field": "batch", "alias": "5o36723", "canonical": "5036723", "record_ref": "pos:SAL-000044" } ],
+                                "recall_id": "NPRA-..." } ] },
   "agents": [ { "name": "PlannerAgent", "role": "..." } ],
-  "adapter": "zetaris|duckdb_fallback", "providers_used": ["meterless"],
+  "adapter": "zetaris|duckdb|duckdb_fallback", "providers_used": ["meterless", "heuristic_fallback"],
   "trace_id": "trace-demo-001", "log_file": "logs/trace-demo-001.jsonl", "execution_time_seconds": 0.0 }
 ```
+- `recall_id` (optional, added 24 Oct by B): set by `daily_scan`, which merges several recalls into one list; `null` for a single `recall_alert`. UIs must group or label scan rows by it.
+- `unresolved_conflicts[]`: one entry per `needs_review` group and for `UNASSIGNED` deliveries (never an exposure). `doubts[]` are the spellings a pharmacist can answer in `decisions.jsonl` (§7.5). A failed or skipped recall in a scan appears as `{recall_id, error}`.
+
 On failure, return `status: "error"` with `error.type`, `error.message` and `error.recoverable`. Never crash silently.
 
 ### 7.3 Trace event (JSONL in `logs/trace-<run_id>.jsonl`, echoed to stdout)
@@ -339,6 +371,57 @@ On failure, return `status: "error"` with `error.type`, `error.message` and `err
 {"timestamp":"...","run_id":"...","agent_name":"ConflictCriticAgent","action":"verify_query","input_summary":"...","output_summary":"...","target_agent":"ReconcilerAgent","provider":"meterless|nvidia_direct|heuristic_fallback|null","served_by":"<response.model or null>","sponsor_call":"zetaris|meterless.nightshift|meterless.world_model|meterless.hmem|null","confidence":0.79,"retry_count":0,"status":"needs_revision","duration_ms":0}
 ```
 Summaries are at most 200 characters. No secrets and no full documents in traces.
+
+### 7.4 Data contract: `recallguard.product_exposure_v` (agreed A ↔ B, 23 Oct)
+
+One row per internal record from inventory, POS or supplier. Identical names and types in Zetaris and DuckDB.
+
+| Column | Type | Meaning |
+|---|---|---|
+| `source` | text | `inventory`, `pos` or `supplier` |
+| `record_id` | text | primary key in the source system; with `source` it is the provenance key |
+| `outlet_id` | text | e.g. `OUT-03`; NULL only for a delivery not yet assigned to an outlet |
+| `product_name` | text | raw, as the source spells it |
+| `reg_no` | text | raw MAL number; NULL where the source has none (POS) |
+| `batch` | text | raw batch, as the source spells it |
+| `reg_no_norm` | text | upper-case, alphanumerics only |
+| `batch_norm` | text | upper-case, alphanumerics only |
+| `qty` | integer | units; stock = on hand, sale = sold, delivery = received, transfer = moved (negative at the sending outlet) |
+| `event_type` | text | `stock`, `sale`, `delivery` or `transfer` |
+| `event_date` | date | snapshot date for stock, otherwise the event date |
+| `customer_id` | text | hashed **synthetic** loyalty ID on `sale` rows, NULL otherwise |
+
+- Agents select these columns by name, never `SELECT *`, so adding columns later is not breaking. Renaming or removing one needs both A and B.
+- The view does not include regulator rows. Regulator data is read from `regulator_pg.*` tables directly.
+- **Raw tables for the Critic** (agreed A ↔ B, 23 Oct; `TODO(verify)` the exact names Zetaris gives them after `REGISTER DATASOURCE TABLES`, and DuckDB mirrors whatever Zetaris shows). No shared key across systems by design: link on `outlet_id` + normalised batch; POS has `sku` but no `reg_no`.
+
+| Table | Columns |
+|---|---|
+| `inventory_pg.stock` | `stock_id`, `outlet_id`, `product_name`, `reg_no` (NULL possible), `batch` (UPPERCASE), `qty_on_hand` int, `snapshot_date` date |
+| `inventory_pg.transfers` | `transfer_id` (shared by both legs), `leg` `out`/`in`, `outlet_id`, `counterparty_outlet_id`, `product_name`, `reg_no`, `batch`, `qty` int (positive), `transfer_date` date. A missing leg is a conflict (`needs_review`); transfers never change on-hand qty. |
+| `pos_pg.sales` | `sale_id`, `outlet_id`, `sku`, `product_name`, `batch` (lowercase), `qty` int, `sold_at` timestamp, `loyalty_id` (hashed synthetic, NULL for walk-ins) |
+| `supplier_rest.deliveries` | `delivery_id`, `supplier_name`, `supplier_licence_no` (NULL = not licensed), `outlet_id` (NULL = unassigned), `supplier_product_name`, `reg_no`, `batch` (hyphenated), `qty` int, `delivered_on` date |
+| `regulator_pg.npra_recalls` | see `data/README.md`; `batches` is `\|`-separated |
+| `regulator_pg.pharmaceutical_*` | the four data.gov.my files, columns as published |
+
+- **Adapter selection:** `app.adapters.factory.get_adapter(sample_mode=None, data_dir=None)`. `adapter.result_name` is the `RunResult.adapter` value; `adapter.fallback_reason` feeds the `adapter_fallback` trace event.
+- **Answer key** (`data/ground_truth/exposures.json`, read only by `evaluate.py`): `exposures[]` keyed by `recall_id` + `outlet_id` + `batch_norm`, with `on_hand_qty`, `sold_after_date_qty` (sales on or after the recall date), `distinct_customers`, `expected_status`, `conflicts[]`, `evidence[]` (`source`, `record_id`); `unassigned[]` (deliveries with no outlet, expected `needs_review`); `decoys[]` (records of a recalled product with a non-affected batch: flagging them is a false positive). `expected_status` is `needs_review` when the conflicts include `batch_typo`, `one_sided_transfer` or `delivered_not_in_inventory`.
+- **Tuning data:** `data/tuning/seed7/` has the same layout with its own `ground_truth/`. Point the DuckDB adapter at it with `data_dir` or `RG_DATA_DIR`.
+- **Hold-out data:** `data/holdout/seed99/` (created 24 Oct, after all tuning) is the honest score. **Never change code because of what it shows**; record findings instead. Seed 42 is no longer held out (two misses on it were fixed).
+
+---
+
+### 7.5 Human verdicts: `data/feedback/decisions.jsonl` (agreed 23 Oct)
+
+One JSON object per line, written by a person **between runs**, validated by `app.schemas.HumanVerdict` and `tests/test_decisions_file.py`. How-to: `data/feedback/README.md`.
+
+```json
+{"field": "batch", "alias": "5o34698", "canonical": "5034698", "verdict": "same", "decided_by": "ethan", "decided_at": "2026-10-24T10:00:00Z", "run_id": "demo-001", "note": "POS typo"}
+```
+
+- `field`: `batch` | `product_name` | `reg_no`. `verdict`: `same` | `different`.
+- H-MEM loads it with `source="human_verdict"` and learns **only `verdict == "same"`** lines as aliases.
+- The Critic still handles everything it can verify; this file covers only `needs_review` items from a real run (Rules 2 and 11).
 
 ---
 
@@ -380,7 +463,8 @@ python scripts/load_postgres.py
 python scripts/zetaris_register.py            # idempotent
 python run.py --input input_examples/example_1.json
 python run.py --serve
-python scripts/evaluate.py --run logs/trace-<id>.jsonl
+python scripts/evaluate.py --data-dir data/holdout/seed99           # honest score (add --live for Zetaris)
+python scripts/evaluate.py --result output_examples/<x>/result.json --recall-id NPRA-...   # score a saved run
 pytest -q
 SAMPLE_MODE=true python run.py --input input_examples/example_1.json    # must pass with an empty .env
 ```
@@ -405,7 +489,7 @@ SAMPLE_MODE=true python run.py --input input_examples/example_1.json    # must p
 
 **Open:**
 - Whether Nightshift on Windows requires an NVIDIA GPU for cloud-only lanes. This decides which teammate's machine runs live demos.
-- Whether `ACTIVATE USL TABLE` works over JDBC datasource tables on our instance. Test on day 2; fall back to a schemastore view.
+- USL: resolved 24 Oct, live over JDBC and REST sources (§5.1).
 
 ## 12. Schedule and cut list
 
@@ -421,7 +505,7 @@ SAMPLE_MODE=true python run.py --input input_examples/example_1.json    # must p
 1. Optional RAG.
 2. `daily_scan` mode.
 3. Live NPRA scraping (keep the committed snapshot).
-4. USL (keep the schemastore view).
+4. USL (`zetaris_register.py --no-usl` keeps the direct schemastore view).
 5. H-MEM and the cold/warm demo.
 
 **Never cut:**

@@ -81,6 +81,7 @@ class Exposure(BaseModel):
     rule_ref: str
     critic_check: CriticCheck | None = None
     evidence: list[Evidence] = Field(default_factory=list)
+    recall_id: str | None = None  # set by daily_scan, which merges several recalls into one list
 
 
 class RunOutput(BaseModel):
@@ -132,3 +133,22 @@ class TraceEvent(BaseModel):
     retry_count: int = 0
     status: str = "ok"
     duration_ms: int = 0
+
+
+# ---------- 7.5 human verdict (data/feedback/decisions.jsonl) ----------
+
+
+class HumanVerdict(BaseModel):
+    """One pharmacist decision, written between runs. `field`/`alias`/`canonical` are the
+    keys H-MEM's load_jsonl already reads; only verdict == "same" becomes an alias."""
+
+    model_config = {"extra": "forbid"}
+
+    field: Literal["batch", "product_name", "reg_no"]
+    alias: str = Field(min_length=1)  # the doubtful spelling, exactly as the source wrote it
+    canonical: str = Field(min_length=1)  # what it was compared against
+    verdict: Literal["same", "different"]
+    decided_by: str = Field(min_length=1)  # a real person's handle, e.g. "ethan"
+    decided_at: str  # ISO 8601 UTC
+    run_id: str  # the cold run whose needs_review item this answers
+    note: str = ""

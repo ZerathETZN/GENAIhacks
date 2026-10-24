@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from itertools import pairwise
 from typing import Any
 
 SEVERITY_ORDER = {"high": 0, "medium": 1, "low": 2}
@@ -10,23 +11,15 @@ SEVERITY_BADGE = {"high": "🔴 High", "medium": "🟠 Medium", "low": "🟢 Low
 STATUS_BADGE = {"confirmed": "✅ Confirmed", "needs_review": "🟡 Needs review"}
 REVISION_STATUSES = {"needs_revision", "rejected", "revise", "revision_requested"}
 DATA_CAVEAT = (
-    "Regulator data: data.gov.my / NPRA open data (CC BY 4.0). It should not be used as the basis for legal action. "
-    "Internal inventory, POS and supplier data in this demo is synthetic."
+    "Regulator data comes from data.gov.my (CC BY 4.0; it should not be used as the basis for legal action) and NPRA's "
+    "public recall notices. Internal inventory, POS and supplier data in this demo is synthetic."
 )
 
 
 def rank_exposures(exposures: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Severity first, then units already sold to customers, then stock still on hand."""
-    return sorted(
-        exposures,
-        key=lambda e: (
-            SEVERITY_ORDER.get(e.get("severity", "low"), 3),
-            -int(e.get("sold_after_date_qty") or 0),
-            -int(e.get("distinct_customers") or 0),
-            -int(e.get("on_hand_qty") or 0),
-            e.get("outlet_id", ""),
-        ),
-    )
+    """Keep the Reporter's ranking (rules table: units sold for safety recalls, stock on hand for administrative
+    ones). Only group by severity, which is a stable sort, so the order inside each tier is the agents' order."""
+    return sorted(exposures, key=lambda e: SEVERITY_ORDER.get(e.get("severity", "low"), 3))
 
 
 def action_rows(exposures: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -35,6 +28,7 @@ def action_rows(exposures: list[dict[str, Any]]) -> list[dict[str, Any]]:
         rows.append(
             {
                 "#": rank,
+                **({"Recall": e.get("recall_id")} if any(x.get("recall_id") for x in exposures) else {}),
                 "Severity": SEVERITY_BADGE.get(e.get("severity"), e.get("severity")),
                 "Status": STATUS_BADGE.get(e.get("status"), e.get("status")),
                 "Outlet": e.get("outlet_id"),
@@ -89,18 +83,56 @@ def trace_rows(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return rows
 
 
+def _is_critic_rejection(ev: dict[str, Any]) -> bool:
+    if "critic" not in (ev.get("agent_name") or "").lower():
+        return False
+    return (ev.get("status") or "") in REVISION_STATUSES or "passed=False" in (ev.get("output_summary") or "")
+
+
+def _is_escalation(ev: dict[str, Any]) -> bool:
+    return (ev.get("status") or "") == "needs_review" or "status=needs_review" in (ev.get("output_summary") or "")
+
+
+def pipeline(events: list[dict[str, Any]]) -> list[str]:
+    """Agents in the order they first acted, e.g. Planner -> Retriever -> Reconciler -> Critic -> Reporter."""
+    seen: list[str] = []
+    for ev in events:
+        a = ev.get("agent_name")
+        if a and a != "Orchestrator" and a not in seen:
+            seen.append(a)
+    return seen
+
+
 def trace_summary(events: list[dict[str, Any]]) -> dict[str, Any]:
-    """Evidence judges look for: handoffs, critic revisions, escalations, sponsor calls, models."""
+    """Evidence judges look for: handoffs, Critic checks and rejections, escalations, sponsor calls, models."""
+    agents_seq = [e.get("agent_name") for e in events if e.get("agent_name") and e.get("agent_name") != "Orchestrator"]
+    explicit = sum(1 for e in events if e.get("target_agent"))
+    transitions = sum(1 for a, b in pairwise(agents_seq) if a != b)
     return {
         "events": len(events),
-        "agents": sorted({e.get("agent_name") for e in events if e.get("agent_name")}),
-        "handoffs": sum(1 for e in events if e.get("target_agent")),
-        "critic_revisions": sum(
-            1 for e in events
-            if "critic" in (e.get("agent_name") or "").lower() and (e.get("status") or "") in REVISION_STATUSES
-        ),
-        "needs_review": sum(1 for e in events if (e.get("status") or "") == "needs_review"),
+        "agents": pipeline(events),
+        "handoffs": max(explicit, transitions),
+        "critic_checks": sum(1 for e in events if "critic" in (e.get("agent_name") or "").lower()),
+        "critic_revisions": sum(1 for e in events if _is_critic_rejection(e)),
+        "needs_review": sum(1 for e in events if _is_escalation(e)),
         "sponsor_calls": dict(Counter(e.get("sponsor_call") for e in events if e.get("sponsor_call"))),
         "served_by": sorted({e.get("served_by") for e in events if e.get("served_by")}),
-        "fallbacks": sorted({e.get("action") for e in events if "fallback" in (e.get("action") or "")}),
+        "fallbacks": sorted({e.get("action") for e in events
+                             if "fallback" in (e.get("action") or "") or (e.get("status") or "") == "degraded"}),
     }
+
+
+def review_items(conflicts: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Flatten unresolved_conflicts[].doubts into questions a pharmacist can answer (AGENTS.md §7.5)."""
+    items = []
+    for c in conflicts:
+        for d in c.get("doubts") or []:
+            items.append({**d, "outlet_id": c.get("outlet_id"), "recall_id": c.get("recall_id")})
+    return items
+
+
+def verdict_line(doubt: dict[str, Any], verdict: str, decided_by: str, decided_at: str, run_id: str,
+                 note: str = "") -> dict[str, Any]:
+    """One decisions.jsonl line in the HumanVerdict shape. Written by a person between runs, never by an agent."""
+    return {"field": doubt["field"], "alias": doubt["alias"], "canonical": doubt["canonical"], "verdict": verdict,
+            "decided_by": decided_by, "decided_at": decided_at, "run_id": run_id, "note": note}
