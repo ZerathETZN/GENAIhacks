@@ -59,7 +59,8 @@ services:
     restart: unless-stopped
     ports: ["8001:8000"]
     volumes:
-      - ./data/sample:/data/sample:ro
+      # Serve the same dataset load_postgres.py loaded: RG_DATA_DIR=data/holdout/seed99 docker compose up -d rg-supplier-api
+      - ./${RG_DATA_DIR:-data/sample}:/data/sample:ro
     networks: [zetaris]
 
   app:

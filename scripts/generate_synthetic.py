@@ -133,9 +133,16 @@ class Gen:
     def build(self, recalls: list[dict], clean: list[dict], suppliers: list[dict]) -> None:
         licensed = suppliers
         products = []
+        # Two NPRA notices can cover the same product (same reg_no) with overlapping batch lists,
+        # e.g. Glumet XR 750mg: one notice lists 5031724, another lists 16 batches including it.
+        # A stocked batch is affected by EVERY chosen notice that lists it, and decoys must avoid
+        # all of them.
+        self.by_reg: dict[str, list[dict]] = defaultdict(list)
+        for r in recalls:
+            self.by_reg[r["reg_no"]].append({**r, "norm_batches": {norm(b) for b in r["batches"]}})
         for r in recalls:
             affected = r["batches"][:2]
-            avoid = {norm(b) for b in r["batches"]}
+            avoid = set().union(*(x["norm_batches"] for x in self.by_reg[r["reg_no"]]))
             decoys = [self.fake_batch(affected[0], avoid) for _ in range(self.rng.choice([1, 2]))]
             products.append({**r, "kind": "recalled", "affected": affected, "decoys": decoys,
                              "sku": f"SKU-{self.rng.randrange(10000, 99999)}"})
@@ -240,24 +247,26 @@ class Gen:
 
         if p["kind"] != "recalled":
             return
-        if not is_affected:
+        affecting = [r for r in self.by_reg[p["reg_no"]] if norm(batch) in r["norm_batches"]]
+        if not affecting:
             self.decoys += [{"outlet_id": outlet, "reg_no": p["reg_no"], "batch_norm": norm(batch),
                              "source": e["source"], "record_id": e["record_id"], "reason": "non_affected_batch"}
                             for e in evidence]
             return
 
-        sold_after = [r for r in sales_rows if recall_date and r["sold_at"][:10] >= recall_date.isoformat()]
-        if sold_after:
-            conflicts.add("sale_after_recall")
-        self.truth[(p["recall_id"], outlet, norm(batch))] = {
-            "recall_id": p["recall_id"], "outlet_id": outlet, "reg_no": p["reg_no"], "batch_norm": norm(batch),
-            "on_hand_qty": on_hand,
-            "sold_after_date_qty": sum(r["qty"] for r in sold_after),
-            "distinct_customers": len({r["loyalty_id"] for r in sold_after if r["loyalty_id"]}),
-            "expected_status": "needs_review" if conflicts & REVIEW_CONFLICTS else "confirmed",
-            "conflicts": sorted(conflicts),
-            "evidence": evidence,
-        }
+        for r in affecting:  # one answer per notice that lists this batch, each with its own recall date
+            r_date = r["recall_date"]
+            sold_after = [s for s in sales_rows if s["sold_at"][:10] >= r_date]
+            r_conflicts = (conflicts - {"sale_after_recall"}) | ({"sale_after_recall"} if sold_after else set())
+            self.truth[(r["recall_id"], outlet, norm(batch))] = {
+                "recall_id": r["recall_id"], "outlet_id": outlet, "reg_no": p["reg_no"], "batch_norm": norm(batch),
+                "on_hand_qty": on_hand,
+                "sold_after_date_qty": sum(s["qty"] for s in sold_after),
+                "distinct_customers": len({s["loyalty_id"] for s in sold_after if s["loyalty_id"]}),
+                "expected_status": "needs_review" if r_conflicts & REVIEW_CONFLICTS else "confirmed",
+                "conflicts": sorted(r_conflicts),
+                "evidence": evidence,
+            }
 
     def unassigned_delivery(self, p: dict, licensed: list[dict]) -> None:
         sup = self.rng.choice(licensed)
