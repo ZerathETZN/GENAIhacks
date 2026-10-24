@@ -38,3 +38,51 @@ def test_second_run_reuses_hmem_from_the_first(tmp_path, monkeypatch):
     monkeypatch.setenv("LOG_DIR", str(tmp_path / "logs"))
     run(req(), FullAdapter(), str(tmp_path / "state"))
     run(req(), FullAdapter(), str(tmp_path / "state"))  # same state dir: must not crash on existing world/hmem files
+
+
+def test_daily_scan_merges_snapshot_recalls_for_stocked_products(tmp_path, monkeypatch):
+    from app.adapters.factory import get_adapter
+
+    monkeypatch.setenv("LOG_DIR", str(tmp_path / "logs"))
+    monkeypatch.setenv("DECISIONS_FILE", str(tmp_path / "none.jsonl"))
+    monkeypatch.setattr("app.orchestrator.SCAN_LIMIT", 3)
+    res = run(RunRequest(run_id="scan1", input=RunInput(mode="daily_scan"), options=RunOptions(sample_mode=True)),
+              get_adapter(sample_mode=True, data_dir="data/sample"), str(tmp_path / "state"))
+    out = res.output
+    assert out.exposures and all(e.recall_id for e in out.exposures)
+    assert len({e.recall_id for e in out.exposures}) == 3  # capped, newest first, each recall kept apart
+    sev = [e.severity for e in out.exposures]
+    assert sev == sorted(sev, key=["high", "medium", "low"].index)
+    assert out.summary.startswith("Daily scan: 3 snapshot recalls")
+    assert "daily_scan_select" in [json.loads(l)["action"] for l in open(res.log_file)]
+
+
+def _scan_request():
+    return RunRequest(run_id="scanx", input=RunInput(mode="daily_scan"), options=RunOptions(sample_mode=False))
+
+
+def test_scan_stops_calling_a_dead_model_after_two_failures(tmp_path, monkeypatch):
+    from app.adapters.factory import get_adapter
+    from app.llm import GenerationResult
+
+    calls = []
+    monkeypatch.setattr("app.orchestrator.generate", lambda *a, **k: (calls.append(1), GenerationResult(text="", provider="heuristic_fallback", served_by=None, latency_ms=0))[1])
+    monkeypatch.setenv("LOG_DIR", str(tmp_path / "logs"))
+    monkeypatch.setenv("DECISIONS_FILE", str(tmp_path / "none.jsonl"))
+    monkeypatch.setattr("app.orchestrator.SCAN_LIMIT", 9)
+    res = run(_scan_request(), get_adapter(sample_mode=True, data_dir="data/sample"), str(tmp_path / "state"))
+    assert len(calls) == 2 and res.status == "success" and res.output.exposures  # still a full answer, by rules
+    assert "model_unavailable" in [json.loads(l)["action"] for l in open(res.log_file)]
+
+
+def test_scan_reports_recalls_skipped_when_the_time_budget_is_used_up(tmp_path, monkeypatch):
+    from app.adapters.factory import get_adapter
+
+    monkeypatch.setenv("LOG_DIR", str(tmp_path / "logs"))
+    monkeypatch.setenv("DECISIONS_FILE", str(tmp_path / "none.jsonl"))
+    monkeypatch.setattr("app.orchestrator.SCAN_BUDGET_S", -1)
+    monkeypatch.setattr("app.orchestrator.SCAN_LIMIT", 3)
+    res = run(RunRequest(run_id="scanb", input=RunInput(mode="daily_scan"), options=RunOptions(sample_mode=True)),
+              get_adapter(sample_mode=True, data_dir="data/sample"), str(tmp_path / "state"))
+    assert res.output.exposures == [] and len(res.output.unresolved_conflicts) == 3
+    assert all("skipped" in c["error"] for c in res.output.unresolved_conflicts)

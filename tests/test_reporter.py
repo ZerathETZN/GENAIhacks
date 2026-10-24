@@ -40,3 +40,9 @@ def test_level_c_lowers_severity_and_level_b_skips_customer_contact():
     assert c.severity == "medium" and "Level C" in c.recommended_action
     b = ReporterAgent("r1", no_model).report(Recall(**R, batches=["B1"], degree_level="sales"), drafts).exposures[0]
     assert b.rule_ref == "actions.yaml#voluntary-no-degree" and "distinct loyalty" not in b.recommended_action
+
+
+def test_administrative_recall_lists_zero_stock_groups_as_conflicts_not_actions():
+    out = ReporterAgent("r1", no_model).report(Recall(**R), [d("O1", 0, 40), d("O2", 0, 0)])
+    assert [e.outlet_id for e in out.exposures] == ["O1"]
+    assert [(c["outlet_id"], c["reasons"]) for c in out.unresolved_conflicts] == [("O2", ["no stock on hand (sales records only)"])]

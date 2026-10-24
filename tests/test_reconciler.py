@@ -11,7 +11,8 @@ def rec(rid, batch="nsc24067", name="Paracetamol 500mg Tablet", reg_no="MAL12345
 
 
 def agent(generate=None, store=None, events=None):
-    kw = {"generate": generate} if generate else {}
+    # never the real generate(): a token in the environment (C's app loads .env) would call Nightshift from a unit test
+    kw = {"generate": generate or fake_generate()}
     emit = events.append if events is not None else (lambda e: None)
     return ReconcilerAgent(MemoryRetrievalService(store or MemoryStoreService()), "r1", emit=emit, **kw)
 

@@ -1,0 +1,3398 @@
+{
+  "run_id": "example-daily-scan",
+  "status": "success",
+  "output": {
+    "summary": "The daily scan found 5 snapshot recalls matching chain-stocked products, resulting in 26 outlet exposures (2 high). There are 289 units on hand, 155 units sold since each recall, and 21 items needing review.",
+    "disclaimer": "For pharmacist review. Not a compliance verdict.",
+    "exposures": [
+      {
+        "outlet_id": "OUT-05",
+        "product_name": "Apalin 250mg Injection (2ml Amp)",
+        "reg_no": "MAL19984033AZ",
+        "batch": "242837T",
+        "on_hand_qty": 34,
+        "sold_after_date_qty": 7,
+        "distinct_customers": 1,
+        "severity": "high",
+        "status": "confirmed",
+        "confidence": 0.8,
+        "recommended_action": "Stop selling the batch within 24 h and segregate it in a secured area; purchasers must be notified within 24 h. (DRGD App. 34 s4.3)",
+        "rule_ref": "actions.yaml#degree-I",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 34,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 1
+          },
+          "observed": {
+            "on_hand_qty": 34,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 1
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000019",
+            "field": "batch",
+            "value": "242837T"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000019",
+            "field": "product_name",
+            "value": "Apalin 250mg Injection (2ml Amp)"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000089",
+            "field": "batch",
+            "value": "242837t"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000089",
+            "field": "product_name",
+            "value": "apalin 250mg injection"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000090",
+            "field": "batch",
+            "value": "242837t"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000090",
+            "field": "product_name",
+            "value": "APALIN 250MG INJECTION"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000023",
+            "field": "batch",
+            "value": "242-837T"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000023",
+            "field": "product_name",
+            "value": "APALIN 250MG INJECTION (2ML AMP) (PACK 10X10)"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000091",
+            "field": "batch",
+            "value": "242837t"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000091",
+            "field": "product_name",
+            "value": "APALIN 250MG INJ"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000092",
+            "field": "batch",
+            "value": "242837t"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000092",
+            "field": "product_name",
+            "value": "APALIN 250MG INJ"
+          }
+        ],
+        "recall_id": "NPRA-2dd68f59bb"
+      },
+      {
+        "outlet_id": "OUT-07",
+        "product_name": "Apalin 250mg Injection (2ml Amp)",
+        "reg_no": "MAL19984033AZ",
+        "batch": "242837T",
+        "on_hand_qty": 39,
+        "sold_after_date_qty": 4,
+        "distinct_customers": 1,
+        "severity": "high",
+        "status": "confirmed",
+        "confidence": 0.8,
+        "recommended_action": "Stop selling the batch within 24 h and segregate it in a secured area; purchasers must be notified within 24 h. (DRGD App. 34 s4.3)",
+        "rule_ref": "actions.yaml#degree-I",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 39,
+            "sold_after_date_qty": 4,
+            "distinct_customers": 1
+          },
+          "observed": {
+            "on_hand_qty": 39,
+            "sold_after_date_qty": 4,
+            "distinct_customers": 1
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000020",
+            "field": "batch",
+            "value": "242837T"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000020",
+            "field": "reg_no",
+            "value": "MAL19984033AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000020",
+            "field": "product_name",
+            "value": "Apalin 250mg Injection (2ml Amp)"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000024",
+            "field": "batch",
+            "value": "242-837T"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000024",
+            "field": "reg_no",
+            "value": "MAL19984033AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000024",
+            "field": "product_name",
+            "value": "APALIN 250MG INJECTION (2ML AMP) (BOX 30S)"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000093",
+            "field": "batch",
+            "value": "242837t"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000093",
+            "field": "product_name",
+            "value": "APALIN 250MG INJ"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000094",
+            "field": "batch",
+            "value": "242837t"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000094",
+            "field": "product_name",
+            "value": "APALIN 250MG INJ"
+          }
+        ],
+        "recall_id": "NPRA-2dd68f59bb"
+      },
+      {
+        "outlet_id": "OUT-04",
+        "product_name": "glumet xr tab 500mg",
+        "reg_no": "MAL13015050AZ",
+        "batch": "5036723",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 11,
+        "distinct_customers": 3,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.49,
+        "recommended_action": "Stop selling the batch within 72 h and segregate it in a secured area; purchasers must be notified within 48 h. (DRGD App. 34 s4.3)",
+        "rule_ref": "actions.yaml#degree-II",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 11,
+            "distinct_customers": 3
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 11,
+            "distinct_customers": 3
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "pos",
+            "record_id": "SAL-000007",
+            "field": "batch",
+            "value": "s036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000007",
+            "field": "product_name",
+            "value": "glumet xr tab 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000008",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000008",
+            "field": "product_name",
+            "value": "glumet xr tablet 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000009",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000009",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000010",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000010",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000011",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000011",
+            "field": "product_name",
+            "value": "glumet xr tab 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000012",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000012",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000002",
+            "field": "batch",
+            "value": "503-6723"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000002",
+            "field": "reg_no",
+            "value": "MAL13015050AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000002",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG (UNIT)"
+          }
+        ],
+        "recall_id": "NPRA-564fb14f2e"
+      },
+      {
+        "outlet_id": "OUT-06",
+        "product_name": "GLUMET XR TABLET 500MG",
+        "reg_no": "MAL13015050AZ",
+        "batch": "5036723",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 9,
+        "distinct_customers": 1,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.93,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 9,
+            "distinct_customers": 1
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 9,
+            "distinct_customers": 1
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "pos",
+            "record_id": "SAL-000019",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000019",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000020",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000020",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000021",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000021",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000022",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000022",
+            "field": "product_name",
+            "value": "glumet xr tab 500mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000004",
+            "field": "batch",
+            "value": "503-6723"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000004",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG (BTL)"
+          }
+        ],
+        "recall_id": "NPRA-489cd58d8a"
+      },
+      {
+        "outlet_id": "OUT-06",
+        "product_name": "GLUMET XR TABLET 500MG",
+        "reg_no": "MAL13025046AZ",
+        "batch": "5037253",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 9,
+        "distinct_customers": 1,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.44,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 9,
+            "distinct_customers": 1
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 9,
+            "distinct_customers": 1
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "pos",
+            "record_id": "SAL-000019",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000019",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000020",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000020",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000021",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000021",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000022",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000022",
+            "field": "product_name",
+            "value": "glumet xr tab 500mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000004",
+            "field": "batch",
+            "value": "503-6723"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000004",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG (BTL)"
+          }
+        ],
+        "recall_id": "NPRA-5f0a102b8d"
+      },
+      {
+        "outlet_id": "OUT-06",
+        "product_name": "GLUMET XR TABLET 500MG",
+        "reg_no": "MAL13015050AZ",
+        "batch": "5036723",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 9,
+        "distinct_customers": 1,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.98,
+        "recommended_action": "Stop selling the batch within 72 h and segregate it in a secured area; purchasers must be notified within 48 h. (DRGD App. 34 s4.3)",
+        "rule_ref": "actions.yaml#degree-II",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 9,
+            "distinct_customers": 1
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 9,
+            "distinct_customers": 1
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "pos",
+            "record_id": "SAL-000019",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000019",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000020",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000020",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000021",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000021",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000022",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000022",
+            "field": "product_name",
+            "value": "glumet xr tab 500mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000004",
+            "field": "batch",
+            "value": "503-6723"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000004",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG (BTL)"
+          }
+        ],
+        "recall_id": "NPRA-564fb14f2e"
+      },
+      {
+        "outlet_id": "OUT-08",
+        "product_name": "Glumet XR Tablet 500mg",
+        "reg_no": "MAL13015050AZ",
+        "batch": "5036723",
+        "on_hand_qty": 18,
+        "sold_after_date_qty": 7,
+        "distinct_customers": 3,
+        "severity": "medium",
+        "status": "confirmed",
+        "confidence": 0.93,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 18,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "observed": {
+            "on_hand_qty": 18,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000006",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000006",
+            "field": "product_name",
+            "value": "Glumet XR Tablet 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000038",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000038",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000039",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000039",
+            "field": "product_name",
+            "value": "glumet xr tablet 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000040",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000040",
+            "field": "product_name",
+            "value": "glumet xr tab 500mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000008",
+            "field": "batch",
+            "value": "503-6723"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000008",
+            "field": "reg_no",
+            "value": "MAL13015050AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000008",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG (BTL)"
+          }
+        ],
+        "recall_id": "NPRA-489cd58d8a"
+      },
+      {
+        "outlet_id": "OUT-08",
+        "product_name": "Glumet XR Tablet 500mg",
+        "reg_no": "MAL13025046AZ",
+        "batch": "5037253",
+        "on_hand_qty": 18,
+        "sold_after_date_qty": 7,
+        "distinct_customers": 3,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.44,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 18,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "observed": {
+            "on_hand_qty": 18,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000006",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000006",
+            "field": "product_name",
+            "value": "Glumet XR Tablet 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000038",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000038",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000039",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000039",
+            "field": "product_name",
+            "value": "glumet xr tablet 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000040",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000040",
+            "field": "product_name",
+            "value": "glumet xr tab 500mg"
+          }
+        ],
+        "recall_id": "NPRA-5f0a102b8d"
+      },
+      {
+        "outlet_id": "OUT-08",
+        "product_name": "Glumet XR Tablet 500mg",
+        "reg_no": "MAL13015050AZ",
+        "batch": "5036723",
+        "on_hand_qty": 18,
+        "sold_after_date_qty": 7,
+        "distinct_customers": 3,
+        "severity": "medium",
+        "status": "confirmed",
+        "confidence": 0.98,
+        "recommended_action": "Stop selling the batch within 72 h and segregate it in a secured area; purchasers must be notified within 48 h. (DRGD App. 34 s4.3)",
+        "rule_ref": "actions.yaml#degree-II",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 18,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "observed": {
+            "on_hand_qty": 18,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000006",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000006",
+            "field": "product_name",
+            "value": "Glumet XR Tablet 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000038",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000038",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000039",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000039",
+            "field": "product_name",
+            "value": "glumet xr tablet 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000040",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000040",
+            "field": "product_name",
+            "value": "glumet xr tab 500mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000008",
+            "field": "batch",
+            "value": "503-6723"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000008",
+            "field": "reg_no",
+            "value": "MAL13015050AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000008",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG (BTL)"
+          }
+        ],
+        "recall_id": "NPRA-564fb14f2e"
+      },
+      {
+        "outlet_id": "OUT-07",
+        "product_name": "glumet xr tablet 750mg",
+        "reg_no": "MAL13015050AZ",
+        "batch": "5036724",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 7,
+        "distinct_customers": 3,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.44,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "pos",
+            "record_id": "SAL-000052",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000052",
+            "field": "product_name",
+            "value": "glumet xr tablet 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000053",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000053",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000054",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000054",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000055",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000055",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000056",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000056",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 750MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000057",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000057",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 750MG"
+          }
+        ],
+        "recall_id": "NPRA-489cd58d8a"
+      },
+      {
+        "outlet_id": "OUT-07",
+        "product_name": "Glumet XR Tablet 750mg",
+        "reg_no": "MAL13025046AZ",
+        "batch": "5031724",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 7,
+        "distinct_customers": 3,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.93,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "TRF-000001:out",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "inventory",
+            "record_id": "TRF-000001:out",
+            "field": "reg_no",
+            "value": "MAL13025046AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "TRF-000001:out",
+            "field": "product_name",
+            "value": "Glumet XR Tablet 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000052",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000052",
+            "field": "product_name",
+            "value": "glumet xr tablet 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000053",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000053",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000054",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000054",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000055",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000055",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000056",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000056",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 750MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000057",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000057",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 750MG"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000013",
+            "field": "batch",
+            "value": "503-1724"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000013",
+            "field": "reg_no",
+            "value": "MAL13025046AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000013",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 750MG (PACK 10X10)"
+          }
+        ],
+        "recall_id": "NPRA-5f0a102b8d"
+      },
+      {
+        "outlet_id": "OUT-07",
+        "product_name": "Glumet XR Tablet 500mg",
+        "reg_no": "MAL13015050AZ",
+        "batch": "5036723",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 7,
+        "distinct_customers": 3,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.49,
+        "recommended_action": "Stop selling the batch within 72 h and segregate it in a secured area; purchasers must be notified within 48 h. (DRGD App. 34 s4.3)",
+        "rule_ref": "actions.yaml#degree-II",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 7,
+            "distinct_customers": 3
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000003",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000003",
+            "field": "reg_no",
+            "value": "MAL13015050AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000003",
+            "field": "product_name",
+            "value": "Glumet XR Tablet 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000023",
+            "field": "batch",
+            "value": "5o36723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000023",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000024",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000024",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000025",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000025",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000026",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000026",
+            "field": "product_name",
+            "value": "glumet xr tablet 500mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000005",
+            "field": "batch",
+            "value": "503-6723"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000005",
+            "field": "reg_no",
+            "value": "MAL13015050AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000005",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG (UNIT)"
+          }
+        ],
+        "recall_id": "NPRA-564fb14f2e"
+      },
+      {
+        "outlet_id": "OUT-08",
+        "product_name": "Doxycillin Tablet 100mg",
+        "reg_no": "MAL19860580AZ",
+        "batch": "2410251",
+        "on_hand_qty": 34,
+        "sold_after_date_qty": 6,
+        "distinct_customers": 2,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.47,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 34,
+            "sold_after_date_qty": 6,
+            "distinct_customers": 2
+          },
+          "observed": {
+            "on_hand_qty": 34,
+            "sold_after_date_qty": 6,
+            "distinct_customers": 2
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000039",
+            "field": "batch",
+            "value": "2410251"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000039",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000039",
+            "field": "product_name",
+            "value": "Doxycillin Tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000172",
+            "field": "batch",
+            "value": "241o251"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000172",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000173",
+            "field": "batch",
+            "value": "2410251"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000173",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000174",
+            "field": "batch",
+            "value": "2410251"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000174",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000175",
+            "field": "batch",
+            "value": "2410251"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000175",
+            "field": "product_name",
+            "value": "DOXYCILLIN TABLET 100MG"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000044",
+            "field": "batch",
+            "value": "241-0251"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000044",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000044",
+            "field": "product_name",
+            "value": "DOXYCILLIN TABLET 100MG (UNIT)"
+          }
+        ],
+        "recall_id": "NPRA-985b67c2ba"
+      },
+      {
+        "outlet_id": "OUT-01",
+        "product_name": "glumet xr tab 750mg",
+        "reg_no": "MAL13015050AZ",
+        "batch": "5036724",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 6,
+        "distinct_customers": 2,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.44,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 6,
+            "distinct_customers": 2
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 6,
+            "distinct_customers": 2
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "pos",
+            "record_id": "SAL-000041",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000041",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000042",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000042",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000043",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000043",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 750MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000044",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000044",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000045",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000045",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          }
+        ],
+        "recall_id": "NPRA-489cd58d8a"
+      },
+      {
+        "outlet_id": "OUT-07",
+        "product_name": "Glumet XR Tablet 500mg",
+        "reg_no": "MAL13015050AZ",
+        "batch": "5036723",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 6,
+        "distinct_customers": 2,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.46,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 6,
+            "distinct_customers": 2
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 6,
+            "distinct_customers": 2
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000003",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000003",
+            "field": "reg_no",
+            "value": "MAL13015050AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000003",
+            "field": "product_name",
+            "value": "Glumet XR Tablet 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000023",
+            "field": "batch",
+            "value": "5o36723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000023",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000024",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000024",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000025",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000025",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000026",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000026",
+            "field": "product_name",
+            "value": "glumet xr tablet 500mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000005",
+            "field": "batch",
+            "value": "503-6723"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000005",
+            "field": "reg_no",
+            "value": "MAL13015050AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000005",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG (UNIT)"
+          }
+        ],
+        "recall_id": "NPRA-489cd58d8a"
+      },
+      {
+        "outlet_id": "OUT-01",
+        "product_name": "Glumet XR Tablet 750mg",
+        "reg_no": "MAL13025046AZ",
+        "batch": "5031724",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 6,
+        "distinct_customers": 2,
+        "severity": "medium",
+        "status": "confirmed",
+        "confidence": 0.93,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 6,
+            "distinct_customers": 2
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 6,
+            "distinct_customers": 2
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000007",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000007",
+            "field": "reg_no",
+            "value": "MAL13025046AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000007",
+            "field": "product_name",
+            "value": "Glumet XR Tablet 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000041",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000041",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000042",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000042",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000043",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000043",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 750MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000044",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000044",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000045",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000045",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000010",
+            "field": "batch",
+            "value": "503-1724"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000010",
+            "field": "reg_no",
+            "value": "MAL13025046AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000010",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 750MG (BOX 30S)"
+          }
+        ],
+        "recall_id": "NPRA-5f0a102b8d"
+      },
+      {
+        "outlet_id": "OUT-08",
+        "product_name": "Doxycillin Tablet 100mg",
+        "reg_no": "MAL19860580AZ",
+        "batch": "2410252",
+        "on_hand_qty": 38,
+        "sold_after_date_qty": 5,
+        "distinct_customers": 2,
+        "severity": "medium",
+        "status": "confirmed",
+        "confidence": 0.93,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 38,
+            "sold_after_date_qty": 5,
+            "distinct_customers": 2
+          },
+          "observed": {
+            "on_hand_qty": 38,
+            "sold_after_date_qty": 5,
+            "distinct_customers": 2
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000038",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000038",
+            "field": "product_name",
+            "value": "Doxycillin Tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000166",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000166",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000167",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000167",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000168",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000168",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000169",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000169",
+            "field": "product_name",
+            "value": "doxycillin tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000170",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000170",
+            "field": "product_name",
+            "value": "doxycillin tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000171",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000171",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000043",
+            "field": "batch",
+            "value": "241-0252"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000043",
+            "field": "product_name",
+            "value": "DOXYCILLIN TABLET 100MG (BOX 30S)"
+          }
+        ],
+        "recall_id": "NPRA-985b67c2ba"
+      },
+      {
+        "outlet_id": "OUT-03",
+        "product_name": "Doxycillin Tablet 100mg",
+        "reg_no": "MAL19860580AZ",
+        "batch": "2410252",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 5,
+        "distinct_customers": 3,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.93,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 5,
+            "distinct_customers": 3
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 5,
+            "distinct_customers": 3
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "TRF-000004:out",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "inventory",
+            "record_id": "TRF-000004:out",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "TRF-000004:out",
+            "field": "product_name",
+            "value": "Doxycillin Tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000127",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000127",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000128",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000128",
+            "field": "product_name",
+            "value": "doxycillin tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000129",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000129",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000130",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000130",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000131",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000131",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000132",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000132",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000034",
+            "field": "batch",
+            "value": "241-0252"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000034",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000034",
+            "field": "product_name",
+            "value": "DOXYCILLIN TABLET 100MG (UNIT)"
+          }
+        ],
+        "recall_id": "NPRA-985b67c2ba"
+      },
+      {
+        "outlet_id": "OUT-08",
+        "product_name": "glumet xr tab 750mg",
+        "reg_no": "MAL13015050AZ",
+        "batch": "5036724",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 5,
+        "distinct_customers": 1,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.44,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 5,
+            "distinct_customers": 1
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 5,
+            "distinct_customers": 1
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "pos",
+            "record_id": "SAL-000060",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000060",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000061",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000061",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000062",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000062",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 750MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000063",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000063",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000064",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000064",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000065",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000065",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          }
+        ],
+        "recall_id": "NPRA-489cd58d8a"
+      },
+      {
+        "outlet_id": "OUT-07",
+        "product_name": "GLUMET XR TABLET 500MG",
+        "reg_no": "MAL13025046AZ",
+        "batch": "5037253",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 5,
+        "distinct_customers": 2,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.44,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 5,
+            "distinct_customers": 2
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 5,
+            "distinct_customers": 2
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "pos",
+            "record_id": "SAL-000024",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000024",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000025",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000025",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000026",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000026",
+            "field": "product_name",
+            "value": "glumet xr tablet 500mg"
+          }
+        ],
+        "recall_id": "NPRA-5f0a102b8d"
+      },
+      {
+        "outlet_id": "OUT-08",
+        "product_name": "Glumet XR Tablet 750mg",
+        "reg_no": "MAL13025046AZ",
+        "batch": "5031724",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 5,
+        "distinct_customers": 1,
+        "severity": "medium",
+        "status": "confirmed",
+        "confidence": 0.93,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 5,
+            "distinct_customers": 1
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 5,
+            "distinct_customers": 1
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000011",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000011",
+            "field": "reg_no",
+            "value": "MAL13025046AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000011",
+            "field": "product_name",
+            "value": "Glumet XR Tablet 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000060",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000060",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000061",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000061",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000062",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000062",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 750MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000063",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000063",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000064",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000064",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000065",
+            "field": "batch",
+            "value": "5031724"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000065",
+            "field": "product_name",
+            "value": "glumet xr tab 750mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000015",
+            "field": "batch",
+            "value": "503-1724"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000015",
+            "field": "reg_no",
+            "value": "MAL13025046AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000015",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 750MG (BOX 30S)"
+          }
+        ],
+        "recall_id": "NPRA-5f0a102b8d"
+      },
+      {
+        "outlet_id": "OUT-07",
+        "product_name": "Doxycillin Tablet 100mg",
+        "reg_no": "MAL19860580AZ",
+        "batch": "2410251",
+        "on_hand_qty": 27,
+        "sold_after_date_qty": 4,
+        "distinct_customers": 2,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.47,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 27,
+            "sold_after_date_qty": 4,
+            "distinct_customers": 2
+          },
+          "observed": {
+            "on_hand_qty": 27,
+            "sold_after_date_qty": 4,
+            "distinct_customers": 2
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000035",
+            "field": "batch",
+            "value": "2410251"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000035",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000035",
+            "field": "product_name",
+            "value": "Doxycillin Tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000154",
+            "field": "batch",
+            "value": "24102s1"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000154",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000155",
+            "field": "batch",
+            "value": "2410251"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000155",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000156",
+            "field": "batch",
+            "value": "2410251"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000156",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000157",
+            "field": "batch",
+            "value": "2410251"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000157",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000040",
+            "field": "batch",
+            "value": "241-0251"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000040",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000040",
+            "field": "product_name",
+            "value": "DOXYCILLIN TABLET 100MG (PACK 10X10)"
+          }
+        ],
+        "recall_id": "NPRA-985b67c2ba"
+      },
+      {
+        "outlet_id": "OUT-04",
+        "product_name": "glumet xr tab 500mg",
+        "reg_no": "MAL13015050AZ",
+        "batch": "5036723",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 4,
+        "distinct_customers": 1,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.46,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 4,
+            "distinct_customers": 1
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 4,
+            "distinct_customers": 1
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "pos",
+            "record_id": "SAL-000007",
+            "field": "batch",
+            "value": "s036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000007",
+            "field": "product_name",
+            "value": "glumet xr tab 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000008",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000008",
+            "field": "product_name",
+            "value": "glumet xr tablet 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000009",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000009",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000010",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000010",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000011",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000011",
+            "field": "product_name",
+            "value": "glumet xr tab 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000012",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000012",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000002",
+            "field": "batch",
+            "value": "503-6723"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000002",
+            "field": "reg_no",
+            "value": "MAL13015050AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000002",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG (UNIT)"
+          }
+        ],
+        "recall_id": "NPRA-489cd58d8a"
+      },
+      {
+        "outlet_id": "OUT-04",
+        "product_name": "glumet xr tablet 500mg",
+        "reg_no": "MAL13025046AZ",
+        "batch": "5037253",
+        "on_hand_qty": 0,
+        "sold_after_date_qty": 4,
+        "distinct_customers": 1,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.44,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 4,
+            "distinct_customers": 1
+          },
+          "observed": {
+            "on_hand_qty": 0,
+            "sold_after_date_qty": 4,
+            "distinct_customers": 1
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "pos",
+            "record_id": "SAL-000008",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000008",
+            "field": "product_name",
+            "value": "glumet xr tablet 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000009",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000009",
+            "field": "product_name",
+            "value": "GLUMET XR TABLET 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000010",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000010",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000011",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000011",
+            "field": "product_name",
+            "value": "glumet xr tab 500mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000012",
+            "field": "batch",
+            "value": "5036723"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000012",
+            "field": "product_name",
+            "value": "GLUMET XR TAB 500MG"
+          }
+        ],
+        "recall_id": "NPRA-5f0a102b8d"
+      },
+      {
+        "outlet_id": "OUT-04",
+        "product_name": "Doxycillin Tablet 100mg",
+        "reg_no": "MAL19860580AZ",
+        "batch": "2410252",
+        "on_hand_qty": 31,
+        "sold_after_date_qty": 2,
+        "distinct_customers": 2,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.93,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 31,
+            "sold_after_date_qty": 2,
+            "distinct_customers": 2
+          },
+          "observed": {
+            "on_hand_qty": 31,
+            "sold_after_date_qty": 2,
+            "distinct_customers": 2
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000032",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000032",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000032",
+            "field": "product_name",
+            "value": "Doxycillin Tablet 100mg"
+          },
+          {
+            "source": "inventory",
+            "record_id": "TRF-000005:out",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "inventory",
+            "record_id": "TRF-000005:out",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "TRF-000005:out",
+            "field": "product_name",
+            "value": "Doxycillin Tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000143",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000143",
+            "field": "product_name",
+            "value": "doxycillin tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000144",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000144",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000145",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000145",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000146",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000146",
+            "field": "product_name",
+            "value": "doxycillin tab 100mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000037",
+            "field": "batch",
+            "value": "241-0252"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000037",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000037",
+            "field": "product_name",
+            "value": "DOXYCILLIN TABLET 100MG (BTL)"
+          }
+        ],
+        "recall_id": "NPRA-985b67c2ba"
+      },
+      {
+        "outlet_id": "OUT-06",
+        "product_name": "Doxycillin Tablet 100mg",
+        "reg_no": "MAL19860580AZ",
+        "batch": "2410252",
+        "on_hand_qty": 32,
+        "sold_after_date_qty": 1,
+        "distinct_customers": 1,
+        "severity": "medium",
+        "status": "needs_review",
+        "confidence": 0.47,
+        "recommended_action": "Segregate the affected batch in a secured area and stop selling it within 72 h until the product holder confirms the recall scope. (assumption (no degree stated; treated as Degree II urgency, App. 34 s4.3))",
+        "rule_ref": "actions.yaml#voluntary-no-degree",
+        "critic_check": {
+          "query": "SELECT batch, qty_on_hand FROM inventory_pg.stock WHERE outlet_id = ? AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) | SELECT batch, qty, loyalty_id FROM pos_pg.sales WHERE outlet_id = ? AND (LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?) AND CAST(sold_at AS DATE) >= CAST(? AS DATE) | SELECT transfer_id, leg, batch FROM inventory_pg.transfers WHERE (outlet_id = ? OR counterparty_outlet_id = ?) AND (UPPER(REPLACE(REPLACE(reg_no, '-', ''), ' ', '')) = ? OR LOWER(product_name) LIKE ? OR LOWER(product_name) LIKE ?)",
+          "expected": {
+            "on_hand_qty": 32,
+            "sold_after_date_qty": 1,
+            "distinct_customers": 1
+          },
+          "observed": {
+            "on_hand_qty": 32,
+            "sold_after_date_qty": 1,
+            "distinct_customers": 1
+          },
+          "passed": true
+        },
+        "evidence": [
+          {
+            "source": "inventory",
+            "record_id": "STK-000034",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000034",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "inventory",
+            "record_id": "STK-000034",
+            "field": "product_name",
+            "value": "Doxycillin Tablet 100mg"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000151",
+            "field": "batch",
+            "value": "241o252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000151",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000152",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000152",
+            "field": "product_name",
+            "value": "DOXYCILLIN TAB 100MG"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000153",
+            "field": "batch",
+            "value": "2410252"
+          },
+          {
+            "source": "pos",
+            "record_id": "SAL-000153",
+            "field": "product_name",
+            "value": "doxycillin tablet 100mg"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000039",
+            "field": "batch",
+            "value": "241-0252"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000039",
+            "field": "reg_no",
+            "value": "MAL19860580AZ"
+          },
+          {
+            "source": "supplier",
+            "record_id": "DLV-000039",
+            "field": "product_name",
+            "value": "DOXYCILLIN TABLET 100MG (BTL)"
+          }
+        ],
+        "recall_id": "NPRA-985b67c2ba"
+      }
+    ],
+    "unresolved_conflicts": [
+      {
+        "recall_id": "NPRA-985b67c2ba",
+        "outlet_id": "OUT-03",
+        "batch": "2410252",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "delivered but no stock record",
+          "transfer with a missing leg: ['TRF-000004']"
+        ],
+        "doubts": []
+      },
+      {
+        "recall_id": "NPRA-985b67c2ba",
+        "outlet_id": "OUT-04",
+        "batch": "2410252",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "transfer with a missing leg: ['TRF-000005']"
+        ],
+        "doubts": []
+      },
+      {
+        "recall_id": "NPRA-985b67c2ba",
+        "outlet_id": "OUT-06",
+        "batch": "2410252",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "batch=near",
+          "identity=0.93 via name_fuzzy",
+          "batch near-miss",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via reg_no"
+        ],
+        "doubts": [
+          {
+            "field": "batch",
+            "alias": "241o252",
+            "canonical": "2410252",
+            "record_ref": "pos:SAL-000151"
+          }
+        ]
+      },
+      {
+        "recall_id": "NPRA-985b67c2ba",
+        "outlet_id": "OUT-07",
+        "batch": "2410251",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "batch=near",
+          "identity=0.93 via name_fuzzy",
+          "batch near-miss",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via reg_no"
+        ],
+        "doubts": [
+          {
+            "field": "batch",
+            "alias": "24102s1",
+            "canonical": "2410251",
+            "record_ref": "pos:SAL-000154"
+          }
+        ]
+      },
+      {
+        "recall_id": "NPRA-985b67c2ba",
+        "outlet_id": "OUT-08",
+        "batch": "2410251",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "batch=near",
+          "identity=0.93 via name_fuzzy",
+          "batch near-miss",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via reg_no"
+        ],
+        "doubts": [
+          {
+            "field": "batch",
+            "alias": "241o251",
+            "canonical": "2410251",
+            "record_ref": "pos:SAL-000172"
+          }
+        ]
+      },
+      {
+        "recall_id": "NPRA-489cd58d8a",
+        "outlet_id": "OUT-01",
+        "batch": "5036724",
+        "reasons": [
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss"
+        ],
+        "doubts": [
+          {
+            "field": "batch",
+            "alias": "5031724",
+            "canonical": "5036724",
+            "record_ref": "pos:SAL-000041"
+          }
+        ]
+      },
+      {
+        "recall_id": "NPRA-489cd58d8a",
+        "outlet_id": "OUT-04",
+        "batch": "5036723",
+        "reasons": [
+          "batch=near",
+          "identity=0.93 via name_fuzzy",
+          "batch near-miss",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "delivered but no stock record"
+        ],
+        "doubts": [
+          {
+            "field": "batch",
+            "alias": "s036723",
+            "canonical": "5036723",
+            "record_ref": "pos:SAL-000007"
+          }
+        ]
+      },
+      {
+        "recall_id": "NPRA-489cd58d8a",
+        "outlet_id": "OUT-06",
+        "batch": "5036723",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "delivered but no stock record"
+        ],
+        "doubts": []
+      },
+      {
+        "recall_id": "NPRA-489cd58d8a",
+        "outlet_id": "OUT-07",
+        "batch": "5036723",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "batch=near",
+          "identity=0.93 via name_fuzzy",
+          "batch near-miss",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via reg_no"
+        ],
+        "doubts": [
+          {
+            "field": "batch",
+            "alias": "5o36723",
+            "canonical": "5036723",
+            "record_ref": "pos:SAL-000023"
+          }
+        ]
+      },
+      {
+        "recall_id": "NPRA-489cd58d8a",
+        "outlet_id": "OUT-07",
+        "batch": "5036724",
+        "reasons": [
+          "batch=near",
+          "identity=0.95 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "transfer with a missing leg: ['TRF-000001']"
+        ],
+        "doubts": [
+          {
+            "field": "batch",
+            "alias": "5031724",
+            "canonical": "5036724",
+            "record_ref": "pos:SAL-000052"
+          }
+        ]
+      },
+      {
+        "recall_id": "NPRA-489cd58d8a",
+        "outlet_id": "OUT-08",
+        "batch": "5036724",
+        "reasons": [
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss"
+        ],
+        "doubts": [
+          {
+            "field": "batch",
+            "alias": "5031724",
+            "canonical": "5036724",
+            "record_ref": "pos:SAL-000060"
+          }
+        ]
+      },
+      {
+        "recall_id": "NPRA-489cd58d8a",
+        "outlet_id": "UNASSIGNED",
+        "batch": "503-6723",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "delivered, no outlet recorded",
+          "delivered but no stock record"
+        ],
+        "doubts": []
+      },
+      {
+        "recall_id": "NPRA-5f0a102b8d",
+        "outlet_id": "OUT-04",
+        "batch": "5037253",
+        "reasons": [
+          "batch=near",
+          "identity=0.95 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.95 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss"
+        ],
+        "doubts": [
+          {
+            "field": "batch",
+            "alias": "5036723",
+            "canonical": "5037253",
+            "record_ref": "pos:SAL-000008"
+          }
+        ]
+      },
+      {
+        "recall_id": "NPRA-5f0a102b8d",
+        "outlet_id": "OUT-06",
+        "batch": "5037253",
+        "reasons": [
+          "batch=near",
+          "identity=0.95 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.95 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.95 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "delivered but no stock record"
+        ],
+        "doubts": [
+          {
+            "field": "batch",
+            "alias": "5036723",
+            "canonical": "5037253",
+            "record_ref": "pos:SAL-000019"
+          },
+          {
+            "field": "batch",
+            "alias": "503-6723",
+            "canonical": "5037253",
+            "record_ref": "supplier:DLV-000004"
+          }
+        ]
+      },
+      {
+        "recall_id": "NPRA-5f0a102b8d",
+        "outlet_id": "OUT-07",
+        "batch": "5031724",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=0.93 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "delivered but no stock record",
+          "transfer with a missing leg: ['TRF-000001']"
+        ],
+        "doubts": []
+      },
+      {
+        "recall_id": "NPRA-5f0a102b8d",
+        "outlet_id": "OUT-07",
+        "batch": "5037253",
+        "reasons": [
+          "batch=near",
+          "identity=0.95 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.95 via name_fuzzy",
+          "batch near-miss"
+        ],
+        "doubts": [
+          {
+            "field": "batch",
+            "alias": "5036723",
+            "canonical": "5037253",
+            "record_ref": "pos:SAL-000024"
+          }
+        ]
+      },
+      {
+        "recall_id": "NPRA-5f0a102b8d",
+        "outlet_id": "OUT-08",
+        "batch": "5037253",
+        "reasons": [
+          "batch=near",
+          "identity=0.95 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.95 via name_fuzzy",
+          "batch near-miss",
+          "batch=near",
+          "identity=0.88 via name_fuzzy",
+          "batch near-miss"
+        ],
+        "doubts": [
+          {
+            "field": "batch",
+            "alias": "5036723",
+            "canonical": "5037253",
+            "record_ref": "inventory:STK-000006"
+          }
+        ]
+      },
+      {
+        "recall_id": "NPRA-564fb14f2e",
+        "outlet_id": "OUT-04",
+        "batch": "5036723",
+        "reasons": [
+          "batch=near",
+          "identity=0.98 via hmem",
+          "batch near-miss",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "delivered but no stock record"
+        ],
+        "doubts": [
+          {
+            "field": "batch",
+            "alias": "s036723",
+            "canonical": "5036723",
+            "record_ref": "pos:SAL-000007"
+          }
+        ]
+      },
+      {
+        "recall_id": "NPRA-564fb14f2e",
+        "outlet_id": "OUT-06",
+        "batch": "5036723",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "delivered but no stock record"
+        ],
+        "doubts": []
+      },
+      {
+        "recall_id": "NPRA-564fb14f2e",
+        "outlet_id": "OUT-07",
+        "batch": "5036723",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "batch=near",
+          "identity=0.98 via hmem",
+          "batch near-miss",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=0.98 via hmem",
+          "batch=exact",
+          "identity=1.00 via name_fuzzy",
+          "batch=exact",
+          "identity=1.00 via reg_no"
+        ],
+        "doubts": [
+          {
+            "field": "batch",
+            "alias": "5o36723",
+            "canonical": "5036723",
+            "record_ref": "pos:SAL-000023"
+          }
+        ]
+      },
+      {
+        "recall_id": "NPRA-564fb14f2e",
+        "outlet_id": "UNASSIGNED",
+        "batch": "503-6723",
+        "reasons": [
+          "batch=exact",
+          "identity=1.00 via reg_no",
+          "delivered, no outlet recorded",
+          "delivered but no stock record"
+        ],
+        "doubts": []
+      }
+    ]
+  },
+  "error": null,
+  "agents": [
+    {
+      "name": "PlannerAgent",
+      "role": "discovers the data catalogue and checks the pipeline can run on it"
+    },
+    {
+      "name": "RetrieverAgent",
+      "role": "reads the data layer and ingests into the World Model"
+    },
+    {
+      "name": "ReconcilerAgent",
+      "role": "matches records to the recall, consulting H-MEM"
+    },
+    {
+      "name": "ConflictCriticAgent",
+      "role": "re-checks each exposure against the raw tables"
+    },
+    {
+      "name": "ReporterAgent",
+      "role": "applies the rules table and ranks the action list"
+    }
+  ],
+  "adapter": "zetaris",
+  "providers_used": [
+    "meterless"
+  ],
+  "trace_id": "trace-example-daily-scan",
+  "log_file": "output_examples\\daily-scan\\trace-example-daily-scan.jsonl",
+  "execution_time_seconds": 26.264
+}

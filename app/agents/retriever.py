@@ -65,7 +65,7 @@ class RetrieverAgent:
             "type": "RegulatorNotice", "source": "regulator", "record_id": f"{recall.reg_no}:{recall.date}",
             "attrs": recall.model_dump(),
         })
-        counts = self.ingest.ingest(self.run_id, "recall_view", records, NAME)
+        counts = self.ingest.ingest(self.run_id, f"recall_view:{recall.reg_no}:{recall.date}", records, NAME)
         self._trace("ingest_world_model", f"{len(records)} records", str(counts), "meterless.world_model", t0)
         return rows
 

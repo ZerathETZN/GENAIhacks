@@ -1,11 +1,13 @@
 """Cold/warm H-MEM demo (AGENTS.md §7.5). Real model calls through Nightshift, DuckDB data.
 
-  python scripts/demo_cold_warm.py cold [--recall-id ID] [--data-dir DIR]
+  python scripts/demo_cold_warm.py cold [--recall-id ID] [--data-dir DIR] [--live]
   ... you read the printed doubts and append YOUR verdicts to data/feedback/decisions.jsonl ...
   python scripts/demo_cold_warm.py warm [--recall-id ID] [--data-dir DIR]
 
 Outputs land in output_examples/cold_warm/ (trace-demo-<phase>.jsonl + result-<phase>.json).
-Cold wipes state/cold_warm/ so H-MEM starts empty; warm reuses it. Nothing here writes verdicts.
+Cold wipes state/cold_warm/ so H-MEM starts empty and ignores decisions.jsonl; warm reuses the state and loads it.
+--live reads through Zetaris (needs the stack up; --data-dir only supplies the recalls, so use the seed that
+load_postgres.py loaded). Nothing here writes verdicts.
 """
 
 import argparse
@@ -21,6 +23,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("phase", choices=["cold", "warm"])
 ap.add_argument("--recall-id")
 ap.add_argument("--data-dir", default="data/tuning/seed7")
+ap.add_argument("--live", action="store_true")
 a = ap.parse_args()
 
 for line in Path(".env").read_text(encoding="utf-8").splitlines() if Path(".env").exists() else []:  # token for Nightshift
@@ -43,14 +46,15 @@ if not a.recall_id:
 r = next(x for x in recalls if x["recall_id"] == a.recall_id)
 if a.phase == "cold":
     shutil.rmtree(STATE, ignore_errors=True)
+    os.environ["DECISIONS_FILE"] = str(OUT / "no-verdicts-yet.jsonl")  # cold = before any pharmacist verdict
 
 recall = Recall(**{k: r[k] for k in ("product_name", "reg_no", "batches", "date", "degree_level")})
 res = run(RunRequest(run_id=f"demo-{a.phase}", input=RunInput(mode="recall_alert", recall=recall), options=RunOptions()),
-          get_adapter(sample_mode=True, data_dir=a.data_dir), str(STATE))
+          get_adapter(sample_mode=not a.live, data_dir=a.data_dir), str(STATE))
 (OUT / f"result-{a.phase}.json").write_text(res.model_dump_json(indent=2), encoding="utf-8")
 
 review = [e for e in res.output.exposures if e.status == "needs_review"]
-print(f"{a.phase}: {len(res.output.exposures)} exposures, {len(review)} needs_review, providers={res.providers_used}")
+print(f"{a.phase}: {len(res.output.exposures)} exposures, {len(review)} needs_review, adapter={res.adapter}, providers={res.providers_used}")
 if a.phase == "warm":
     cold = OUT / "result-cold.json"
     if cold.exists():

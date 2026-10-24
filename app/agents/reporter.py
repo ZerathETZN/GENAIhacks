@@ -49,12 +49,17 @@ class ReporterAgent:
     ) -> None:
         self.run_id, self.generate, self.emit = run_id, generate, emit
 
-    def report(self, recall: Recall, drafts: list[ExposureDraft]) -> RunOutput:
+    def report(self, recall: Recall, drafts: list[ExposureDraft], summarise: bool = True) -> RunOutput:
         key, level = pick_rule(recall), pick_level(recall)
         rule = dict(RULES[key])
         if level == "C":  # distributors only: the chain's shelf stock is not in scope
             rule["severity"] = _TIERS[max(_TIERS.index(rule["severity"]) - 1, 0)]
         real = [d for d in drafts if d.outlet_id != UNASSIGNED]
+        if rule["rank_by"] == "stock":  # administrative: the action is about stock, so a group with none is not actionable
+            for d in real:
+                if d.on_hand_qty == 0:
+                    d.status, d.reasons = "needs_review", d.reasons + ["no stock on hand (sales records only)"]
+            real = [d for d in real if d.on_hand_qty > 0]
         # safety recalls rank by units sold, then stock; administrative by stock
         rank = (lambda d: (d.sold_after_date_qty, d.on_hand_qty)) if rule["rank_by"] == "sold" else (lambda d: (d.on_hand_qty,))
         exposures = [self._exposure(recall, d, key, rule, level) for d in sorted(real, key=rank, reverse=True)]
@@ -62,7 +67,7 @@ class ReporterAgent:
             {"outlet_id": d.outlet_id, "batch": d.batch, "reasons": d.reasons, "doubts": d.doubts}
             for d in drafts if d.status == "needs_review"
         ]
-        return RunOutput(summary=self._summary(recall, key, rule, exposures, conflicts), exposures=exposures, unresolved_conflicts=conflicts)
+        return RunOutput(summary=self._summary(recall, key, rule, exposures, conflicts, summarise), exposures=exposures, unresolved_conflicts=conflicts)
 
     def _exposure(self, recall: Recall, d: ExposureDraft, key: str, rule: dict, level: str | None) -> Exposure:
         action = f"{rule['action']} ({rule['ref']})"
@@ -77,12 +82,14 @@ class ReporterAgent:
             rule_ref=f"actions.yaml#{key}", critic_check=d.critic_check, evidence=d.evidence,
         )
 
-    def _summary(self, recall: Recall, key: str, rule: dict, exposures: list[Exposure], conflicts: list[dict]) -> str:
+    def _summary(self, recall: Recall, key: str, rule: dict, exposures: list[Exposure], conflicts: list[dict], summarise: bool) -> str:
         facts = (
             f"{recall.product_name} ({recall.reg_no}), rule {key}, severity {rule['severity']}: "
             f"{len(exposures)} outlets exposed, {sum(e.on_hand_qty for e in exposures)} units on hand, "
             f"{sum(e.sold_after_date_qty for e in exposures)} units sold since {recall.date}, {len(conflicts)} items need review."
         )
+        if not summarise:  # daily_scan writes one summary for all recalls
+            return facts
         t0 = time.monotonic()
         res = self.generate(
             f"Write a two-sentence summary for a pharmacist. Use only these facts, add nothing:\n{facts}",

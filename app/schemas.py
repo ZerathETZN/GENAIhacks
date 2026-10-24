@@ -81,6 +81,7 @@ class Exposure(BaseModel):
     rule_ref: str
     critic_check: CriticCheck | None = None
     evidence: list[Evidence] = Field(default_factory=list)
+    recall_id: str | None = None  # set by daily_scan, which merges several recalls into one list
 
 
 class RunOutput(BaseModel):
