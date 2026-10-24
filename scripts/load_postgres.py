@@ -5,7 +5,8 @@
 
 Idempotent: each table is dropped and recreated, then filled with COPY. Column types are
 the same definitions the DuckDB adapter uses, so live and sample mode see one schema.
-Supplier deliveries are not loaded here: rg-supplier-api serves them over REST.
+Supplier deliveries are not loaded here: rg-supplier-api serves them over REST. With --data-dir,
+restart it on the same data: RG_DATA_DIR=<dir> docker compose up -d rg-supplier-api
 Run zetaris_register.py afterwards (it refreshes Zetaris's cached column metadata).
 """
 

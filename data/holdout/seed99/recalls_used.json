@@ -1,0 +1,88 @@
+[
+  {
+    "recall_id": "NPRA-564fb14f2e",
+    "product_name": "Glumet XR Tablet 500mg",
+    "reg_no": "MAL13015050AZ",
+    "batches": [
+      "5036723"
+    ],
+    "date": "2026-04-15",
+    "degree_level": "II"
+  },
+  {
+    "recall_id": "NPRA-f4e4d75995",
+    "product_name": "Glumet XR Tablet 750mg",
+    "reg_no": "MAL13025046AZ",
+    "batches": [
+      "5031724"
+    ],
+    "date": "2026-04-15",
+    "degree_level": "II"
+  },
+  {
+    "recall_id": "NPRA-3cb59e559d",
+    "product_name": "Vamlo Tablets 10mg",
+    "reg_no": "MAL07010993AZ",
+    "batches": [
+      "24030132"
+    ],
+    "date": "2026-02-13",
+    "degree_level": "sales"
+  },
+  {
+    "recall_id": "NPRA-2bd56eb8cd",
+    "product_name": "Axcel Mometasone 0.05%w/w Nasal Spray",
+    "reg_no": "MAL14025010AZ",
+    "batches": [
+      "B2509050",
+      "B2509050A",
+      "B2509064A"
+    ],
+    "date": "2026-04-10",
+    "degree_level": "consumer"
+  },
+  {
+    "recall_id": "NPRA-5f0a102b8d",
+    "product_name": "Glumet XR Tablet 750mg",
+    "reg_no": "MAL13025046AZ",
+    "batches": [
+      "5029183",
+      "5030138",
+      "5030777",
+      "5030778",
+      "5030779",
+      "5031726",
+      "5031728",
+      "5031724",
+      "5032581",
+      "5032577",
+      "5033837",
+      "5034636",
+      "5035512",
+      "5035844",
+      "5037253",
+      "5040469"
+    ],
+    "date": "2026-05-14",
+    "degree_level": "sales"
+  },
+  {
+    "recall_id": "NPRA-97eaee16c3",
+    "product_name": "Decondine Syrup",
+    "reg_no": "MAL19860261AZ",
+    "batches": [
+      "307-24002",
+      "307-24003",
+      "307-24004",
+      "307-24005",
+      "307-24008",
+      "307-24009",
+      "307-24010",
+      "307-24011",
+      "307-24012",
+      "307-24013"
+    ],
+    "date": "2026-07-03",
+    "degree_level": "sub-distributor (wholesaler)"
+  }
+]

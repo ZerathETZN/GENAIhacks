@@ -2,6 +2,7 @@
 
 > **Context for coding agents** (Cursor Agent, Codex). Read this file fully before writing code.
 > - If anything here conflicts with a direct instruction from a teammate, follow the teammate and update this file in the same commit.
+> - Version 2.3, 24 Oct 2026. `Exposure.recall_id` and `unresolved_conflicts[].doubts` added to the result contract (§7.2, from B's `daily_scan`); `scripts/evaluate.py` and the seed-99 hold-out set (§4.2, §9); USL status and the schemastore view as the semantic layer (§5.1).
 > - Version 2.2, 23 Oct 2026. Agreed the `product_exposure_v` column contract with B (§7.4), `?` parameter handling (§5.1), Critic reads raw tables, and data findings from the real regulator files (§4.1, §4.2).
 > - Version 2, 21 Oct 2026. Supersedes v1: the provider is now Nightshift-first, Zetaris is reached over REST, regulator data comes from data.gov.my open data, and `metadata.json` is added.
 
@@ -199,7 +200,8 @@ The script then:
 - Agents query this view first. Its columns are fixed in §7.4.
 - **The Critic does not verify against this view.** It runs its own targeted query on the raw source tables (§7.4), so its check is independent of what the Reconciler read.
 - **Preferred:** Unified Semantic Layer (`COMPILE USL` → `ACTIVATE USL TABLE`). USL constraints: scalar column types only, the namespace must exist under `lightning.metastore`, and multi-table `COMPILE USL` is sent intact.
-- **Fallback, if USL blocks us for more than 2 hours:** `CREATE SCHEMASTORE VIEW`. It is still Zetaris-side and still load-bearing. Record which one we used in `metadata.json`. **Status 23 Oct: the schemastore view is live** (`zetaris_register.py`); USL not tried yet.
+- **Fallback, if USL blocks us for more than 2 hours:** `CREATE SCHEMASTORE VIEW`. It is still Zetaris-side and still load-bearing. Record which one we used in `metadata.json`.
+- **Status 24 Oct: the semantic layer is the schemastore view** `recallguard.product_exposure_v`, live and verified (595 rows, same answers as DuckDB, 22/22 on live Zetaris). USL exists on our instance (`COMPILE USL ... DEPLOY NAMESPACE ...` is parsed) but is its own DSL with no docs in this repo, so it stays cut-list #4: try it only with docs in hand and a 2-hour cap. If it ever replaces the view it must keep the same name and columns (the Planner checks them).
 
 **Adapters:**
 - `app/adapters/data_adapter.py`: `DataAdapter.query(sql, params=None, limit=1000) -> list[dict]`, plus `name`.
@@ -350,12 +352,18 @@ Keep it accurate: update `models` to what traces actually show in `served_by`.
       "severity": "high|medium|low", "status": "confirmed|needs_review", "confidence": 0.87,
       "recommended_action": "...", "rule_ref": "actions.yaml#degree-II",
       "critic_check": { "query": "...", "expected": 12, "observed": 12, "passed": true },
-      "evidence": [ { "source": "inventory|pos|supplier|regulator", "record_id": "...", "field": "batch", "value": "NSC-24067" } ] } ],
-    "unresolved_conflicts": [] },
+      "evidence": [ { "source": "inventory|pos|supplier|regulator", "record_id": "...", "field": "batch", "value": "NSC-24067" } ],
+      "recall_id": "NPRA-..." } ],
+    "unresolved_conflicts": [ { "outlet_id": "OUT-07", "batch": "...", "reasons": ["..."],
+                                "doubts": [ { "field": "batch", "alias": "5o36723", "canonical": "5036723", "record_ref": "pos:SAL-000044" } ],
+                                "recall_id": "NPRA-..." } ] },
   "agents": [ { "name": "PlannerAgent", "role": "..." } ],
-  "adapter": "zetaris|duckdb_fallback", "providers_used": ["meterless"],
+  "adapter": "zetaris|duckdb|duckdb_fallback", "providers_used": ["meterless", "heuristic_fallback"],
   "trace_id": "trace-demo-001", "log_file": "logs/trace-demo-001.jsonl", "execution_time_seconds": 0.0 }
 ```
+- `recall_id` (optional, added 24 Oct by B): set by `daily_scan`, which merges several recalls into one list; `null` for a single `recall_alert`. UIs must group or label scan rows by it.
+- `unresolved_conflicts[]`: one entry per `needs_review` group and for `UNASSIGNED` deliveries (never an exposure). `doubts[]` are the spellings a pharmacist can answer in `decisions.jsonl` (§7.5). A failed or skipped recall in a scan appears as `{recall_id, error}`.
+
 On failure, return `status: "error"` with `error.type`, `error.message` and `error.recoverable`. Never crash silently.
 
 ### 7.3 Trace event (JSONL in `logs/trace-<run_id>.jsonl`, echoed to stdout)
@@ -399,6 +407,7 @@ One row per internal record from inventory, POS or supplier. Identical names and
 - **Adapter selection:** `app.adapters.factory.get_adapter(sample_mode=None, data_dir=None)`. `adapter.result_name` is the `RunResult.adapter` value; `adapter.fallback_reason` feeds the `adapter_fallback` trace event.
 - **Answer key** (`data/ground_truth/exposures.json`, read only by `evaluate.py`): `exposures[]` keyed by `recall_id` + `outlet_id` + `batch_norm`, with `on_hand_qty`, `sold_after_date_qty` (sales on or after the recall date), `distinct_customers`, `expected_status`, `conflicts[]`, `evidence[]` (`source`, `record_id`); `unassigned[]` (deliveries with no outlet, expected `needs_review`); `decoys[]` (records of a recalled product with a non-affected batch: flagging them is a false positive). `expected_status` is `needs_review` when the conflicts include `batch_typo`, `one_sided_transfer` or `delivered_not_in_inventory`.
 - **Tuning data:** `data/tuning/seed7/` has the same layout with its own `ground_truth/`. Point the DuckDB adapter at it with `data_dir` or `RG_DATA_DIR`.
+- **Hold-out data:** `data/holdout/seed99/` (created 24 Oct, after all tuning) is the honest score. **Never change code because of what it shows**; record findings instead. Seed 42 is no longer held out (two misses on it were fixed).
 
 ---
 
@@ -453,7 +462,8 @@ python scripts/load_postgres.py
 python scripts/zetaris_register.py            # idempotent
 python run.py --input input_examples/example_1.json
 python run.py --serve
-python scripts/evaluate.py --run logs/trace-<id>.jsonl
+python scripts/evaluate.py --data-dir data/holdout/seed99           # honest score (add --live for Zetaris)
+python scripts/evaluate.py --result output_examples/<x>/result.json --recall-id NPRA-...   # score a saved run
 pytest -q
 SAMPLE_MODE=true python run.py --input input_examples/example_1.json    # must pass with an empty .env
 ```
@@ -477,7 +487,7 @@ SAMPLE_MODE=true python run.py --input input_examples/example_1.json    # must p
 **Open:**
 - How to put NVIDIA-key models in a Nightshift lane. Ask at the Build workshop.
 - Whether Nightshift on Windows requires an NVIDIA GPU for cloud-only lanes. This decides which teammate's machine runs live demos.
-- Whether `ACTIVATE USL TABLE` works over JDBC datasource tables on our instance. Test on day 2; fall back to a schemastore view.
+- USL: exists on our instance but undocumented here; the schemastore view is the semantic layer (§5.1).
 
 ## 12. Schedule and cut list
 
