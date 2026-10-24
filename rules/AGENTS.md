@@ -2,7 +2,7 @@
 
 > **Context for coding agents** (Cursor Agent, Codex). Read this file fully before writing code.
 > - If anything here conflicts with a direct instruction from a teammate, follow the teammate and update this file in the same commit.
-> - Version 2.3, 24 Oct 2026. `Exposure.recall_id` and `unresolved_conflicts[].doubts` added to the result contract (§7.2, from B's `daily_scan`); `scripts/evaluate.py` and the seed-99 hold-out set (§4.2, §9); USL status and the schemastore view as the semantic layer (§5.1).
+> - Version 2.3, 24 Oct 2026. `Exposure.recall_id` and `unresolved_conflicts[].doubts` added to the result contract (§7.2, from B's `daily_scan`); `scripts/evaluate.py` and the seed-99 hold-out set (§4.2, §9); USL live as the semantic layer under the view (§5.1).
 > - Version 2.2, 23 Oct 2026. Agreed the `product_exposure_v` column contract with B (§7.4), `?` parameter handling (§5.1), Critic reads raw tables, and data findings from the real regulator files (§4.1, §4.2).
 > - Version 2, 21 Oct 2026. Supersedes v1: the provider is now Nightshift-first, Zetaris is reached over REST, regulator data comes from data.gov.my open data, and `metadata.json` is added.
 
@@ -201,7 +201,13 @@ The script then:
 - **The Critic does not verify against this view.** It runs its own targeted query on the raw source tables (§7.4), so its check is independent of what the Reconciler read.
 - **Preferred:** Unified Semantic Layer (`COMPILE USL` → `ACTIVATE USL TABLE`). USL constraints: scalar column types only, the namespace must exist under `lightning.metastore`, and multi-table `COMPILE USL` is sent intact.
 - **Fallback, if USL blocks us for more than 2 hours:** `CREATE SCHEMASTORE VIEW`. It is still Zetaris-side and still load-bearing. Record which one we used in `metadata.json`.
-- **Status 24 Oct: the semantic layer is the schemastore view** `recallguard.product_exposure_v`, live and verified (595 rows, same answers as DuckDB, 22/22 on live Zetaris). USL exists on our instance (`COMPILE USL ... DEPLOY NAMESPACE ...` is parsed) but is its own DSL with no docs in this repo, so it stays cut-list #4: try it only with docs in hand and a 2-hour cap. If it ever replaces the view it must keep the same name and columns (the Planner checks them).
+- **Status 24 Oct: USL is live and is the semantic layer.** `zetaris_register.py` builds it following the [Zetaris USL HOWTO](https://zetaris.github.io/getting-started/open_data/usl/HOWTO.html):
+  1. `CREATE NAMESPACE IF NOT EXISTS lightning.metastore` then `... lightning.metastore.recallguard`
+  2. `COMPILE USL IF NOT EXISTS recallguard_usl DEPLOY NAMESPACE lightning.metastore.recallguard DDL CREATE TABLE product_exposure (...)`
+  3. `ACTIVATE USL TABLE lightning.metastore.recallguard.recallguard_usl.product_exposure AS <the four-source union>`
+  4. `recallguard.product_exposure_v` = a schemastore view that renames `source_system` back to `source` over the USL table. **Agents still query only the view: same name, same 12 columns.**
+- USL facts verified on our build: works over JDBC datasource and REST tables; activation is a **live query, not a copy** (a row inserted in Postgres appears at once, also after `load_postgres.py` recreates the tables); `source` is a reserved word in USL DDL (backticks are stored literally, hence `source_system`); columns must be nullable to match a `SELECT`; re-running compile (`IF NOT EXISTS`) and activate is safe; `DROP NAMESPACE ... CASCADE` returns OK but did not remove a USL model (teardown unconfirmed, as the HOWTO says).
+- Results through USL: 595 rows, identical to the direct view; `evaluate.py --data-dir data/sample --live` 22/22. If USL ever fails, the script falls back to the direct schemastore view and says so (`--no-usl` forces that).
 
 **Adapters:**
 - `app/adapters/data_adapter.py`: `DataAdapter.query(sql, params=None, limit=1000) -> list[dict]`, plus `name`.
@@ -487,7 +493,7 @@ SAMPLE_MODE=true python run.py --input input_examples/example_1.json    # must p
 **Open:**
 - How to put NVIDIA-key models in a Nightshift lane. Ask at the Build workshop.
 - Whether Nightshift on Windows requires an NVIDIA GPU for cloud-only lanes. This decides which teammate's machine runs live demos.
-- USL: exists on our instance but undocumented here; the schemastore view is the semantic layer (§5.1).
+- USL: resolved 24 Oct, live over JDBC and REST sources (§5.1).
 
 ## 12. Schedule and cut list
 
@@ -503,7 +509,7 @@ SAMPLE_MODE=true python run.py --input input_examples/example_1.json    # must p
 1. Optional RAG.
 2. `daily_scan` mode.
 3. Live NPRA scraping (keep the committed snapshot).
-4. USL (keep the schemastore view).
+4. USL (`zetaris_register.py --no-usl` keeps the direct schemastore view).
 5. H-MEM and the cold/warm demo.
 
 **Never cut:**

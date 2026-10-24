@@ -17,9 +17,21 @@ def test_statements_cover_every_source_and_the_view():
         assert f"CREATE DATASOURCE {ds}" in sql and f"REFRESH DATASOURCE TABLES FROM {ds}" in sql
     assert "jdbc:postgresql://rg-inventory:5432/inventory" in sql
     assert "http://rg-supplier-api:8000/deliveries" in sql
-    assert "CREATE SCHEMASTORE VIEW product_exposure_v WITH CONTAINER recallguard AS SELECT" in sql
-    assert "DROP SCHEMASTORE VIEW product_exposure_v FROM recallguard" in sql
     assert ", 'g')" not in sql  # Spark regexp_replace has no flag argument
+
+
+def test_usl_model_and_view_over_it():
+    usl = " ".join(s for _, s, _ in zr.usl_statements())
+    assert "CREATE NAMESPACE IF NOT EXISTS lightning.metastore.recallguard" in usl
+    assert "COMPILE USL IF NOT EXISTS recallguard_usl DEPLOY NAMESPACE lightning.metastore.recallguard DDL CREATE TABLE" in usl
+    assert "ACTIVATE USL TABLE lightning.metastore.recallguard.recallguard_usl.product_exposure AS SELECT 'inventory' AS source_system" in usl
+    assert " source varchar" not in usl and "`source`" not in usl  # `source` is reserved in USL DDL
+    over = " ".join(s for _, s, _ in zr.view_statements(over_usl=True))
+    assert "DROP SCHEMASTORE VIEW product_exposure_v FROM recallguard" in over
+    assert "AS SELECT source_system AS source, record_id" in over
+    assert "FROM lightning.metastore.recallguard.recallguard_usl.product_exposure" in over
+    direct = " ".join(s for _, s, _ in zr.view_statements(over_usl=False))
+    assert "CREATE SCHEMASTORE VIEW product_exposure_v WITH CONTAINER recallguard AS SELECT 'inventory' AS source" in direct
 
 
 def test_option_values_are_escaped_and_dry_run_masks_password(capsys, monkeypatch):

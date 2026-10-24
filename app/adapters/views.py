@@ -43,3 +43,35 @@ SELECT 'supplier', delivery_id, outlet_id, supplier_product_name, reg_no, batch,
        CAST(qty AS INT), 'delivery', CAST(delivered_on AS DATE), CAST(NULL AS STRING)
 FROM supplier_rest.deliveries
 """.replace("STRING", "VARCHAR" if dialect == "duckdb" else "STRING")
+
+
+# ---------- Zetaris Unified Semantic Layer (USL) ----------
+# Verified on the hackathon build (24 Oct) following
+# https://zetaris.github.io/getting-started/open_data/usl/HOWTO.html :
+#   CREATE NAMESPACE -> COMPILE USL ... DDL CREATE TABLE -> ACTIVATE USL TABLE ... AS SELECT
+# Quirks: `source` is reserved in USL DDL (backticks get stored literally), so the USL column is
+# `source_system` and the agents' view renames it back. Columns must be nullable to match a SELECT.
+USL_NAMESPACE = "lightning.metastore.recallguard"
+USL_MODEL = "recallguard_usl"
+USL_TABLE = f"{USL_NAMESPACE}.{USL_MODEL}.product_exposure"
+
+USL_DDL = (
+    "CREATE TABLE product_exposure ( source_system varchar(16), record_id varchar(64), outlet_id varchar(16), "
+    "product_name varchar(256), reg_no varchar(32), batch varchar(64), reg_no_norm varchar(32), "
+    "batch_norm varchar(64), qty integer, event_type varchar(16), event_date date, customer_id varchar(32) )"
+)
+
+VIEW_COLUMNS = ("source", "record_id", "outlet_id", "product_name", "reg_no", "batch",
+                "reg_no_norm", "batch_norm", "qty", "event_type", "event_date", "customer_id")
+
+
+def usl_activation_select() -> str:
+    """The same union as the view, with the first column named source_system for USL."""
+    sql = " ".join(product_exposure_select("spark").split())
+    return sql.replace("'inventory' AS source,", "'inventory' AS source_system,", 1)
+
+
+def view_over_usl_select() -> str:
+    """The agents' view as a thin rename over the USL table: same name and columns as before."""
+    cols = ", ".join("source_system AS source" if c == "source" else c for c in VIEW_COLUMNS)
+    return f"SELECT {cols} FROM {USL_TABLE}"

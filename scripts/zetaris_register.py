@@ -7,8 +7,11 @@ Steps
   1. CREATE DATASOURCE inventory_pg | pos_pg | regulator_pg  (JDBC to the rg-* containers)
   2. REGISTER DATASOURCE TABLES, then REFRESH (Zetaris caches column metadata)
   3. CREATE LIGHTNING DATABASE supplier_rest + REST table deliveries (rg-supplier-api)
-  4. CREATE SCHEMASTORE CONTAINER recallguard + VIEW product_exposure_v (same SQL as DuckDB's)
-  5. Verify: row count of every table the agents use, through Zetaris
+  4. Unified Semantic Layer: namespace lightning.metastore.recallguard, COMPILE USL recallguard_usl,
+     ACTIVATE USL TABLE product_exposure AS <the four-source union>   (skip with --no-usl)
+  5. CREATE SCHEMASTORE CONTAINER recallguard + VIEW product_exposure_v: a rename over the USL table,
+     or the union itself if USL failed. Agents only ever see the view (same name and columns).
+  6. Verify: row count of every table the agents use, through Zetaris
 
 Run order: docker compose up -d -> load_postgres.py -> this script.
 Credentials come from .env only: ZETARIS_*, PG_READER_USER, PG_READER_PASSWORD.
@@ -26,7 +29,10 @@ sys.path.insert(0, str(ROOT))
 
 from _env import load_env  # noqa: E402
 from app.adapters.data_adapter import AdapterError  # noqa: E402
-from app.adapters.views import VIEW_NAME, product_exposure_select  # noqa: E402
+from app.adapters.views import (  # noqa: E402
+    USL_DDL, USL_MODEL, USL_NAMESPACE, USL_TABLE, VIEW_NAME, product_exposure_select, usl_activation_select,
+    view_over_usl_select,
+)
 
 JDBC_SOURCES = {  # datasource -> (container, database)
     "inventory_pg": ("rg-inventory", "inventory"),
@@ -39,7 +45,7 @@ CONTAINER = "recallguard"
 
 VERIFY_TABLES = [
     "inventory_pg.stock", "inventory_pg.transfers", "pos_pg.sales", "supplier_rest.deliveries",
-    "regulator_pg.npra_recalls", "regulator_pg.pharmaceutical_products_cancelled", VIEW_NAME,
+    "regulator_pg.npra_recalls", "regulator_pg.pharmaceutical_products_cancelled", USL_TABLE, VIEW_NAME,
 ]
 
 
@@ -68,12 +74,28 @@ def statements(reader_user: str, reader_pw: str) -> list[tuple[str, str, bool]]:
     # Schemastore-view fallback (AGENTS.md §5.1); USL is the preferred upgrade once this works.
     # Syntax verified on the hackathon build (23 Oct): create WITH CONTAINER, drop FROM, query as
     # recallguard.<view>. Re-creating an existing view fails, so drop first ("does not exist" is fine).
-    view = VIEW_NAME.split(".", 1)[1]
-    out.append((f"drop old view {VIEW_NAME}", f"DROP SCHEMASTORE VIEW {view} FROM {CONTAINER}", True))
-    out.append((f"view {VIEW_NAME}",
-                f"CREATE SCHEMASTORE VIEW {view} WITH CONTAINER {CONTAINER} AS "
-                f"{' '.join(product_exposure_select('spark').split())}", False))
     return out
+
+
+def usl_statements() -> list[tuple[str, str, bool]]:
+    """Unified Semantic Layer: the governed model the view reads from (AGENTS.md §5.1)."""
+    parent = USL_NAMESPACE.rsplit(".", 1)[0]
+    return [
+        (f"namespace {parent}", f"CREATE NAMESPACE IF NOT EXISTS {parent}", True),
+        (f"namespace {USL_NAMESPACE}", f"CREATE NAMESPACE IF NOT EXISTS {USL_NAMESPACE}", True),
+        (f"compile USL {USL_MODEL}", f"COMPILE USL IF NOT EXISTS {USL_MODEL} DEPLOY NAMESPACE {USL_NAMESPACE} DDL {USL_DDL}", True),
+        (f"activate USL {USL_TABLE}", f"ACTIVATE USL TABLE {USL_TABLE} AS {usl_activation_select()}", False),
+    ]
+
+
+def view_statements(over_usl: bool) -> list[tuple[str, str, bool]]:
+    view = VIEW_NAME.split(".", 1)[1]
+    body = view_over_usl_select() if over_usl else " ".join(product_exposure_select("spark").split())
+    return [
+        (f"drop old view {VIEW_NAME}", f"DROP SCHEMASTORE VIEW {view} FROM {CONTAINER}", True),
+        (f"view {VIEW_NAME} ({'over USL' if over_usl else 'direct'})",
+         f"CREATE SCHEMASTORE VIEW {view} WITH CONTAINER {CONTAINER} AS {body}", False),
+    ]
 
 
 def masked(sql: str, secret: str) -> str:
@@ -83,15 +105,17 @@ def masked(sql: str, secret: str) -> str:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--no-usl", action="store_true", help="skip the USL model; build the view directly on the sources")
     args = ap.parse_args(argv)
     load_env()
 
     reader_user = os.getenv("PG_READER_USER", "zetaris_reader")
     reader_pw = os.getenv("PG_READER_PASSWORD", "")
     plan = statements(reader_user, reader_pw)
+    usl_plan = [] if args.no_usl else usl_statements()
 
     if args.dry_run:
-        for label, sql, _ in plan:
+        for label, sql, _ in plan + usl_plan + view_statements(over_usl=not args.no_usl):
             print(f"-- {label}\n{masked(sql, reader_pw)};\n")
         return 0
 
@@ -115,18 +139,28 @@ def main(argv: list[str] | None = None) -> int:
         print(f"cannot use Zetaris: {e}{hint}", file=sys.stderr)
         return 1
 
-    failed = 0
-    for label, sql, ok_if_exists in plan:
-        try:
-            z.query(sql)
-            print(f"  ok       {label}")
-        except AdapterError as e:
-            msg = str(e).lower()
-            if ok_if_exists and ("exist" in msg or "duplicate" in msg):
-                print(f"  exists   {label}")
-            else:
-                failed += 1
-                print(f"  FAILED   {label}: {masked(str(e), reader_pw)[:300]}")
+    def run_steps(steps: list[tuple[str, str, bool]]) -> int:
+        bad = 0
+        for label, sql, ok_if_exists in steps:
+            try:
+                z.query(sql)
+                print(f"  ok       {label}")
+            except AdapterError as e:
+                msg = str(e).lower()
+                if ok_if_exists and ("exist" in msg or "duplicate" in msg):
+                    print(f"  exists   {label}")
+                else:
+                    bad += 1
+                    print(f"  FAILED   {label}: {masked(str(e), reader_pw)[:300]}")
+        return bad
+
+    failed = run_steps(plan)
+    over_usl = bool(usl_plan) and run_steps(usl_plan) == 0
+    if usl_plan and not over_usl:
+        print("  -> USL failed: falling back to a schemastore view built directly on the sources")
+    failed += run_steps(view_statements(over_usl))
+    layer = f"USL {USL_TABLE} -> view {VIEW_NAME}" if over_usl else f"schemastore view {VIEW_NAME} (no USL)"
+    print(f"\nsemantic layer: {layer}")
 
     print("\nverify through Zetaris:")
     for t in VERIFY_TABLES:
