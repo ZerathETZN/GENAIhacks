@@ -12,17 +12,30 @@
     "zetaris": {
       "role": "federated SQL over four sources (3 JDBC Postgres, 1 REST); USL model recallguard_usl + view recallguard.product_exposure_v as the semantic layer; catalogue discovery; Critic verification queries on the raw tables",
       "semantic_layer": "USL",
-      "files": ["app/adapters/", "scripts/zetaris_register.py", "scripts/load_postgres.py"]
+      "files": [
+        "app/adapters/",
+        "scripts/zetaris_register.py",
+        "scripts/load_postgres.py"
+      ]
     },
     "meterless": {
       "role": "Nightshift is the model provider (LLM_PROVIDER=meterless, no direct NVIDIA client); World Model engine holds provenance-tracked entities; H-MEM keeps verified aliases and pharmacist verdicts across runs",
-      "engines": ["world_model", "h_mem"],
-      "files": ["app/llm/generator.py", "app/meterless/world_model/", "app/meterless/hmem/", "data/feedback/decisions.jsonl"]
+      "engines": [
+        "world_model",
+        "h_mem"
+      ],
+      "files": [
+        "app/llm/generator.py",
+        "app/meterless/world_model/",
+        "app/meterless/hmem/",
+        "data/feedback/decisions.jsonl"
+      ]
     },
     "nvidia": {
-      "role": "Nemotron served through Meterless Nightshift lanes for the Reconciler's ambiguous-match decisions and the Reporter's summary",
-      "models": ["nvidia/nemotron-3.5-super-vl-120b-a12b", "nvidia/nemotron-3.5-lightning-30b-a3b"],
-      "served_by_in_committed_traces": ["nvidia/nemotron-3.5-super-vl-120b-a12b"]
+      "role": "Nemotron served through a Meterless Nightshift lane for the Reconciler's ambiguous-match decisions and the Reporter's summary; the Planner and Critic are deterministic",
+      "models": [
+        "nvidia/nemotron-3.5-super-vl-120b-a12b"
+      ]
     }
   },
   "data": {

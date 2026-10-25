@@ -77,3 +77,24 @@ def test_visuals_use_only_run_evidence():
     html = v.spellings_html(sp, ["5036723"])
     assert 'class="sp-b odd">s036723' in html and 'class="sp-b">503-6723' in html  # 503-6723 normalises to 5036723
     assert v.as_img(v.pipeline_svg([]), "x").startswith('<img src="data:image/svg+xml;base64,')
+
+
+def test_critic_rejection_counts_missing_transfer_leg():
+    ev = {"agent_name": "ConflictCriticAgent", "action": "verify_exposure", "status": "ok",
+          "output_summary": "passed=True one_leg=1 status=needs_review"}
+    ok = {**ev, "output_summary": "passed=True one_leg=0 status=confirmed"}
+    assert h.trace_summary([ev, ok])["critic_revisions"] == 1
+
+
+def test_review_breakdown_matches_reporter_count():
+    conflicts = [{"outlet_id": "OUT-04"}, {"outlet_id": "OUT-06"}, {"outlet_id": "UNASSIGNED"}]
+    assert h.review_breakdown(conflicts) == (3, "2 outlets + 1 delivery with no outlet to check")
+    assert h.review_breakdown([{"recall_id": "R", "error": "skipped"}]) == (1, "1 other item to check")
+
+
+def test_recorded_runs_are_real_committed_runs():
+    from pathlib import Path
+    runs = h.recorded_runs(Path("output_examples"))
+    assert {r["folder"] for r in runs} >= {"cold_warm", "daily-scan"}
+    cold = next(r for r in runs if r["label"] == "cold_warm (cold)")
+    assert cold["trace"] is not None and h.read_trace_file(cold["trace"])

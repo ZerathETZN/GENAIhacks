@@ -27,6 +27,8 @@ SAMPLE_MODE=true .venv/bin/python run.py --input input_examples/example_2.json
 
 Sample mode runs the **real agent logic** over the committed sample data (DuckDB) with a deterministic heuristic model fallback. It never replays saved outputs.
 
+The committed `data/feedback/decisions.jsonl` holds two pharmacist verdicts, so fresh runs are already "warm". To see the learning step, open **A recorded live run** in the UI sidebar and compare `cold_warm (cold)` with `cold_warm (warm)`: the cold run's *Pharmacist review* tab shows the open questions, and the warm run resolves them (see `output_examples/cold_warm/`). Recorded runs are shown exactly as saved, never re-run.
+
 ## Live mode (Zetaris + Meterless Nightshift + NVIDIA Nemotron)
 
 Prerequisites on the machine running the demo:
@@ -34,7 +36,7 @@ Prerequisites on the machine running the demo:
 1. **Docker Desktop** running, with the Zetaris platform up (`docker compose up -d` in the Zetaris folder; UI on :3000, REST on :8888). This creates the `zetaris_default` network.
 2. **Meterless Nightshift** open, with:
    - an NVIDIA key in Setup → Providers;
-   - cloud lanes set to NVIDIA Nemotron 3.5 Super VL / Lightning 30B;
+   - a cloud lane set to NVIDIA Nemotron 3.5 Super VL 120B, and only that model in the Race lane (so every trace shows Nemotron);
    - the local WebLLM lane stopped.
 3. `cp .env.example .env`, then fill in:
    - `METERLESS_RUNTIME_TOKEN`, from Nightshift Console → API key (the NVIDIA key lives in Nightshift, not in `.env`);
@@ -102,7 +104,6 @@ Every agent action and sponsor call is written to `logs/trace-<run_id>.jsonl` an
 
 **Models:**
 - NVIDIA **Nemotron 3.5 Super VL 120B** (`nvidia/nemotron-3.5-super-vl-120b-a12b`), served through a Meterless Nightshift lane, for the Reconciler's ambiguous-match decisions and the Reporter's summary. Every committed live trace records it as `served_by`.
-- NVIDIA **Nemotron 3.5 Lightning 30B** is configured as a second Nightshift lane.
 - There is no direct NVIDIA client: every model call goes through Nightshift. The Planner, Critic and ranking are deterministic by design.
 
 **Sponsor technology:**
@@ -255,6 +256,10 @@ Every file in `output_examples/` was saved from a real run (`scripts/run_example
 - Internal chain data is synthetic. Results show the method, not a real chain's exposure.
 - Outputs are exposure reviews for a pharmacist to confirm, not regulatory decisions.
 - The live mode needs Zetaris and Nightshift running on the same machine. Judges can use sample mode.
+- Most real NPRA notices are "voluntary recalls" with no degree. The guideline has no rule for them, so treating them with Degree II urgency is **our assumption** (`app/rules/actions.yaml`, `voluntary-no-degree`).
+- Only the Reconciler's ambiguous cases and the summary use the model; in many recalls the model makes no match decision at all. Nightshift's Judge lane is not used.
+- When the Critic's raw-table numbers disagree with a draft, it adopts the raw numbers and marks the item `needs_review`; it does not send the draft back for a second matching round. No committed run has hit a mismatch.
+- Matching thresholds (`app/reconcile/match.py`) were tuned on two small synthetic seeds.
 - Matching does not yet separate strengths of the same brand (the 3 extra hold-out rows above), and the datasets are small (6 recalls and 8 outlets each).
 - `daily_scan` covers the newest `SCAN_LIMIT` (default 5) recalls per run, within a `SCAN_BUDGET_S` time budget; skipped recalls are listed, never dropped.
 - In sample mode there is no model call: the agents' deterministic rules make every decision (`heuristic_fallback`).

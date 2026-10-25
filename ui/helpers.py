@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import json
+import re
 from collections import Counter
 from itertools import pairwise
+from pathlib import Path
 from typing import Any
 
 SEVERITY_ORDER = {"high": 0, "medium": 1, "low": 2}
@@ -83,10 +86,18 @@ def trace_rows(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return rows
 
 
+_ONE_LEG = re.compile(r"one_leg=(\d+)")
+
+
 def _is_critic_rejection(ev: dict[str, Any]) -> bool:
+    """The Critic overturned a draft: a status that says so, its raw-table numbers disagreed (passed=False),
+    or it found a transfer with a missing leg (one_leg > 0) and sent the draft to review."""
     if "critic" not in (ev.get("agent_name") or "").lower():
         return False
-    return (ev.get("status") or "") in REVISION_STATUSES or "passed=False" in (ev.get("output_summary") or "")
+    out = ev.get("output_summary") or ""
+    m = _ONE_LEG.search(out)
+    return ((ev.get("status") or "") in REVISION_STATUSES or "passed=False" in out
+            or bool(m and int(m.group(1)) > 0))
 
 
 def _is_escalation(ev: dict[str, Any]) -> bool:
@@ -156,3 +167,45 @@ def split_action(text: str) -> tuple[str, str | None]:
     if i > 0 and " sold " in text[i:]:
         return text[:i].strip(), text[i:].strip()
     return text, None
+
+
+def review_breakdown(conflicts: list[dict[str, Any]]) -> tuple[int, str]:
+    """The Reporter's "N items need review" in words: outlets, deliveries with no outlet, skipped recalls."""
+    outlets = sum(1 for c in conflicts if c.get("outlet_id") and c.get("outlet_id") != "UNASSIGNED" and not c.get("error"))
+    unassigned = sum(1 for c in conflicts if c.get("outlet_id") == "UNASSIGNED")
+    other = len(conflicts) - outlets - unassigned
+    parts = []
+    if outlets:
+        parts.append(f"{outlets} outlet{'s' if outlets != 1 else ''}")
+    if unassigned:
+        parts.append(f"{unassigned} deliver{'ies' if unassigned != 1 else 'y'} with no outlet")
+    if other:
+        parts.append(f"{other} other item{'s' if other != 1 else ''}")
+    return len(conflicts), (" + ".join(parts) + " to check") if parts else "nothing to check"
+
+
+def recorded_runs(root: Path) -> list[dict[str, Any]]:
+    """Real runs committed under output_examples/ (each folder: result*.json + trace-<run_id>.jsonl)."""
+    runs = []
+    for res in sorted(root.glob("*/result*.json")):
+        try:
+            data = json.loads(res.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        run_id = data.get("run_id", "")
+        trace = res.parent / f"trace-{run_id}.jsonl"
+        label = f"{res.parent.name}" + (f" ({res.stem.split('-', 1)[1]})" if "-" in res.stem else "")
+        runs.append({"label": label, "result": data, "trace": trace if trace.exists() else None, "folder": res.parent.name})
+    return runs
+
+
+def read_trace_file(path: Path | None) -> list[dict[str, Any]]:
+    if not path or not path.exists():
+        return []
+    out = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        try:
+            out.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+    return out
