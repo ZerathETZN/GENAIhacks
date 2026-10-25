@@ -82,6 +82,7 @@ class ConflictCriticAgent:
         self.emit(TraceEvent(
             run_id=self.run_id, agent_name=NAME, action="verify_exposure", input_summary=f"{d.outlet_id}/{d.batch}"[:200],
             output_summary=f"passed={passed} one_leg={len(one_leg)} status={d.status}"[:200],
+            status="ok" if passed and not one_leg else "needs_revision",  # AGENTS.md §3: a rejection must be visible in the trace
             sponsor_call="zetaris" if self.adapter.name == "zetaris" else None, duration_ms=int((time.monotonic() - t0) * 1000),
         ))
         return d
