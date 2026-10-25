@@ -26,6 +26,7 @@ from ui import visuals as v
 
 API_URL = os.getenv("API_URL", "http://localhost:8000").rstrip("/")
 EXAMPLES = Path(__file__).resolve().parent.parent / "input_examples"
+RECORDED = Path(__file__).resolve().parent.parent / "output_examples"
 RUN_TIMEOUT = httpx.Timeout(900.0, connect=5.0)  # a full run targets < 10 min (AGENTS.md §2.8)
 SEVERITY_LABEL = {"high": "High", "medium": "Medium", "low": "Low"}
 STATUS_LABEL = {"confirmed": "Confirmed by Critic", "needs_review": "Pharmacist to check"}
@@ -190,10 +191,12 @@ with st.sidebar:
         st.error(f"The API is not reachable at {API_URL}. Start it with `python run.py --serve`.")
 
     examples = load_examples()
-    source = st.radio("What to check", ["A saved recall", "A new recall notice", "Today's daily scan", "A past run"])
+    source = st.radio("What to check", ["A saved recall", "A new recall notice", "Today's daily scan",
+                                         "A recorded live run", "A past run"])
 
 payload: dict | None = None
 past_run_id: str | None = None
+recorded: dict | None = None
 
 with st.sidebar:
     if source == "A saved recall":
@@ -224,6 +227,15 @@ with st.sidebar:
     elif source == "Today's daily scan":
         payload = {"run_id": f"scan-{uuid.uuid4().hex[:8]}", "input": {"mode": "daily_scan"},
                    "options": {"sample_mode": False, "max_critic_rounds": 2}}
+    elif source == "A recorded live run":
+        runs = h.recorded_runs(RECORDED)
+        if runs:
+            pick = st.selectbox("Recorded run", range(len(runs)), format_func=lambda i: runs[i]["label"])
+            recorded = runs[pick]
+            st.caption("Saved from a real live run (Zetaris + Nemotron through Nightshift) in output_examples/. "
+                       "Shown as recorded, not re-run.")
+        else:
+            st.info("No recorded runs in output_examples/.")
     else:
         past_run_id = st.text_input("Run ID", placeholder="example-2-1a2b")
 
@@ -237,7 +249,7 @@ with st.sidebar:
             payload["run_id"] = f"{payload.get('run_id', 'run')}-{uuid.uuid4().hex[:4]}"
         go = st.button("Check outlets", type="primary", use_container_width=True)
     else:
-        go = st.button("Open run", use_container_width=True) if source == "A past run" else False
+        go = st.button("Open run", use_container_width=True) if source in ("A past run", "A recorded live run") else False
 
 # ---------------- run ----------------
 
@@ -246,15 +258,24 @@ if go and payload is not None:
         try:
             st.session_state["result"] = api_run(payload)
             st.session_state["request"] = payload
+            st.session_state["trace_file"] = None
+            st.session_state["recorded_from"] = None
         except httpx.HTTPError as exc:
             st.session_state["result"] = {"status": "error", "run_id": payload["run_id"],
                                           "error": {"type": type(exc).__name__, "message": str(exc), "recoverable": True}}
     if st.session_state["result"].get("status") == "success":
         st.toast("Check finished", icon="✅")
+elif go and recorded:
+    st.session_state["result"] = recorded["result"]
+    st.session_state["request"] = None
+    st.session_state["trace_file"] = str(recorded["trace"]) if recorded["trace"] else None
+    st.session_state["recorded_from"] = recorded["folder"]
 elif go and past_run_id:
     try:
         st.session_state["result"] = api_get(f"/runs/{past_run_id.strip()}")
         st.session_state["request"] = None
+        st.session_state["trace_file"] = None
+        st.session_state["recorded_from"] = None
     except httpx.HTTPError as exc:
         st.error(f"Could not open run '{past_run_id}': {exc}")
 
@@ -298,6 +319,9 @@ sev_var = f"var(--{top_sev})" if top_sev else "var(--green)"
 
 # ---------------- recall notice slip ----------------
 
+if st.session_state.get("recorded_from"):
+    st.info(f"Recorded live run from output_examples/{st.session_state['recorded_from']}/, shown as saved.", icon="📼")
+
 if scan:
     recalls = sorted({e.get("recall_id") for e in exposures if e.get("recall_id")})
     title, kind = "Daily scan of the NPRA recall snapshot", "Scan across every recall the chain stocks"
@@ -320,13 +344,16 @@ st.html(f'<div class="rg-notice" style="--sev:{sev_var}"><p class="kind">{kind}<
 if out.get("summary"):
     st.markdown(f'<p class="rg-summary">{escape(out["summary"]).replace("**", "")}</p>', unsafe_allow_html=True)
 
+n_review, review_words = h.review_breakdown(out.get("unresolved_conflicts", []))
+if not n_review:
+    n_review, review_words = t["needs_review"], "for a pharmacist to check"
 st.html(f"""
 <div class="rg-tally">
   <div><strong>{t['outlets']}</strong><span>outlets affected</span></div>
   <div><strong>{t['on_hand']}</strong><span>units still in stock</span></div>
   <div class="{'alert' if t['sold'] else ''}"><strong>{t['sold']}</strong><span>units sold since the recall</span></div>
   <div class="{'alert' if t['customers'] else ''}"><strong>{t['customers']}</strong><span>customers to contact</span></div>
-  <div class="{'review' if t['needs_review'] else ''}"><strong>{t['needs_review']}</strong><span>for a pharmacist to check</span></div>
+  <div class="{'review' if n_review else ''}"><strong>{n_review}</strong><span>{escape(review_words)}</span></div>
 </div>""")
 
 sp = v.spellings(exposures)
@@ -468,10 +495,13 @@ with tab_review:
 # ---------------- agent trace ----------------
 
 with tab_trace:
-    try:
-        events = api_get(f"/runs/{result['run_id']}/trace")
-    except httpx.HTTPError:
-        events = []
+    if st.session_state.get("trace_file"):
+        events = h.read_trace_file(Path(st.session_state["trace_file"]))
+    else:
+        try:
+            events = api_get(f"/runs/{result['run_id']}/trace")
+        except httpx.HTTPError:
+            events = []
     if not events:
         st.info("This run has no trace events.")
     else:
