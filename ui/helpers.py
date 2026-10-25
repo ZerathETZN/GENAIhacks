@@ -209,3 +209,18 @@ def read_trace_file(path: Path | None) -> list[dict[str, Any]]:
         except json.JSONDecodeError:
             continue
     return out
+
+
+def display_name(exposures: list[dict[str, Any]]) -> str | None:
+    """A recorded run has no request, so pick the registered-style product name (mixed case, the inventory
+    spelling) over till or supplier spellings (all lower or all upper case)."""
+    names = [e.get("product_name") for e in exposures if e.get("product_name")]
+    for n in names:
+        if n != n.lower() and n != n.upper():
+            return n
+    return names[0] if names else None
+
+
+def date_from_summary(summary: str) -> str | None:
+    m = re.search(r"since (\d{4}-\d{2}-\d{2})", summary or "")
+    return m.group(1) if m else None

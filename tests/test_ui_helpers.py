@@ -98,3 +98,9 @@ def test_recorded_runs_are_real_committed_runs():
     assert {r["folder"] for r in runs} >= {"cold_warm", "daily-scan"}
     cold = next(r for r in runs if r["label"] == "cold_warm (cold)")
     assert cold["trace"] is not None and h.read_trace_file(cold["trace"])
+
+
+def test_display_name_and_date_for_recorded_runs():
+    exps = [{"product_name": "glumet xr tab 500mg"}, {"product_name": "Glumet XR Tablet 500mg"}]
+    assert h.display_name(exps) == "Glumet XR Tablet 500mg"
+    assert h.date_from_summary("34 units sold since 2026-04-15. Four items") == "2026-04-15"
