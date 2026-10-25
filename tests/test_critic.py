@@ -68,3 +68,9 @@ def test_batch_with_slash_matches_raw_rows_after_norm():
     a.db.execute("INSERT INTO inventory_pg.stock VALUES ('s9','OUT-09','Paracetamol 500mg Tablet','MAL12345678A','BN2404/23','5','2026-09-30')")
     d = draft(outlet_id="OUT-09", batch="BN2404-23", on_hand_qty=5, sold_after_date_qty=0, distinct_customers=0)
     assert ConflictCriticAgent(a, MemoryStoreService(), "r1").review(RECALL, [d])[0].critic_check.passed
+
+
+def test_rejections_are_visible_in_the_trace():
+    events = []
+    ConflictCriticAgent(RawAdapter(), MemoryStoreService(), "r1", events.append).review(RECALL, [draft(), draft(on_hand_qty=99)])
+    assert [e.status for e in events] == ["ok", "needs_revision"]

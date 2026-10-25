@@ -2,7 +2,7 @@
   "run_id": "example-daily-scan",
   "status": "success",
   "output": {
-    "summary": "The daily scan found 5 snapshot recalls matching chain-stocked products, resulting in 26 outlet exposures (2 high). There are 289 units on hand, 155 units sold since each recall, and 21 items needing review.",
+    "summary": "The daily scan found 5 snapshot recalls matching products the chain stocks, resulting in 26 outlet exposures (2 high). There are 289 units on hand, 155 units sold since each recall, and 21 items needing review.",
     "disclaimer": "For pharmacist review. Not a compliance verdict.",
     "exposures": [
       {
@@ -2818,20 +2818,8 @@
         "reasons": [
           "batch=exact",
           "identity=1.00 via reg_no",
-          "batch=exact",
           "identity=0.93 via name_fuzzy",
-          "batch=exact",
           "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via reg_no",
           "delivered but no stock record",
           "transfer with a missing leg: ['TRF-000004']"
         ],
@@ -2844,18 +2832,8 @@
         "reasons": [
           "batch=exact",
           "identity=1.00 via reg_no",
-          "batch=exact",
-          "identity=1.00 via reg_no",
-          "batch=exact",
           "identity=1.00 via name_fuzzy",
-          "batch=exact",
           "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via reg_no",
           "transfer with a missing leg: ['TRF-000005']"
         ],
         "doubts": []
@@ -2870,12 +2848,7 @@
           "batch=near",
           "identity=0.93 via name_fuzzy",
           "batch near-miss",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via reg_no"
+          "identity=1.00 via name_fuzzy"
         ],
         "doubts": [
           {
@@ -2895,15 +2868,7 @@
           "identity=1.00 via reg_no",
           "batch=near",
           "identity=0.93 via name_fuzzy",
-          "batch near-miss",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via reg_no"
+          "batch near-miss"
         ],
         "doubts": [
           {
@@ -2924,14 +2889,7 @@
           "batch=near",
           "identity=0.93 via name_fuzzy",
           "batch near-miss",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via reg_no"
+          "identity=1.00 via name_fuzzy"
         ],
         "doubts": [
           {
@@ -2947,18 +2905,6 @@
         "outlet_id": "OUT-01",
         "batch": "5036724",
         "reasons": [
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
           "batch=near",
           "identity=0.88 via name_fuzzy",
           "batch near-miss"
@@ -2982,15 +2928,6 @@
           "batch near-miss",
           "batch=exact",
           "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
           "identity=1.00 via reg_no",
           "delivered but no stock record"
         ],
@@ -3010,14 +2947,7 @@
         "reasons": [
           "batch=exact",
           "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via name_fuzzy",
-          "batch=exact",
           "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via name_fuzzy",
           "delivered but no stock record"
         ],
         "doubts": []
@@ -3032,14 +2962,7 @@
           "batch=near",
           "identity=0.93 via name_fuzzy",
           "batch near-miss",
-          "batch=exact",
-          "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via reg_no"
+          "identity=1.00 via name_fuzzy"
         ],
         "doubts": [
           {
@@ -3058,21 +2981,7 @@
           "batch=near",
           "identity=0.95 via name_fuzzy",
           "batch near-miss",
-          "batch=near",
           "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
           "transfer with a missing leg: ['TRF-000001']"
         ],
         "doubts": [
@@ -3089,21 +2998,6 @@
         "outlet_id": "OUT-08",
         "batch": "5036724",
         "reasons": [
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
           "batch=near",
           "identity=0.88 via name_fuzzy",
           "batch near-miss"
@@ -3137,18 +3031,7 @@
           "batch=near",
           "identity=0.95 via name_fuzzy",
           "batch near-miss",
-          "batch=near",
-          "identity=0.95 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss"
+          "identity=0.88 via name_fuzzy"
         ],
         "doubts": [
           {
@@ -3167,18 +3050,7 @@
           "batch=near",
           "identity=0.95 via name_fuzzy",
           "batch near-miss",
-          "batch=near",
-          "identity=0.95 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.95 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
           "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
           "delivered but no stock record"
         ],
         "doubts": [
@@ -3203,20 +3075,8 @@
         "reasons": [
           "batch=exact",
           "identity=1.00 via reg_no",
-          "batch=exact",
           "identity=1.00 via name_fuzzy",
-          "batch=exact",
           "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=0.93 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via reg_no",
           "delivered but no stock record",
           "transfer with a missing leg: ['TRF-000001']"
         ],
@@ -3230,12 +3090,7 @@
           "batch=near",
           "identity=0.95 via name_fuzzy",
           "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.95 via name_fuzzy",
-          "batch near-miss"
+          "identity=0.88 via name_fuzzy"
         ],
         "doubts": [
           {
@@ -3254,15 +3109,7 @@
           "batch=near",
           "identity=0.95 via name_fuzzy",
           "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.95 via name_fuzzy",
-          "batch near-miss",
-          "batch=near",
-          "identity=0.88 via name_fuzzy",
-          "batch near-miss"
+          "identity=0.88 via name_fuzzy"
         ],
         "doubts": [
           {
@@ -3283,15 +3130,6 @@
           "batch near-miss",
           "batch=exact",
           "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=0.98 via hmem",
-          "batch=exact",
-          "identity=0.98 via hmem",
-          "batch=exact",
-          "identity=0.98 via hmem",
-          "batch=exact",
           "identity=1.00 via reg_no",
           "delivered but no stock record"
         ],
@@ -3311,13 +3149,6 @@
         "reasons": [
           "batch=exact",
           "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=0.98 via hmem",
-          "batch=exact",
           "identity=0.98 via hmem",
           "delivered but no stock record"
         ],
@@ -3333,14 +3164,7 @@
           "batch=near",
           "identity=0.98 via hmem",
           "batch near-miss",
-          "batch=exact",
-          "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=0.98 via hmem",
-          "batch=exact",
-          "identity=1.00 via name_fuzzy",
-          "batch=exact",
-          "identity=1.00 via reg_no"
+          "identity=1.00 via name_fuzzy"
         ],
         "doubts": [
           {
@@ -3394,5 +3218,5 @@
   ],
   "trace_id": "trace-example-daily-scan",
   "log_file": "output_examples\\daily-scan\\trace-example-daily-scan.jsonl",
-  "execution_time_seconds": 26.264
+  "execution_time_seconds": 26.643
 }

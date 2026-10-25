@@ -88,7 +88,7 @@ def build_drafts(recall: Recall, candidates: list[Candidate]) -> list[ExposureDr
             status="confirmed" if not unassigned and not no_stock and all(c.status == "match" for c in cs) else "needs_review",
             confidence=min(c.confidence for c in cs),
             evidence=[e for c in cs for e in c.evidence],
-            reasons=[x for c in cs for x in c.reasons] + (["delivered, no outlet recorded"] if unassigned else []) + (["delivered but no stock record"] if no_stock else []),
+            reasons=list(dict.fromkeys([x for c in cs for x in c.reasons] + (["delivered, no outlet recorded"] if unassigned else []) + (["delivered but no stock record"] if no_stock else []))),  # one line per distinct reason, not per record
             doubts=_doubts(recall, cs),
             batch_norms=sorted({norm(r.get("batch") or "") for r in rows}),
             names=sorted({r["product_name"] for r in rows if r.get("product_name")}),
