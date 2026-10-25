@@ -329,12 +329,12 @@ if scan:
 else:
     rc = (request.get("input") or {}).get("recall") or {}
     first = ranked[0] if ranked else {}
-    title = rc.get("product_name") or first.get("product_name") or "Recall"
+    title = rc.get("product_name") or h.display_name(ranked) or "Recall"
     degree = rc.get("degree_level")
     kind = f"NPRA recall, degree {escape(str(degree))}" if degree else "NPRA recall notice"
     facts = [("Registration", rc.get("reg_no") or first.get("reg_no") or "-"),
              ("Batches", ", ".join(rc.get("batches") or []) or (first.get("batch") or "all")),
-             ("Recall date", rc.get("date") or "-"),
+             ("Recall date", rc.get("date") or h.date_from_summary(out.get("summary", "")) or "-"),
              ("Rule applied", (first.get("rule_ref") or "-").split("#")[-1])]
 facts.append(("Data and model", f"{result.get('adapter') or '-'}, {', '.join(result.get('providers_used') or []) or '-'}"))
 dl = "".join(f"<div><dt>{escape(k)}</dt><dd>{escape(str(v))}</dd></div>" for k, v in facts)
